@@ -37,7 +37,7 @@ jobs:
           pip-compile --upgrade requirements-test.in
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           commit-message: "chore: update python dependencies"
           title: "chore: Update Python dependencies"
@@ -79,7 +79,7 @@ jobs:
           npm audit fix
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           commit-message: "chore: update node dependencies"
           title: "chore: Update Node.js dependencies"
@@ -118,7 +118,7 @@ jobs:
           sed -i 's/FROM node:[0-9.]\+/FROM node:18/' frontend/Dockerfile
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           commit-message: "chore: update docker base images"
           title: "chore: Update Docker base images"
