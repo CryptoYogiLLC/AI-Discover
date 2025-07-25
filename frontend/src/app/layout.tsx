@@ -1,13 +1,14 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { Providers } from './providers';
-import './globals.css';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { Providers } from "./providers";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'AI-Discover - Automated Application Discovery',
-  description: 'Intelligent application discovery and cloud migration assessment platform',
+  title: "AI-Discover - Automated Application Discovery",
+  description:
+    "Intelligent application discovery and cloud migration assessment platform",
 };
 
 export default function RootLayout({

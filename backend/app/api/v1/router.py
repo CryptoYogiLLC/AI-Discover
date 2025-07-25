@@ -22,9 +22,5 @@ api_router.include_router(
 api_router.include_router(
     collection_flows.router, prefix="/collection-flows", tags=["collection-flows"]
 )
-api_router.include_router(
-    discovery.router, prefix="/discovery", tags=["discovery"]
-)
-api_router.include_router(
-    adapters.router, prefix="/adapters", tags=["adapters"]
-)
+api_router.include_router(discovery.router, prefix="/discovery", tags=["discovery"])
+api_router.include_router(adapters.router, prefix="/adapters", tags=["adapters"])

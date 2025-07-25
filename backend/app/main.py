@@ -26,16 +26,16 @@ logger = get_logger()
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
     logger.info("Starting AI-Discover application", version=settings.VERSION)
-    
+
     # Initialize database
     await init_db()
-    
+
     # Initialize CrewAI agents
     logger.info("Initializing CrewAI agents")
     # TODO: Initialize agents
-    
+
     yield
-    
+
     # Cleanup
     logger.info("Shutting down AI-Discover application")
 
@@ -50,25 +50,25 @@ def create_application() -> FastAPI:
         redoc_url="/redoc",
         lifespan=lifespan,
     )
-    
+
     # Add middleware
     app.add_middleware(SecurityHeadersMiddleware)
     app.add_middleware(RequestIDMiddleware)
     app.add_middleware(LoggingMiddleware)
     app.add_middleware(GZipMiddleware, minimum_size=1000)
-    
+
     # CORS configuration
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.BACKEND_CORS_ORIGINS,
+        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    
+
     # Include API router
     app.include_router(api_router, prefix=settings.API_V1_STR)
-    
+
     # Add health check endpoint
     @app.get("/health", tags=["health"])
     async def health_check() -> Dict[str, Any]:
@@ -77,15 +77,32 @@ def create_application() -> FastAPI:
             "version": settings.VERSION,
             "environment": settings.ENVIRONMENT,
         }
-    
+
     # Mount Prometheus metrics endpoint
     metrics_app = make_asgi_app()
     app.mount("/metrics", metrics_app)
-    
+
     # Instrument FastAPI with OpenTelemetry
     FastAPIInstrumentor.instrument_app(app)
-    
+
     return app
 
 
 app = create_application()
+
+
+@app.get("/")
+async def root() -> Dict[str, Any]:
+    """Root endpoint"""
+    return {
+        "message": "Welcome to AI-Discover API",
+        "version": settings.VERSION,
+        "docs": "/docs",
+        "redoc": "/redoc",
+    }
+
+
+@app.get("/health")
+async def health_check() -> Dict[str, str]:
+    """Health check endpoint"""
+    return {"status": "healthy"}
