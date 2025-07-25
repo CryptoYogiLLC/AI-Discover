@@ -52,7 +52,7 @@ jobs:
           docker build -t ai-discover-${{ matrix.image }}:scan ./${{ matrix.image }}
 
       - name: Run Grype vulnerability scanner
-        uses: anchore/scan-action@v3
+        uses: anchore/scan-action@v6
         with:
           image: ai-discover-${{ matrix.image }}:scan
           fail-build: true
@@ -127,7 +127,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run OWASP ZAP
-        uses: zaproxy/action-full-scan@v0.10.0
+        uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: "https://staging.ai-discover.example.com"
           rules_file_name: ".zap/rules.tsv"

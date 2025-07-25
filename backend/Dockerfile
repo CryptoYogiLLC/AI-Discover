@@ -1,5 +1,5 @@
 # Backend Dockerfile
-FROM python:3.11-slim as builder
+FROM python:3.13-slim as builder
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -25,7 +25,7 @@ RUN pip-compile requirements.in -o requirements.txt && \
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Production stage
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser
