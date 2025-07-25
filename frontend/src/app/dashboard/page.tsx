@@ -18,9 +18,7 @@ export default function DashboardPage() {
               <dt className="text-sm font-medium text-gray-500 truncate">
                 Active Discoveries
               </dt>
-              <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                0
-              </dd>
+              <dd className="mt-1 text-3xl font-semibold text-gray-900">0</dd>
             </div>
           </div>
 
@@ -30,9 +28,7 @@ export default function DashboardPage() {
               <dt className="text-sm font-medium text-gray-500 truncate">
                 Total Applications
               </dt>
-              <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                0
-              </dd>
+              <dd className="mt-1 text-3xl font-semibold text-gray-900">0</dd>
             </div>
           </div>
 
@@ -42,9 +38,7 @@ export default function DashboardPage() {
               <dt className="text-sm font-medium text-gray-500 truncate">
                 Assessment Progress
               </dt>
-              <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                0%
-              </dd>
+              <dd className="mt-1 text-3xl font-semibold text-gray-900">0%</dd>
             </div>
           </div>
         </div>
