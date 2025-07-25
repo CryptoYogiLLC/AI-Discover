@@ -4,7 +4,6 @@ import asyncio
 from typing import AsyncGenerator, Generator
 
 import pytest
-import httpx
 from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
