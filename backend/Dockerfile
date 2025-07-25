@@ -10,10 +10,19 @@ RUN apt-get update && apt-get install -y \
 # Set work directory
 WORKDIR /app
 
+# Install pip-tools for compiling requirements
+RUN pip install --no-cache-dir --upgrade pip pip-tools
+
+# Copy requirements.in files
+COPY requirements*.in ./
+
+# Compile requirements files
+RUN pip-compile requirements.in -o requirements.txt && \
+    pip-compile requirements-dev.in -o requirements-dev.txt && \
+    pip-compile requirements-test.in -o requirements-test.txt
+
 # Install Python dependencies
-COPY requirements.txt requirements-*.txt ./
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Production stage
 FROM python:3.11-slim
