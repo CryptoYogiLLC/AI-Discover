@@ -1,0 +1,77 @@
+name: Dependabot Auto-Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  # Check if PR is from Dependabot
+  check-dependabot:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    outputs:
+      update-type: ${{ steps.metadata.outputs.update-type }}
+      dependency-type: ${{ steps.metadata.outputs.dependency-type }}
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+  # Auto-approve patch and minor updates
+  auto-approve:
+    runs-on: ubuntu-latest
+    needs: check-dependabot
+    if: |
+      needs.check-dependabot.outputs.update-type == 'version-update:semver-patch' ||
+      needs.check-dependabot.outputs.update-type == 'version-update:semver-minor'
+    steps:
+      - name: Approve PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Label PRs for easier management
+  label-pr:
+    runs-on: ubuntu-latest
+    needs: check-dependabot
+    steps:
+      - name: Add labels
+        uses: actions/labeler@v5
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          
+      - name: Add update type label
+        run: |
+          if [[ "${{ needs.check-dependabot.outputs.update-type }}" == "version-update:semver-major" ]]; then
+            gh pr edit "$PR_URL" --add-label "major-update"
+          elif [[ "${{ needs.check-dependabot.outputs.update-type }}" == "version-update:semver-minor" ]]; then
+            gh pr edit "$PR_URL" --add-label "minor-update"
+          else
+            gh pr edit "$PR_URL" --add-label "patch-update"
+          fi
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Auto-merge if tests pass
+  auto-merge:
+    runs-on: ubuntu-latest
+    needs: [check-dependabot, auto-approve]
+    if: |
+      needs.check-dependabot.outputs.dependency-type == 'direct:development' ||
+      (needs.check-dependabot.outputs.dependency-type == 'direct:production' &&
+       needs.check-dependabot.outputs.update-type != 'version-update:semver-major')
+    steps:
+      - name: Enable auto-merge
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
