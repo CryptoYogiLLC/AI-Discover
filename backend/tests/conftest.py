@@ -4,7 +4,6 @@ import asyncio
 from typing import AsyncGenerator, Generator
 
 import pytest
-from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
@@ -12,9 +11,7 @@ from app.core.database import Base, get_db
 from app.main import app
 
 # Test database URL
-TEST_DATABASE_URL = (
-    "postgresql+asyncpg://testuser:testpass@localhost:5432/test_ai_discover"
-)
+TEST_DATABASE_URL = "postgresql+asyncpg://testuser:testpass@localhost:5432/test_ai_discover"  # pragma: allowlist secret
 
 
 @pytest.fixture(scope="session")
@@ -58,26 +55,25 @@ async def test_db(test_engine) -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest.fixture
-def test_client(test_db) -> Generator[TestClient, None, None]:
-    """Create test client with database override"""
-
-    async def override_get_db():
-        yield test_db
-
-    app.dependency_overrides[get_db] = override_get_db
-
-    with TestClient(app) as client:
-        yield client
-
-    app.dependency_overrides.clear()
-
-
-@pytest.fixture
-async def async_client(test_db) -> AsyncGenerator[AsyncClient, None]:
+async def async_client() -> AsyncGenerator[AsyncClient, None]:
     """Create async test client"""
+    # Create test engine and session for this test
+    engine = create_async_engine(TEST_DATABASE_URL, echo=False)
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    TestSessionLocal = async_sessionmaker(
+        engine,
+        class_=AsyncSession,
+        expire_on_commit=False,
+        autocommit=False,
+        autoflush=False,
+    )
 
     async def override_get_db():
-        yield test_db
+        async with TestSessionLocal() as session:
+            yield session
 
     app.dependency_overrides[get_db] = override_get_db
 
@@ -86,3 +82,8 @@ async def async_client(test_db) -> AsyncGenerator[AsyncClient, None]:
         yield client
 
     app.dependency_overrides.clear()
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
+    await engine.dispose()

@@ -4,15 +4,25 @@ FROM node:24-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+# Create non-root user for build stages
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+USER nextjs
+
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY --chown=nextjs:nodejs package.json package-lock.json* ./
+RUN npm ci --ignore-scripts
 
 # Rebuild the source code only when needed
 FROM node:24-alpine AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+
+# Create non-root user for build stage
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --chown=nextjs:nodejs . .
+
+USER nextjs
 
 # Build the application
 ENV NEXT_TELEMETRY_DISABLED 1
