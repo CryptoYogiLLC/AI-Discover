@@ -77,8 +77,8 @@ class Settings(BaseSettings):
             scheme="redis",
             username=None,
             password=password,
-            host=info.data.get("REDIS_HOST"),
-            port=info.data.get("REDIS_PORT"),
+            host=info.data.get("REDIS_HOST", "localhost"),
+            port=info.data.get("REDIS_PORT", 6379),
             path=str(info.data.get("REDIS_DB", 0)),
         )
 

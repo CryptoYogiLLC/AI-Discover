@@ -45,7 +45,7 @@ async def list_discovery_flows(
     """List discovery flows with optional filtering"""
     try:
         service = DiscoveryService(db)
-        flows = await service.list_flows(skip=skip, limit=limit, status=status)
+        flows = await service.list_flows(skip=skip, limit=limit)
         return flows
     except Exception as e:
         logger.error("Failed to list discovery flows", error=str(e))

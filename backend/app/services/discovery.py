@@ -74,3 +74,31 @@ class DiscoveryService:
             available_sources=["manual", "api"],
             confidence=0.75,
         )
+
+    async def assess_automation_tier(
+        self, target_type: str, target_id: str
+    ) -> TierAssessment:
+        """Assess the automation tier for a target (alias for assess_tier)"""
+        return await self.assess_tier(target_type, target_id)
+
+    async def start_discovery(self, flow_id: UUID) -> bool:
+        """Start a discovery flow"""
+        # Placeholder implementation
+        return True
+
+    async def stop_discovery(self, flow_id: UUID) -> bool:
+        """Stop a discovery flow"""
+        # Placeholder implementation
+        return True
+
+    async def get_discovery_progress(self, flow_id: UUID) -> dict:
+        """Get progress of a discovery flow"""
+        # Placeholder implementation
+        return {
+            "discovery_id": str(flow_id),
+            "status": "running",
+            "progress_percentage": 50,
+            "current_phase": "data_collection",
+            "collected_applications": 5,
+            "total_applications": 10,
+        }
