@@ -1,7 +1,7 @@
 """Application configuration settings"""
 
 from typing import Any, Dict, List, Optional, Union
-from pydantic import AnyHttpUrl, PostgresDsn, RedisDsn, field_validator
+from pydantic import AnyHttpUrl, PostgresDsn, RedisDsn, field_validator, ValidationInfo
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,6 +12,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_ignore_empty=True,
         extra="ignore",
+        case_sensitive=True,
     )
 
     # Application
@@ -48,15 +49,15 @@ class Settings(BaseSettings):
 
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
-    def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
+    def assemble_db_connection(cls, v: Optional[str], info: ValidationInfo) -> Any:
         if isinstance(v, str):
             return v
         return PostgresDsn.build(
             scheme="postgresql+asyncpg",
-            username=values.data.get("POSTGRES_USER"),
-            password=values.data.get("POSTGRES_PASSWORD"),
-            host=values.data.get("POSTGRES_SERVER"),
-            path=values.data.get("POSTGRES_DB", ""),
+            username=info.data.get("POSTGRES_USER"),
+            password=info.data.get("POSTGRES_PASSWORD"),
+            host=info.data.get("POSTGRES_SERVER"),
+            path=info.data.get("POSTGRES_DB", ""),
         )
 
     # Redis
@@ -68,17 +69,17 @@ class Settings(BaseSettings):
 
     @field_validator("REDIS_URL", mode="before")
     @classmethod
-    def assemble_redis_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
+    def assemble_redis_connection(cls, v: Optional[str], info: ValidationInfo) -> Any:
         if isinstance(v, str):
             return v
-        password = values.data.get("REDIS_PASSWORD")
+        password = info.data.get("REDIS_PASSWORD")
         return RedisDsn.build(
             scheme="redis",
             username=None,
             password=password,
-            host=values.data.get("REDIS_HOST"),
-            port=values.data.get("REDIS_PORT"),
-            path=str(values.data.get("REDIS_DB", 0)),
+            host=info.data.get("REDIS_HOST"),
+            port=info.data.get("REDIS_PORT"),
+            path=str(info.data.get("REDIS_DB", 0)),
         )
 
     # Celery
@@ -118,9 +119,6 @@ class Settings(BaseSettings):
     # File Upload
     MAX_UPLOAD_SIZE: int = 100 * 1024 * 1024  # 100MB
     ALLOWED_UPLOAD_EXTENSIONS: List[str] = [".csv", ".xlsx", ".json", ".yaml", ".yml"]
-
-    class Config:
-        case_sensitive = True
 
 
 settings = Settings()
