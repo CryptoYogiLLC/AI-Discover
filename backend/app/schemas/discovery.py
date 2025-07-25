@@ -3,13 +3,18 @@
 from datetime import datetime
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
+from uuid import UUID
 
 
-class DiscoveryRequest(BaseModel):
-    """Request model for application discovery"""
+class DiscoveryFlowCreate(BaseModel):
+    """Request model for creating a discovery flow"""
 
-    target_type: str = Field(..., description="Type of target: application, infrastructure, or organization")
+    name: str = Field(..., description="Name of the discovery flow")
+    target_type: str = Field(
+        ..., description="Type of target: application, infrastructure, or organization"
+    )
     target_id: str = Field(..., description="Unique identifier for the target")
+    tier: int = Field(..., ge=1, le=4, description="Automation tier (1-4)")
     discovery_options: Optional[Dict[str, Any]] = Field(default_factory=dict)
 
 
@@ -33,12 +38,36 @@ class ApplicationAttributes(BaseModel):
     confidence_score: float = Field(..., ge=0.0, le=1.0)
 
 
-class DiscoveryResponse(BaseModel):
-    """Response model for discovery results"""
+class DiscoveryFlowUpdate(BaseModel):
+    """Request model for updating a discovery flow"""
 
-    discovery_id: str
+    name: Optional[str] = None
+    status: Optional[str] = None
+    tier: Optional[int] = Field(None, ge=1, le=4)
+    discovery_options: Optional[Dict[str, Any]] = None
+
+
+class TierAssessment(BaseModel):
+    """Response model for tier assessment"""
+
+    recommended_tier: int = Field(..., ge=1, le=4)
+    rationale: str
+    available_sources: List[str]
+    confidence: float = Field(..., ge=0.0, le=1.0)
+
+
+class DiscoveryFlowResponse(BaseModel):
+    """Response model for discovery flow"""
+
+    id: UUID
+    name: str
+    target_type: str
+    target_id: str
+    tier: int
     status: str
-    started_at: datetime
+    created_at: datetime
+    updated_at: datetime
+    started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     applications: List[ApplicationAttributes] = Field(default_factory=list)
     errors: List[str] = Field(default_factory=list)
