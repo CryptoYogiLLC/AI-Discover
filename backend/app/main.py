@@ -89,3 +89,20 @@ def create_application() -> FastAPI:
 
 
 app = create_application()
+
+
+@app.get("/")
+async def root() -> Dict[str, Any]:
+    """Root endpoint"""
+    return {
+        "message": "Welcome to AI-Discover API",
+        "version": settings.VERSION,
+        "docs": "/docs",
+        "redoc": "/redoc",
+    }
+
+
+@app.get("/health")
+async def health_check() -> Dict[str, str]:
+    """Health check endpoint"""
+    return {"status": "healthy"}
