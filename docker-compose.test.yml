@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Test Database
+  test-postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: test_ai_discover
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Test Redis
+  test-redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Backend Tests
+  backend-tests:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: builder
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://testuser:testpass@test-postgres:5432/test_ai_discover
+      - REDIS_URL=redis://test-redis:6379/0
+      - ENVIRONMENT=test
+    depends_on:
+      test-postgres:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: pytest -v --cov=app --cov-report=xml --cov-report=term
+
+  # Frontend Tests
+  frontend-tests:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: builder
+    environment:
+      - NODE_ENV=test
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run test:ci
+
+  # Integration Tests
+  integration-tests:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://testuser:testpass@test-postgres:5432/test_ai_discover
+      - REDIS_URL=redis://test-redis:6379/0
+      - ENVIRONMENT=test
+      - API_URL=http://backend:8000
+    depends_on:
+      - backend
+      - frontend
+    volumes:
+      - ./tests/integration:/app/tests
+    command: pytest tests/integration -v

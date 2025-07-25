@@ -1,0 +1,91 @@
+# OWASP ZAP Custom Rules Configuration
+# Format: RULE_ID	THRESHOLD	STRENGTH
+# THRESHOLD: OFF, LOW, MEDIUM, HIGH
+# STRENGTH: LOW, MEDIUM, HIGH, INSANE
+
+# SQL Injection
+40018	HIGH	HIGH
+
+# Cross Site Scripting
+40012	HIGH	HIGH
+40014	HIGH	HIGH
+40016	HIGH	HIGH
+40017	HIGH	HIGH
+
+# Path Traversal
+6	HIGH	HIGH
+
+# Remote File Inclusion
+7	HIGH	HIGH
+
+# Server Side Include
+40009	HIGH	HIGH
+
+# Cross Site Request Forgery
+40013	MEDIUM	MEDIUM
+
+# Buffer Overflow
+30001	HIGH	HIGH
+
+# Format String Error
+30002	HIGH	HIGH
+
+# LDAP Injection
+40015	HIGH	HIGH
+
+# Script Active Scan Rules
+50000	HIGH	HIGH
+
+# Server Side Code Injection
+90019	HIGH	HIGH
+
+# Remote OS Command Injection
+90020	HIGH	HIGH
+
+# XPath Injection
+90021	HIGH	HIGH
+
+# XML External Entity Attack
+90023	HIGH	HIGH
+
+# Generic Padding Oracle
+90024	HIGH	HIGH
+
+# Expression Language Injection
+90025	HIGH	HIGH
+
+# Cookie No HttpOnly Flag
+10010	MEDIUM	LOW
+
+# Cookie Without Secure Flag
+10011	MEDIUM	LOW
+
+# Cross-Domain JavaScript Source File Inclusion
+10017	MEDIUM	LOW
+
+# Content-Type Header Missing
+10019	LOW	LOW
+
+# X-Frame-Options Header Not Set
+10020	MEDIUM	LOW
+
+# X-Content-Type-Options Header Missing
+10021	LOW	LOW
+
+# Information Disclosure - Debug Error Messages
+10023	MEDIUM	LOW
+
+# Information Disclosure - Sensitive Information in URL
+10024	MEDIUM	LOW
+
+# Information Disclosure - Sensitive Information in HTTP Referrer Header
+10025	MEDIUM	LOW
+
+# HTTP Parameter Override
+10026	MEDIUM	LOW
+
+# Information Disclosure - Suspicious Comments
+10027	LOW	LOW
+
+# Weak Authentication Method
+10105	MEDIUM	LOW

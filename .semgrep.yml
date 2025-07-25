@@ -1,0 +1,86 @@
+# Semgrep configuration for security scanning
+rules:
+  # Python Security Rules
+  - id: python-sql-injection
+    pattern-either:
+      - pattern: |
+          $QUERY = $X + $Y
+          ...
+          cursor.execute($QUERY, ...)
+      - pattern: |
+          $QUERY = f"..."
+          ...
+          cursor.execute($QUERY, ...)
+      - pattern: |
+          $QUERY = "...".format(...)
+          ...
+          cursor.execute($QUERY, ...)
+    message: "Potential SQL injection vulnerability. Use parameterized queries."
+    languages: [python]
+    severity: ERROR
+
+  - id: hardcoded-secrets
+    pattern-either:
+      - pattern: $KEY = "..."
+      - pattern: password = "..."
+      - pattern: api_key = "..."
+      - pattern: secret = "..."
+    message: "Hardcoded secret detected. Use environment variables or secret management."
+    languages: [python, javascript, typescript]
+    severity: ERROR
+
+  - id: insecure-random
+    pattern-either:
+      - pattern: random.random()
+      - pattern: random.randint(...)
+    message: "Use secrets module for cryptographic randomness"
+    languages: [python]
+    severity: WARNING
+
+  # JavaScript/TypeScript Security Rules
+  - id: react-dangerouslysetinnerhtml
+    pattern: dangerouslySetInnerHTML={...}
+    message: "Avoid using dangerouslySetInnerHTML to prevent XSS"
+    languages: [javascript, typescript, jsx, tsx]
+    severity: WARNING
+
+  - id: eval-usage
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+    message: "Avoid using eval() or Function constructor"
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: unvalidated-redirect
+    pattern-either:
+      - pattern: |
+          location.href = $INPUT
+      - pattern: |
+          window.location = $INPUT
+      - pattern: |
+          res.redirect($INPUT)
+    message: "Validate URLs before redirecting to prevent open redirect vulnerabilities"
+    languages: [javascript, typescript]
+    severity: WARNING
+
+  # Docker Security Rules
+  - id: docker-no-root
+    pattern: USER root
+    message: "Avoid running containers as root user"
+    languages: [dockerfile]
+    severity: WARNING
+
+  - id: docker-apt-no-version
+    pattern: |
+      RUN apt-get install $PACKAGE
+    message: "Pin package versions in Dockerfile"
+    languages: [dockerfile]
+    severity: INFO
+
+# Import community rules
+imports:
+  - r/python.lang.security
+  - r/javascript.lang.security
+  - r/typescript.lang.security
+  - r/docker.best-practice
