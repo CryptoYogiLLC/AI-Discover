@@ -52,7 +52,7 @@ jobs:
           docker build -t ai-discover-${{ matrix.image }}:scan ./${{ matrix.image }}
 
       - name: Run Grype vulnerability scanner
-        uses: anchore/scan-action@v3
+        uses: anchore/scan-action@v6
         with:
           image: ai-discover-${{ matrix.image }}:scan
           fail-build: true
