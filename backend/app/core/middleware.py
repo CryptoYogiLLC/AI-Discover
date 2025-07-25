@@ -15,16 +15,16 @@ logger = get_logger()
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
     """Add unique request ID to each request"""
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         request_id = str(uuid.uuid4())
-        
+
         # Bind request ID to context for logging
         bind_contextvars(request_id=request_id)
-        
+
         # Add request ID to request state
         request.state.request_id = request_id
-        
+
         try:
             response = await call_next(request)
             response.headers["X-Request-ID"] = request_id
@@ -35,10 +35,10 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     """Log all requests and responses"""
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         start_time = time.time()
-        
+
         # Log request
         logger.info(
             "Request started",
@@ -46,13 +46,13 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             path=request.url.path,
             client=request.client.host if request.client else None,
         )
-        
+
         try:
             response = await call_next(request)
-            
+
             # Calculate request duration
             duration = time.time() - start_time
-            
+
             # Log response
             logger.info(
                 "Request completed",
@@ -61,9 +61,9 @@ class LoggingMiddleware(BaseHTTPMiddleware):
                 status_code=response.status_code,
                 duration=f"{duration:.3f}s",
             )
-            
+
             return response
-            
+
         except Exception as e:
             duration = time.time() - start_time
             logger.error(
@@ -73,7 +73,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
                 error=str(e),
                 duration=f"{duration:.3f}s",
             )
-            
+
             return JSONResponse(
                 status_code=500,
                 content={
@@ -85,10 +85,10 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add security headers to responses"""
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         response = await call_next(request)
-        
+
         # Add security headers
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
@@ -99,7 +99,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "gyroscope=(), magnetometer=(), microphone=(), "
             "payment=(), usb=()"
         )
-        
+
         # Add CSP header for HTML responses
         if response.headers.get("content-type", "").startswith("text/html"):
             response.headers["Content-Security-Policy"] = (
@@ -111,5 +111,5 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                 "connect-src 'self' https:; "
                 "frame-ancestors 'none';"
             )
-        
+
         return response
