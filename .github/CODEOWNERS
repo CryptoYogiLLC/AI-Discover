@@ -1,0 +1,30 @@
+# CODEOWNERS for AI-Discover
+# This file defines who is responsible for code in this repository
+
+# Default owners for everything
+* @CryptoYogiLLC
+
+# Backend specific owners
+/backend/ @CryptoYogiLLC
+/backend/app/api/ @CryptoYogiLLC
+/backend/app/crews/ @CryptoYogiLLC
+/backend/app/adapters/ @CryptoYogiLLC
+
+# Frontend specific owners
+/frontend/ @CryptoYogiLLC
+/frontend/src/components/ @CryptoYogiLLC
+/frontend/src/app/ @CryptoYogiLLC
+
+# Infrastructure and DevOps
+/infrastructure/ @CryptoYogiLLC
+/.github/ @CryptoYogiLLC
+/docker-compose*.yml @CryptoYogiLLC
+/Dockerfile* @CryptoYogiLLC
+
+# Documentation
+/docs/ @CryptoYogiLLC
+*.md @CryptoYogiLLC
+
+# Security-sensitive files
+.env* @CryptoYogiLLC
+**/security/ @CryptoYogiLLC
