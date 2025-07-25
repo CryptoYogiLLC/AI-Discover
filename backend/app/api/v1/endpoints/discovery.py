@@ -99,7 +99,8 @@ async def assess_automation_tier(
     """Assess the automation tier for a discovery flow"""
     try:
         service = DiscoveryService(db)
-        assessment = await service.assess_automation_tier(flow_id)
+        # TODO: Get flow details to extract target_type and target_id
+        assessment = await service.assess_automation_tier("application", str(flow_id))
         return assessment
     except HTTPException:
         raise
@@ -117,7 +118,7 @@ async def start_discovery(
     try:
         service = DiscoveryService(db)
         result = await service.start_discovery(flow_id)
-        return {"status": "started", "flow_id": str(flow_id), "task_id": result.task_id}
+        return {"status": "started", "flow_id": str(flow_id), "success": result}
     except HTTPException:
         raise
     except Exception as e:
