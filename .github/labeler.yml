@@ -1,0 +1,55 @@
+# Configuration for labeler action
+# https://github.com/actions/labeler
+
+# Add 'frontend' label to any change in the frontend directory
+frontend:
+  - changed-files:
+      - any-glob-to-any-file: frontend/**
+
+# Add 'backend' label to any change in the backend directory
+backend:
+  - changed-files:
+      - any-glob-to-any-file: backend/**
+
+# Add 'documentation' label to any markdown file changes
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: "**/*.md"
+
+# Add 'dependencies' label to dependency updates
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/package.json"
+          - "**/package-lock.json"
+          - "**/requirements*.in"
+          - "**/requirements*.txt"
+          - "**/Pipfile"
+          - "**/Pipfile.lock"
+          - "**/poetry.lock"
+          - "**/pyproject.toml"
+
+# Add 'github-actions' label to workflow changes
+github-actions:
+  - changed-files:
+      - any-glob-to-any-file: .github/**
+
+# Add 'docker' label to Docker-related changes
+docker:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/Dockerfile"
+          - "**/docker-compose*.yml"
+          - "**/.dockerignore"
+
+# Add 'tests' label to test file changes
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/test_*.py"
+          - "**/*_test.py"
+          - "**/tests/**"
+          - "**/*.test.ts"
+          - "**/*.test.tsx"
+          - "**/*.spec.ts"
+          - "**/*.spec.tsx"
