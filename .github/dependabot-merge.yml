@@ -1,0 +1,49 @@
+# Dependabot auto-merge configuration
+# This reduces the pain of handling dependency updates
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+    labels:
+      - "dependencies"
+      - "frontend"
+    # Auto-merge rules
+    allow:
+      - dependency-type: "direct"
+    # Group updates to reduce PR noise
+    groups:
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@typescript-eslint/*"
+      react:
+        patterns:
+          - "react*"
+          - "@types/react*"
+    
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+    labels:
+      - "dependencies"
+      - "backend"
+    # Group Python updates
+    groups:
+      fastapi:
+        patterns:
+          - "fastapi*"
+          - "uvicorn*"
+      testing:
+        patterns:
+          - "pytest*"
+          - "black"
+          - "ruff"
+          - "mypy"
