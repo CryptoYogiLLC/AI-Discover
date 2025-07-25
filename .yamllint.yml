@@ -12,7 +12,7 @@ rules:
   document-start:
     present: false
   truthy:
-    allowed-values: ['true', 'false', 'on', 'off']
+    allowed-values: ["true", "false", "on", "off"]
 
 ignore: |
   .github/workflows/

@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # Test Database
@@ -6,7 +6,7 @@ services:
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: testuser
-      POSTGRES_PASSWORD: testpass
+      POSTGRES_PASSWORD: testpass # pragma: allowlist secret
       POSTGRES_DB: test_ai_discover
     ports:
       - "5433:5432"

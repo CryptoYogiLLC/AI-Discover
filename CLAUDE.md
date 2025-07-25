@@ -7,6 +7,7 @@ This document defines the roles and responsibilities for Claude Code agents work
 **Role**: System Architecture and Design Leadership
 
 ### Responsibilities
+
 - Review overall system architecture and design patterns
 - Ensure architectural consistency across the monorepo
 - Make decisions about technology choices and integrations
@@ -14,6 +15,7 @@ This document defines the roles and responsibilities for Claude Code agents work
 - Maintain architectural decision records (ADRs)
 
 ### Key Tasks
+
 ```bash
 # Review architecture
 /architect-review
@@ -29,6 +31,7 @@ semgrep --config=.semgrep-architecture.yml
 ```
 
 ### Focus Areas
+
 - Microservices vs monolithic decisions
 - API design and contracts
 - Database schema design
@@ -40,6 +43,7 @@ semgrep --config=.semgrep-architecture.yml
 **Role**: Python/FastAPI/CrewAI Implementation
 
 ### Responsibilities
+
 - Implement REST APIs using FastAPI
 - Develop CrewAI agents for discovery automation
 - Create cloud platform adapters (AWS, Azure, GCP)
@@ -47,6 +51,7 @@ semgrep --config=.semgrep-architecture.yml
 - Write comprehensive unit and integration tests
 
 ### Key Tasks
+
 ```bash
 # Create new API endpoint
 /create-endpoint "endpoint_name"
@@ -65,6 +70,7 @@ cd backend && pytest --cov=app --cov-report=html
 ```
 
 ### Focus Areas
+
 - FastAPI route implementation
 - SQLAlchemy models and migrations
 - CrewAI agent development
@@ -77,6 +83,7 @@ cd backend && pytest --cov=app --cov-report=html
 **Role**: Next.js/React Implementation
 
 ### Responsibilities
+
 - Develop responsive UI components
 - Implement state management with Zustand
 - Create data fetching logic with React Query
@@ -84,6 +91,7 @@ cd backend && pytest --cov=app --cov-report=html
 - Ensure accessibility standards (WCAG 2.1)
 
 ### Key Tasks
+
 ```bash
 # Create new component
 /create-component "ComponentName"
@@ -102,6 +110,7 @@ cd frontend && npm run build
 ```
 
 ### Focus Areas
+
 - React component architecture
 - Next.js app router
 - Tailwind CSS styling
@@ -114,6 +123,7 @@ cd frontend && npm run build
 **Role**: Infrastructure and CI/CD Management
 
 ### Responsibilities
+
 - Maintain GitHub Actions workflows
 - Manage Docker configurations
 - Set up Kubernetes manifests
@@ -121,6 +131,7 @@ cd frontend && npm run build
 - Implement infrastructure as code
 
 ### Key Tasks
+
 ```bash
 # Build Docker images
 docker-compose build
@@ -139,6 +150,7 @@ gh workflow view
 ```
 
 ### Focus Areas
+
 - Container optimization
 - CI/CD pipeline efficiency
 - Secret management
@@ -151,6 +163,7 @@ gh workflow view
 **Role**: Security Implementation and Compliance
 
 ### Responsibilities
+
 - Conduct security code reviews
 - Implement security controls
 - Ensure compliance (SOC2, GDPR)
@@ -158,6 +171,7 @@ gh workflow view
 - Address vulnerabilities promptly
 
 ### Key Tasks
+
 ```bash
 # Run security scan
 semgrep --config=auto
@@ -177,6 +191,7 @@ gitleaks detect
 ```
 
 ### Focus Areas
+
 - Authentication/Authorization
 - Input validation
 - SQL injection prevention
@@ -190,6 +205,7 @@ gitleaks detect
 **Role**: Quality Assurance and Testing
 
 ### Responsibilities
+
 - Write comprehensive test suites
 - Perform integration testing
 - Conduct performance testing
@@ -197,6 +213,7 @@ gitleaks detect
 - Create test documentation
 
 ### Key Tasks
+
 ```bash
 # Run all tests
 /test-all
@@ -215,6 +232,7 @@ cd e2e && npm run test
 ```
 
 ### Focus Areas
+
 - Unit test coverage
 - Integration test scenarios
 - E2E test automation
@@ -227,6 +245,7 @@ cd e2e && npm run test
 **Role**: Technical Documentation and Knowledge Management
 
 ### Responsibilities
+
 - Maintain README files
 - Create API documentation
 - Write user guides
@@ -234,6 +253,7 @@ cd e2e && npm run test
 - Keep architecture docs current
 
 ### Key Tasks
+
 ```bash
 # Generate API docs
 /generate-api-docs
@@ -252,6 +272,7 @@ cd e2e && npm run test
 ```
 
 ### Focus Areas
+
 - API documentation
 - Architecture diagrams
 - Deployment guides
@@ -264,16 +285,19 @@ cd e2e && npm run test
 ### Collaboration Workflow
 
 1. **Planning Phase**
+
    - Architect Agent creates technical design
    - Security Agent reviews security requirements
    - All agents review and provide input
 
 2. **Implementation Phase**
+
    - Backend/Frontend Agents implement features
    - DevOps Agent updates CI/CD as needed
    - QA Agent writes tests alongside development
 
 3. **Review Phase**
+
    - Security Agent performs security review
    - Architect Agent ensures architectural compliance
    - QA Agent validates test coverage
@@ -298,6 +322,7 @@ cd e2e && npm run test
 ### Quality Standards
 
 All agents must ensure:
+
 - Code passes all pre-commit hooks
 - Tests maintain >80% coverage
 - Security scans show no high/critical issues
@@ -333,18 +358,21 @@ git push origin feature/user-auth
 ## 📋 Agent Checklists
 
 ### Before Starting Work
+
 - [ ] Pull latest changes from main
 - [ ] Create feature branch
 - [ ] Review existing code patterns
 - [ ] Check security requirements
 
 ### During Development
+
 - [ ] Follow coding standards
 - [ ] Write tests alongside code
 - [ ] Update documentation
 - [ ] Run pre-commit hooks
 
 ### Before PR Submission
+
 - [ ] All tests passing
 - [ ] Security scan clean
 - [ ] Documentation updated
@@ -354,6 +382,7 @@ git push origin feature/user-auth
 ## 🔄 Continuous Improvement
 
 Each agent should:
+
 - Regularly update their tools and knowledge
 - Share learnings with other agents
 - Contribute to best practices

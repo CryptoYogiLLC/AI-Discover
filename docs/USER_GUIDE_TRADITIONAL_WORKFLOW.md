@@ -7,6 +7,7 @@ The Traditional Workflow provides a structured, manual approach to data collecti
 ## When to Use Traditional Workflow
 
 ### Optimal Use Cases
+
 - **Air-Gapped Environments**: No external connectivity or API access
 - **Legacy Systems**: Older applications without modern monitoring or APIs
 - **High-Security Environments**: Strict access controls preventing automated scanning
@@ -15,6 +16,7 @@ The Traditional Workflow provides a structured, manual approach to data collecti
 - **Mixed Environments**: Combination of discoverable and non-discoverable systems
 
 ### Environment Types
+
 - **Tier 4 (Air-Gapped)**: Primary workflow for completely isolated environments
 - **Tier 3 (Restricted)**: Supplementary workflow for systems with limited API access
 - **Hybrid Scenarios**: Validation and gap-filling for Smart Workflow results
@@ -22,6 +24,7 @@ The Traditional Workflow provides a structured, manual approach to data collecti
 ## Getting Started
 
 ### Prerequisites
+
 - Access to application documentation and stakeholders
 - Understanding of current environment architecture
 - Business process and workflow documentation
@@ -30,6 +33,7 @@ The Traditional Workflow provides a structured, manual approach to data collecti
 ### Initial Setup
 
 1. **Navigate to Discovery Dashboard**
+
    - From main navigation, select "Discovery"
    - Choose "Start New Assessment"
    - Select "Traditional Workflow (Manual Collection)"
@@ -49,6 +53,7 @@ The Traditional Workflow provides a structured, manual approach to data collecti
 The system provides adaptive questionnaires that adjust based on previous answers:
 
 1. **Basic Application Information**
+
    ```
    ✓ Application name and description
    ✓ Business criticality and users
@@ -58,6 +63,7 @@ The system provides adaptive questionnaires that adjust based on previous answer
    ```
 
 2. **Technical Architecture**
+
    ```
    ✓ Technology stack and frameworks
    ✓ Database systems and connections
@@ -67,6 +73,7 @@ The system provides adaptive questionnaires that adjust based on previous answer
    ```
 
 3. **Operational Characteristics**
+
    ```
    ✓ Deployment frequency and processes
    ✓ Monitoring and alerting systems
@@ -89,6 +96,7 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
 #### Supported File Formats
 
 1. **CSV/Excel Templates**
+
    - Pre-formatted templates for different data types
    - Built-in validation rules and data type checking
    - Support for multiple worksheets/tabs
@@ -103,12 +111,14 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
 #### Data Upload Process
 
 1. **Download Templates**
+
    - Access standardized data collection templates
    - Choose from application, infrastructure, or dependency templates
    - Review field definitions and requirements
    - Understand validation rules and constraints
 
 2. **Data Preparation**
+
    - Gather information from multiple sources
    - Validate data quality before upload
    - Ensure consistency across related records
@@ -125,6 +135,7 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
 #### Team-Based Collection
 
 1. **Multi-User Coordination**
+
    - Assign specific applications or data categories to team members
    - Track individual progress and contributions
    - Prevent duplicate data entry through locking mechanisms
@@ -139,6 +150,7 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
 #### Workflow Management
 
 1. **Task Assignment**
+
    - Automatic task distribution based on expertise
    - Custom assignment for specific knowledge requirements
    - Escalation procedures for blocked or delayed tasks
@@ -155,6 +167,7 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
 ### Phase 1: Planning and Preparation
 
 1. **Stakeholder Identification**
+
    - Map applications to business owners
    - Identify technical contacts and SMEs
    - Create communication plan and schedule
@@ -169,14 +182,16 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
 ### Phase 2: Data Gathering
 
 1. **Application Inventory Creation**
-   
+
    **Step-by-Step Process:**
+
    - Start with high-level application list
    - Use guided forms to capture basic information
    - Progressively add technical and operational details
    - Validate information with application stakeholders
 
    **Key Data Points:**
+
    ```
    ✓ Application identification and naming
    ✓ Business function and criticality
@@ -187,8 +202,9 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
    ```
 
 2. **Infrastructure Documentation**
-   
+
    **Manual Discovery Methods:**
+
    - Network diagrams and topology maps
    - Server inventory and configuration documentation
    - Database schemas and connection strings
@@ -196,8 +212,9 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
    - Storage systems and backup procedures
 
 3. **Dependency Mapping**
-   
+
    **Relationship Documentation:**
+
    - Application-to-application dependencies
    - Database connections and shared resources
    - External service integrations
@@ -207,12 +224,14 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
 ### Phase 3: Validation and Quality Assurance
 
 1. **Data Completeness Review**
+
    - Check for required fields and missing information
    - Identify critical gaps that impact 6R analysis
    - Prioritize data collection efforts based on impact
    - Document assumptions and limitations
 
 2. **Cross-Validation**
+
    - Compare information from multiple sources
    - Validate dependencies with both source and target systems
    - Check consistency across related applications
@@ -233,6 +252,7 @@ The questionnaire system employs progressive disclosure to reduce cognitive load
 The system learns from previous assessments to create intelligent templates:
 
 1. **Pattern Recognition**
+
    - Identify similar applications based on technology stack
    - Suggest common configurations and characteristics
    - Pre-populate likely values based on historical data
@@ -247,6 +267,7 @@ The system learns from previous assessments to create intelligent templates:
 #### Template Management
 
 1. **Template Creation**
+
    - Build templates from successful assessments
    - Define validation rules and business logic
    - Create conditional branching for different scenarios
@@ -265,6 +286,7 @@ The system learns from previous assessments to create intelligent templates:
 When combining data from multiple sources:
 
 1. **Automated Conflict Detection**
+
    - Identify inconsistencies in overlapping data
    - Highlight conflicts for manual review
    - Suggest resolution based on data confidence
@@ -279,6 +301,7 @@ When combining data from multiple sources:
 #### Data Enrichment
 
 1. **Cross-Reference Enhancement**
+
    - Link applications to infrastructure components
    - Connect business processes to technical implementations
    - Identify shared services and dependencies
@@ -295,6 +318,7 @@ When combining data from multiple sources:
 ### Stakeholder Engagement
 
 1. **Interview Scheduling**
+
    - Integration with calendar systems
    - Automated meeting invitations and reminders
    - Pre-meeting preparation materials
@@ -309,6 +333,7 @@ When combining data from multiple sources:
 ### Communication Tools
 
 1. **In-Application Messaging**
+
    - Context-aware discussions about specific applications
    - @mentions and notifications for team members
    - Integration with external communication platforms
@@ -325,6 +350,7 @@ When combining data from multiple sources:
 ### Validation Framework
 
 1. **Business Rule Validation**
+
    - Enforce data consistency across related fields
    - Validate against organizational standards
    - Check compliance with regulatory requirements
@@ -339,11 +365,13 @@ When combining data from multiple sources:
 ### Quality Metrics
 
 1. **Completeness Scoring**
+
    ```
    Completeness = (Populated Required Fields / Total Required Fields) × 100
    ```
 
 2. **Accuracy Assessment**
+
    - Validation against authoritative sources
    - Stakeholder confirmation and sign-off
    - Technical verification where possible
@@ -359,6 +387,7 @@ When combining data from multiple sources:
 ### Hybrid Approaches
 
 1. **Validation Mode**
+
    - Use Traditional Workflow to validate Smart Workflow results
    - Manually verify critical automated discoveries
    - Add business context to technical data
@@ -373,6 +402,7 @@ When combining data from multiple sources:
 ### Seamless Transitions
 
 1. **Data Merging**
+
    - Combine automated and manual data sources
    - Maintain data lineage and source tracking
    - Resolve conflicts through intelligent merging
@@ -389,6 +419,7 @@ When combining data from multiple sources:
 ### Planning Phase
 
 1. **Stakeholder Engagement**
+
    - Identify all relevant stakeholders early
    - Clearly communicate expectations and timelines
    - Provide training on tools and processes
@@ -403,6 +434,7 @@ When combining data from multiple sources:
 ### Execution Phase
 
 1. **Incremental Approach**
+
    - Start with pilot applications or business units
    - Learn and refine processes before full rollout
    - Celebrate early wins to build momentum
@@ -417,6 +449,7 @@ When combining data from multiple sources:
 ### Completion Phase
 
 1. **Stakeholder Sign-off**
+
    - Formal review and approval process
    - Document accepted assumptions and limitations
    - Create handoff documentation for analysis phase
@@ -433,14 +466,17 @@ When combining data from multiple sources:
 ### Common Challenges
 
 1. **Stakeholder Availability**
+
    - **Issue**: Key stakeholders unavailable for data collection
    - **Solution**: Identify backup contacts, use asynchronous collection methods, schedule well in advance
 
 2. **Incomplete Documentation**
+
    - **Issue**: Missing or outdated technical documentation
    - **Solution**: Use discovery workshops, technical interviews, reverse engineering approaches
 
 3. **Data Conflicts**
+
    - **Issue**: Inconsistent information from multiple sources
    - **Solution**: Establish source hierarchy, conduct validation workshops, document resolution decisions
 

@@ -22,6 +22,7 @@ This document describes how to use Claude Code agents to manage pull requests, e
 ```
 
 **Example workflow**:
+
 ```bash
 # 1. Start security review for a PR
 gh pr view 1 --repo CryptoYogiLLC/AI-Discover
@@ -92,6 +93,7 @@ gh pr view 1 --repo CryptoYogiLLC/AI-Discover
 ### Step 2: Handle by Priority
 
 #### Priority 1: Security Updates (Critical)
+
 ```bash
 # For each security PR:
 gh pr checkout <PR_NUMBER>
@@ -105,6 +107,7 @@ gh pr merge <PR_NUMBER> --merge
 ```
 
 #### Priority 2: Major Version Updates (High Risk)
+
 ```bash
 # For major updates (e.g., Next.js 14 → 15):
 gh pr checkout <PR_NUMBER>
@@ -126,6 +129,7 @@ git push
 ```
 
 #### Priority 3: Minor/Patch Updates (Low Risk)
+
 ```bash
 # Batch approve safe updates
 ./scripts/manage-dependabot-prs.sh
@@ -189,6 +193,7 @@ For complex updates requiring multiple agents:
 Here's the recommended approach:
 
 ### 1. Quick Wins (5 minutes)
+
 ```bash
 # Auto-approve GitHub Actions updates (low risk)
 gh pr review 3 4 5 6 7 --approve
@@ -197,6 +202,7 @@ gh pr review 3 4 5 6 7 --approve
 ```
 
 ### 2. Frontend Updates (30 minutes)
+
 ```bash
 # Check out the Next.js major update
 gh pr checkout 9
@@ -209,6 +215,7 @@ gh pr checkout 9
 ```
 
 ### 3. Docker Updates (15 minutes)
+
 ```bash
 # Python 3.11 → 3.13 and Node 18 → 24
 gh pr checkout 8
@@ -219,6 +226,7 @@ gh pr checkout 2
 ```
 
 ### 4. Development Dependencies (10 minutes)
+
 ```bash
 # These are safe to batch approve
 ./scripts/manage-dependabot-prs.sh
@@ -244,6 +252,7 @@ gh pr list --author "app/dependabot"
 ## Troubleshooting
 
 ### If Tests Fail
+
 ```bash
 # Check specific test failure
 gh pr checks <PR_NUMBER>
@@ -253,6 +262,7 @@ gh pr checks <PR_NUMBER>
 ```
 
 ### If Merge Conflicts
+
 ```bash
 # Check out PR
 gh pr checkout <PR_NUMBER>

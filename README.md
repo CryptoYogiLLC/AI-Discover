@@ -26,6 +26,7 @@ ai-discover/
 ## 🛠️ Technology Stack
 
 ### Backend
+
 - **Language**: Python 3.11+
 - **Framework**: FastAPI
 - **AI Framework**: CrewAI
@@ -34,6 +35,7 @@ ai-discover/
 - **Task Queue**: Celery
 
 ### Frontend
+
 - **Framework**: Next.js 14+
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
@@ -41,6 +43,7 @@ ai-discover/
 - **API Client**: React Query
 
 ### Infrastructure
+
 - **Containerization**: Docker
 - **Orchestration**: Kubernetes
 - **CI/CD**: GitHub Actions
@@ -50,6 +53,7 @@ ai-discover/
 ## 🚦 Getting Started
 
 ### Prerequisites
+
 - Docker and Docker Compose
 - Python 3.11+
 - Node.js 18+
@@ -58,25 +62,29 @@ ai-discover/
 ### Quick Start
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/[your-org]/ai-discover.git
 cd ai-discover
 ```
 
 2. Set up development environment:
+
 ```bash
 ./scripts/setup-dev.sh
 ```
 
 3. Start the application:
+
 ```bash
 docker-compose up -d
 ```
 
 4. Access the application:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Documentation: http://localhost:8000/docs
+
+- Frontend: <http://localhost:3000>
+- Backend API: <http://localhost:8000>
+- API Documentation: <http://localhost:8000/docs>
 
 ## 🤖 AI Development Team
 

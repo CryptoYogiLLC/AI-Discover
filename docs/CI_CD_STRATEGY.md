@@ -7,29 +7,35 @@ Our CI/CD pipeline uses a three-tier approach to provide fast feedback while mai
 ## Tiers
 
 ### 1. Local Checks (Pre-commit)
+
 **When:** Before every commit
 **Duration:** < 10 seconds
 **Checks:**
+
 - Code formatting (Black, Prettier)
 - Linting (Ruff, ESLint)
 - File hygiene (trailing spaces, file size)
 - Secret detection
 
 ### 2. Quick CI
+
 **When:** Every push to feature branches
 **Duration:** < 1 minute
 **Checks:**
+
 - All formatting and linting
 - Type checking (MyPy, TypeScript)
 - Unit tests (if changed)
 
 ### 3. Full CI
-**When:** 
+
+**When:**
+
 - PRs to main/staging branches
 - Daily scheduled runs
 - Manual trigger
-**Duration:** 5-10 minutes
-**Checks:**
+  **Duration:** 5-10 minutes
+  **Checks:**
 - Everything from Quick CI
 - Integration tests
 - Docker builds
@@ -39,32 +45,39 @@ Our CI/CD pipeline uses a three-tier approach to provide fast feedback while mai
 ## Special Cases
 
 ### Dependabot PRs
+
 - Only run Quick CI initially
 - Run Full CI only after approval
 - Auto-merge if all checks pass
 
 ### Documentation Changes
+
 - Skip CI with `[skip ci]` in commit message
 - Only run markdown linting
 
 ### Hotfixes
+
 - Can bypass certain checks with `[hotfix]` tag
 - Still runs critical security checks
 
 ## Local Development
 
 ### Initial Setup
+
 ```bash
 ./scripts/setup-dev.sh
 ```
 
 ### Before Committing
+
 Pre-commit hooks run automatically. To run manually:
+
 ```bash
 pre-commit run --all-files
 ```
 
 ### Before Pushing
+
 ```bash
 ./scripts/test-local.sh
 ```

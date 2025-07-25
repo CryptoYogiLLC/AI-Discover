@@ -7,11 +7,13 @@ The Smart Workflow is the intelligent, automated approach to data collection tha
 ## Getting Started
 
 ### Prerequisites
+
 - Active account with appropriate permissions
 - Access to target cloud platform (AWS, Azure, GCP) or on-premises environment
 - Platform credentials configured (API keys, service accounts, etc.)
 
 ### When to Use Smart Workflow
+
 - **Modern Cloud Environments**: Your applications run on AWS, Azure, or GCP with API access
 - **Automated Discovery**: You want to minimize manual data entry
 - **Large Portfolios**: You need to assess 50+ applications efficiently
@@ -23,8 +25,9 @@ The Smart Workflow is the intelligent, automated approach to data collection tha
 ### Step 1: Initiate Collection Flow
 
 1. **Navigate to Discovery Dashboard**
+
    - From the main navigation, click "Discovery"
-   - Select "Start New Assessment" 
+   - Select "Start New Assessment"
    - Choose "Smart Workflow (Automated Collection)"
 
 2. **Environment Selection**
@@ -35,6 +38,7 @@ The Smart Workflow is the intelligent, automated approach to data collection tha
 ### Step 2: Configure Collection Scope
 
 1. **Define Collection Boundaries**
+
    ```
    ✓ Specify regions/locations to scan
    ✓ Set resource tags or naming patterns
@@ -52,21 +56,25 @@ The Smart Workflow is the intelligent, automated approach to data collection tha
 The system analyzes your environment and provides an automation assessment:
 
 #### Tier 1 - Modern Cloud (90%+ Automation)
+
 - **Indicators**: Full API access, modern services, comprehensive tagging
 - **Capabilities**: Automated discovery, dependency mapping, configuration analysis
 - **Expected Timeline**: 2-4 hours for 100 applications
 
 #### Tier 2 - Mixed Environment (70% Automation)
+
 - **Indicators**: Partial API access, mixed legacy/modern services
 - **Capabilities**: Automated discovery with manual validation steps
 - **Expected Timeline**: 4-8 hours for 100 applications
 
 #### Tier 3 - Restricted Access (40% Automation)
+
 - **Indicators**: Limited API access, security restrictions
 - **Capabilities**: File-based collection with automated processing
 - **Expected Timeline**: 1-2 days for 100 applications
 
 #### Tier 4 - Air-Gapped (10% Automation)
+
 - **Indicators**: No external connectivity, manual processes required
 - **Capabilities**: Template-based manual collection with validation
 - **Expected Timeline**: 3-5 days for 100 applications
@@ -76,41 +84,45 @@ The system analyzes your environment and provides an automation assessment:
 ### Automated Discovery Phase
 
 1. **Real-time Progress Monitoring**
+
    - Track discovery progress via the Collection Dashboard
    - Monitor resource scanning across different service types
    - View real-time quality scores and data completeness
 
 2. **Platform-Specific Discovery**
 
-   #### AWS Discovery
-   ```
-   ✓ EC2 instances and configurations
-   ✓ RDS databases and connections
-   ✓ Load balancers and networking
-   ✓ S3 storage and access patterns
-   ✓ Lambda functions and triggers
-   ✓ Security groups and IAM policies
-   ```
+#### AWS Discovery
 
-   #### Azure Discovery
-   ```
-   ✓ Virtual machines and scale sets
-   ✓ SQL databases and managed instances
-   ✓ Application gateways and networks
-   ✓ Storage accounts and blob containers
-   ✓ Function apps and logic apps
-   ✓ Resource groups and subscriptions
-   ```
+```
+✓ EC2 instances and configurations
+✓ RDS databases and connections
+✓ Load balancers and networking
+✓ S3 storage and access patterns
+✓ Lambda functions and triggers
+✓ Security groups and IAM policies
+```
 
-   #### GCP Discovery
-   ```
-   ✓ Compute Engine instances
-   ✓ Cloud SQL and database services
-   ✓ Load balancers and VPC networks
-   ✓ Cloud Storage buckets
-   ✓ Cloud Functions and Cloud Run
-   ✓ IAM policies and service accounts
-   ```
+#### Azure Discovery
+
+```
+✓ Virtual machines and scale sets
+✓ SQL databases and managed instances
+✓ Application gateways and networks
+✓ Storage accounts and blob containers
+✓ Function apps and logic apps
+✓ Resource groups and subscriptions
+```
+
+#### GCP Discovery
+
+```
+✓ Compute Engine instances
+✓ Cloud SQL and database services
+✓ Load balancers and VPC networks
+✓ Cloud Storage buckets
+✓ Cloud Functions and Cloud Run
+✓ IAM policies and service accounts
+```
 
 3. **Dependency Mapping**
    - Automatic detection of application dependencies
@@ -121,22 +133,25 @@ The system analyzes your environment and provides an automation assessment:
 ### Quality Assurance Phase
 
 1. **Automated Data Validation**
+
    - Cross-reference discovered data with multiple sources
    - Validate configuration consistency
    - Identify data anomalies and outliers
    - Calculate confidence scores for each data element
 
 2. **Gap Identification**
+
    - Highlight missing critical information
    - Prioritize gaps by impact on 6R recommendations
    - Suggest collection strategies for identified gaps
    - Provide templates for manual data collection
 
 3. **Quality Score Calculation**
+
    ```
-   Data Quality Score = (Completeness × 0.4) + 
-                       (Accuracy × 0.3) + 
-                       (Consistency × 0.2) + 
+   Data Quality Score = (Completeness × 0.4) +
+                       (Accuracy × 0.3) +
+                       (Consistency × 0.2) +
                        (Freshness × 0.1)
    ```
 
@@ -145,6 +160,7 @@ The system analyzes your environment and provides an automation assessment:
 ### Reviewing Discovered Assets
 
 1. **Asset Inventory Dashboard**
+
    - View all discovered applications and infrastructure
    - Filter by platform, region, or quality score
    - Sort by criticality or migration complexity
@@ -159,6 +175,7 @@ The system analyzes your environment and provides an automation assessment:
 ### Addressing Data Gaps
 
 1. **Automated Gap Resolution**
+
    - System attempts additional discovery methods
    - Cross-platform correlation for missing information
    - Historical data analysis for pattern completion
@@ -173,6 +190,7 @@ The system analyzes your environment and provides an automation assessment:
 ### Validation and Approval
 
 1. **Stakeholder Review Process**
+
    - Share discovery results with technical teams
    - Enable collaborative validation and corrections
    - Track approval status by application owner
@@ -191,6 +209,7 @@ The system analyzes your environment and provides an automation assessment:
 The system provides intelligent recommendations based on discovered patterns:
 
 1. **Optimization Opportunities**
+
    - Identify underutilized resources
    - Suggest cost optimization strategies
    - Recommend modernization candidates
@@ -205,6 +224,7 @@ The system provides intelligent recommendations based on discovered patterns:
 ### Continuous Monitoring
 
 1. **Scheduled Re-scanning**
+
    - Configure automatic periodic discovery
    - Monitor environment changes over time
    - Track configuration drift and updates
@@ -221,6 +241,7 @@ The system provides intelligent recommendations based on discovered patterns:
 ### Pre-Collection Preparation
 
 1. **Credential Management**
+
    - Use service accounts with minimal required permissions
    - Implement credential rotation policies
    - Test connectivity before full discovery
@@ -235,6 +256,7 @@ The system provides intelligent recommendations based on discovered patterns:
 ### During Collection
 
 1. **Monitoring and Intervention**
+
    - Actively monitor progress and quality scores
    - Address issues promptly to prevent data gaps
    - Validate unexpected results immediately
@@ -249,6 +271,7 @@ The system provides intelligent recommendations based on discovered patterns:
 ### Post-Collection
 
 1. **Data Validation**
+
    - Review results with application teams
    - Validate critical business applications first
    - Cross-check against existing documentation
@@ -263,18 +286,22 @@ The system provides intelligent recommendations based on discovered patterns:
 ## Troubleshooting Common Issues
 
 ### Authentication Problems
+
 - **Issue**: API credential authentication failures
 - **Solution**: Verify permissions, check credential expiration, validate service account roles
 
 ### Incomplete Discovery
+
 - **Issue**: Missing applications or infrastructure
 - **Solution**: Expand discovery scope, check network connectivity, verify resource tags
 
 ### Performance Issues
+
 - **Issue**: Slow discovery or timeouts
 - **Solution**: Reduce parallelism, increase timeout values, schedule during off-peak hours
 
 ### Data Quality Concerns
+
 - **Issue**: Low quality scores or confidence levels
 - **Solution**: Enable additional validation sources, manual verification of critical data, expert review
 

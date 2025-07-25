@@ -66,7 +66,7 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpass
+          POSTGRES_PASSWORD: testpass # pragma: allowlist secret
           POSTGRES_DB: testdb
         options: >-
           --health-cmd pg_isready
@@ -104,7 +104,7 @@ jobs:
 
       - name: Run tests with coverage
         env:
-          DATABASE_URL: postgresql+asyncpg://testuser:testpass@localhost:5432/testdb
+          DATABASE_URL: postgresql+asyncpg://testuser:testpass@localhost:5432/testdb # pragma: allowlist secret
           REDIS_URL: redis://localhost:6379
         run: |
           cd backend
@@ -128,7 +128,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
@@ -157,7 +157,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
@@ -203,15 +203,15 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
       # Secret scanning
       - name: Run GitLeaks

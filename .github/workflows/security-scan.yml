@@ -3,7 +3,7 @@ name: Security Scanning
 on:
   schedule:
     # Run daily at 2 AM UTC
-    - cron: '0 2 * * *'
+    - cron: "0 2 * * *"
   workflow_dispatch:
   push:
     branches: [main, develop]
@@ -24,9 +24,9 @@ jobs:
       - name: Run OWASP Dependency Check
         uses: dependency-check/Dependency-Check_Action@main
         with:
-          project: 'ai-discover'
-          path: '.'
-          format: 'ALL'
+          project: "ai-discover"
+          path: "."
+          format: "ALL"
           args: >
             --enableRetired
             --enableExperimental
@@ -129,9 +129,9 @@ jobs:
       - name: Run OWASP ZAP
         uses: zaproxy/action-full-scan@v0.10.0
         with:
-          target: 'https://staging.ai-discover.example.com'
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a'
+          target: "https://staging.ai-discover.example.com"
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-a"
 
       - name: Upload ZAP results
         uses: actions/upload-artifact@v4

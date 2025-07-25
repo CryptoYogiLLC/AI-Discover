@@ -17,9 +17,9 @@ Fixes #(issue number)
 
 ## Changes Made
 
-- 
-- 
-- 
+-
+-
+-
 
 ## Testing
 
@@ -63,6 +63,7 @@ Please note any special deployment considerations:
 ## AI Agent Review Required
 
 Please tag the appropriate AI agent for review:
+
 - [ ] @architect-agent - For architectural changes
 - [ ] @security-agent - For security-sensitive changes
 - [ ] @performance-agent - For performance-critical changes

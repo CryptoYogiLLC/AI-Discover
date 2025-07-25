@@ -4,10 +4,10 @@ on:
   pull_request:
     types: [opened, synchronize]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.gitignore'
-      - 'LICENSE'
+      - "**.md"
+      - "docs/**"
+      - ".gitignore"
+      - "LICENSE"
 
 jobs:
   quick-checks:
@@ -16,29 +16,29 @@ jobs:
     if: |
       github.event.pull_request.draft == false &&
       !contains(github.event.pull_request.title, '[skip ci]')
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      
+          python-version: "3.11"
+
       - name: Backend Quick Checks
         run: |
           cd backend
           pip install black ruff
           black --check .
           ruff check .
-      
+
       - name: Frontend Quick Checks
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
-      
+
       - name: Run ESLint
         run: |
           cd frontend

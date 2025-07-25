@@ -3,7 +3,7 @@ name: Dependency Update
 on:
   schedule:
     # Run every Monday at 9 AM UTC
-    - cron: '0 9 * * 1'
+    - cron: "0 9 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -113,7 +113,7 @@ jobs:
         run: |
           # Update Python base image
           sed -i 's/FROM python:[0-9.]\+/FROM python:3.11/' backend/Dockerfile
-          
+
           # Update Node base image
           sed -i 's/FROM node:[0-9.]\+/FROM node:18/' frontend/Dockerfile
 
