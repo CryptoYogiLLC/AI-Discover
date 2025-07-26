@@ -79,6 +79,28 @@ This document tracks technical debt incurred during Sprint 1 to enable rapid fou
 3. Re-enable npm audit as blocking check
 4. Implement dependency update automation
 
+## Test Failures (Critical - Fix First)
+
+### Backend Tests
+
+**Status**: Failing due to import errors
+**Error**: Pydantic version compatibility issue causing import failures
+**Sprint 2 Actions**:
+
+1. Fix Pydantic dependency version conflicts
+2. Ensure all test imports work correctly
+3. Re-enable backend tests as blocking
+
+### Frontend Tests
+
+**Status**: Some tests failing due to missing modules
+**Error**: Missing `lib/utils` module in component tests
+**Sprint 2 Actions**:
+
+1. Create missing utility modules
+2. Fix all component test imports
+3. Ensure 100% test pass rate
+
 ## Code Quality Issues
 
 ### Backend
