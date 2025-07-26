@@ -113,7 +113,8 @@ jobs:
           cd backend
           # SPRINT 1 TEMPORARY: Reduced coverage requirement to 70% for initial implementation
           # TODO: Increase back to 80% in Sprint 2 after adding more tests
-          pytest --cov=app --cov-report=xml --cov-report=html --cov-report=term --cov-fail-under=70
+          # Use pytest.ini settings for coverage configuration
+          pytest
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
