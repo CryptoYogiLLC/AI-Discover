@@ -46,6 +46,11 @@ This document tracks technical debt incurred during Sprint 1 to enable rapid fou
 ### 3. Test Coverage Requirements
 
 **Status**: Reduced from 80% to 70% (backend) and 10% (frontend)
+**Files Modified**:
+
+- `.github/workflows/ci-cd.yml` - CI/CD coverage thresholds
+- `backend/pytest.ini` - Backend pytest coverage requirement
+
 **Current Coverage**:
 
 - Backend: ~72%
