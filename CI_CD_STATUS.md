@@ -4,6 +4,8 @@
 
 All major CI/CD issues have been resolved. The pipeline is now successfully running with the following status:
 
+**Latest Update**: Fixed Docker repository naming to use all lowercase
+
 ### ✅ Passing Checks
 
 - Backend Linting
