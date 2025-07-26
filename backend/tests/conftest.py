@@ -1,6 +1,7 @@
 """Pytest configuration and fixtures"""
 
 import asyncio
+import os
 from typing import AsyncGenerator, Generator
 
 import pytest
@@ -11,8 +12,11 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from app.core.database import Base, get_db
 from app.main import app
 
-# Test database URL
-TEST_DATABASE_URL = "postgresql+asyncpg://testuser:testpass@localhost:5432/test_ai_discover"  # pragma: allowlist secret
+# Test database URL - use environment variable if available (for CI)
+TEST_DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+asyncpg://testuser:testpass@localhost:5432/test_ai_discover",  # pragma: allowlist secret
+)
 
 
 @pytest.fixture(scope="session")
