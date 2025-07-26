@@ -9,7 +9,7 @@ on:
 
 env:
   PYTHON_VERSION: "3.13"
-  NODE_VERSION: "18"
+  NODE_VERSION: "24"
   DOCKER_BUILDKIT: 1
 
 permissions:

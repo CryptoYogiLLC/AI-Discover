@@ -55,9 +55,11 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy necessary files
-COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Create public directory if it doesn't exist (Next.js may not have one)
+RUN mkdir -p public && chown nextjs:nodejs public
 
 # Copy health check script
 COPY --chown=nextjs:nodejs healthcheck.js ./
