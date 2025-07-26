@@ -2,6 +2,7 @@ import React, { ReactElement } from "react";
 import { render, RenderOptions } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
+import "@testing-library/jest-dom";
 
 // Create a custom render function that includes providers
 const createTestQueryClient = () =>
@@ -32,7 +33,7 @@ const AllTheProviders = ({ children }: AllTheProvidersProps) => {
 
 const customRender = (
   ui: ReactElement,
-  options?: Omit<RenderOptions, "wrapper">
+  options?: Omit<RenderOptions, "wrapper">,
 ) => {
   const user = userEvent.setup();
 
@@ -87,7 +88,7 @@ export const generateMockApplication = (overrides = {}) => ({
 });
 
 // Mock API responses
-export const mockApiResponse = <T>(data: T, delay = 0) => {
+export const mockApiResponse = <T,>(data: T, delay = 0) => {
   return new Promise<{ data: T }>((resolve) => {
     setTimeout(() => {
       resolve({ data });
@@ -118,7 +119,7 @@ export const expectToBeInDocument = (element: HTMLElement) => {
 // Form helpers
 export const fillForm = async (
   user: ReturnType<typeof userEvent.setup>,
-  formData: Record<string, string>
+  formData: Record<string, string>,
 ) => {
   for (const [name, value] of Object.entries(formData)) {
     const input = document.querySelector(`[name="${name}"]`) as HTMLElement;
@@ -133,7 +134,9 @@ export const fillForm = async (
 export const waitForLoadingToFinish = async () => {
   const { waitFor } = await import("@testing-library/react");
   await waitFor(() => {
-    const loadingElements = document.querySelectorAll('[data-testid="loading"]');
+    const loadingElements = document.querySelectorAll(
+      '[data-testid="loading"]',
+    );
     expect(loadingElements).toHaveLength(0);
   });
 };

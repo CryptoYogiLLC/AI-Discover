@@ -1,10 +1,9 @@
 """Seed data script for development"""
 
 import asyncio
-import uuid
 from datetime import datetime, timedelta, timezone
 from typing import List
-import random
+import random  # nosemgrep: insecure-random - This is for test data generation only
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -56,7 +55,7 @@ async def create_users(db: AsyncSession) -> List[User]:
             "ldap_dn": "CN=LDAP User,OU=Users,DC=example,DC=com",
         },
     ]
-    
+
     users = []
     for user_data in users_data:
         # Check if user already exists
@@ -64,7 +63,7 @@ async def create_users(db: AsyncSession) -> List[User]:
             select(User).where(User.username == user_data["username"])
         )
         existing_user = result.scalar_one_or_none()
-        
+
         if not existing_user:
             user = User(**user_data)
             db.add(user)
@@ -73,7 +72,7 @@ async def create_users(db: AsyncSession) -> List[User]:
         else:
             users.append(existing_user)
             print(f"User already exists: {existing_user.username}")
-    
+
     await db.commit()
     return users
 
@@ -103,7 +102,7 @@ async def create_projects(db: AsyncSession, users: List[User]) -> List[Project]:
             "created_by": users[2].id,  # Jane Smith
         },
     ]
-    
+
     projects = []
     for i, project_data in enumerate(projects_data):
         # Check if project already exists
@@ -111,57 +110,57 @@ async def create_projects(db: AsyncSession, users: List[User]) -> List[Project]:
             select(Project).where(Project.name == project_data["name"])
         )
         existing_project = result.scalar_one_or_none()
-        
+
         if not existing_project:
             project = Project(**project_data)
             db.add(project)
             await db.flush()
-            
+
             # Add project members
             # Creator is admin
             member = ProjectMember(
-                project_id=project.id,
-                user_id=project.created_by,
-                role="admin"
+                project_id=project.id, user_id=project.created_by, role="admin"
             )
             db.add(member)
-            
+
             # Add other members
             if i == 0:  # First project gets all users
                 for user in users[1:]:
                     member = ProjectMember(
                         project_id=project.id,
                         user_id=user.id,
-                        role="collaborator" if user.role != UserRole.VIEWER else "viewer"
+                        role=(
+                            "collaborator" if user.role != UserRole.VIEWER else "viewer"
+                        ),
                     )
                     db.add(member)
             elif i == 1:  # Second project
                 member = ProjectMember(
                     project_id=project.id,
                     user_id=users[2].id,  # Jane
-                    role="collaborator"
+                    role="collaborator",
                 )
                 db.add(member)
                 member = ProjectMember(
-                    project_id=project.id,
-                    user_id=users[3].id,  # Viewer
-                    role="viewer"
+                    project_id=project.id, user_id=users[3].id, role="viewer"  # Viewer
                 )
                 db.add(member)
-            
+
             projects.append(project)
             print(f"Created project: {project.name}")
         else:
             projects.append(existing_project)
             print(f"Project already exists: {existing_project.name}")
-    
+
     await db.commit()
     return projects
 
 
-async def create_assessments(db: AsyncSession, projects: List[Project], users: List[User]) -> None:
+async def create_assessments(
+    db: AsyncSession, projects: List[Project], users: List[User]
+) -> None:
     """Create sample application assessments"""
-    
+
     # Sample applications for assessment
     applications = [
         {
@@ -213,20 +212,20 @@ async def create_assessments(db: AsyncSession, projects: List[Project], users: L
             "recommendation": MigrationRecommendation.REPURCHASE,
         },
     ]
-    
+
     for i, app_data in enumerate(applications):
         # Assign to different projects
         project = projects[i % len(projects)]
-        
+
         # Check if assessment already exists
         result = await db.execute(
             select(ApplicationAssessment).where(
                 ApplicationAssessment.application_name == app_data["name"],
-                ApplicationAssessment.project_id == project.id
+                ApplicationAssessment.project_id == project.id,
             )
         )
         existing_assessment = result.scalar_one_or_none()
-        
+
         if not existing_assessment:
             assessment = ApplicationAssessment(
                 project_id=project.id,
@@ -241,23 +240,44 @@ async def create_assessments(db: AsyncSession, projects: List[Project], users: L
                 technology_stack=app_data["tech_stack"],
                 programming_languages=app_data["tech_stack"][:2],
                 server_count=random.randint(1, 20),
-                database_types=["Oracle", "PostgreSQL", "MongoDB"][: random.randint(1, 3)],
+                database_types=["Oracle", "PostgreSQL", "MongoDB"][
+                    : random.randint(1, 3)
+                ],
                 storage_requirements_gb=random.randint(100, 5000),
                 integration_count=random.randint(2, 15),
-                integration_types=["REST API", "SOAP", "File Transfer", "Message Queue"][: random.randint(2, 4)],
-                external_dependencies=["Payment Gateway", "Email Service", "SMS Service"][: random.randint(1, 3)],
+                integration_types=[
+                    "REST API",
+                    "SOAP",
+                    "File Transfer",
+                    "Message Queue",
+                ][: random.randint(2, 4)],
+                external_dependencies=[
+                    "Payment Gateway",
+                    "Email Service",
+                    "SMS Service",
+                ][: random.randint(1, 3)],
                 peak_load_users=random.randint(500, 5000),
                 response_time_sla_ms=random.choice([100, 200, 500, 1000]),
                 availability_sla_percent=random.choice([99.0, 99.5, 99.9, 99.99]),
-                compliance_requirements=random.choice([["HIPAA"], ["PCI-DSS"], ["SOX"], ["GDPR"], []]),
-                data_sensitivity=random.choice(["Public", "Internal", "Confidential", "Restricted"]),
-                authentication_methods=["LDAP", "OAuth2", "SAML"][: random.randint(1, 2)],
+                compliance_requirements=random.choice(
+                    [["HIPAA"], ["PCI-DSS"], ["SOX"], ["GDPR"], []]
+                ),
+                data_sensitivity=random.choice(
+                    ["Public", "Internal", "Confidential", "Restricted"]
+                ),
+                authentication_methods=["LDAP", "OAuth2", "SAML"][
+                    : random.randint(1, 2)
+                ],
                 technical_debt_score=random.randint(3, 8),
                 code_quality_score=random.randint(4, 9),
-                documentation_quality=random.choice(["Excellent", "Good", "Fair", "Poor"]),
+                documentation_quality=random.choice(
+                    ["Excellent", "Good", "Fair", "Poor"]
+                ),
                 containerization_ready=random.choice([True, False]),
                 stateless_architecture=random.choice([True, False]),
-                cloud_native_services_used=["S3", "SQS", "Lambda"][: random.randint(0, 3)],
+                cloud_native_services_used=["S3", "SQS", "Lambda"][
+                    : random.randint(0, 3)
+                ],
                 data_volume_gb=random.randint(50, 2000),
                 transaction_volume_per_day=random.randint(1000, 100000),
                 batch_processing_required=random.choice([True, False]),
@@ -265,21 +285,31 @@ async def create_assessments(db: AsyncSession, projects: List[Project], users: L
                 current_licensing_cost_annual=random.randint(10000, 200000),
                 infrastructure_cost_annual=random.randint(20000, 300000),
                 support_cost_annual=random.randint(5000, 50000),
-                migration_deadline=datetime.now(timezone.utc) + timedelta(days=random.randint(90, 365)),
+                migration_deadline=datetime.now(timezone.utc)
+                + timedelta(days=random.randint(90, 365)),
                 migration_risk_score=random.randint(3, 8),
-                business_impact_if_failed=random.choice(["Critical", "High", "Medium", "Low"]),
+                business_impact_if_failed=random.choice(
+                    ["Critical", "High", "Medium", "Low"]
+                ),
                 rollback_complexity=random.choice(["Simple", "Moderate", "Complex"]),
                 team_cloud_experience_score=random.randint(4, 9),
                 training_required=random.choice([True, False]),
                 external_support_needed=random.choice([True, False]),
-                last_major_update=datetime.now(timezone.utc) - timedelta(days=random.randint(180, 1080)),
+                last_major_update=datetime.now(timezone.utc)
+                - timedelta(days=random.randint(180, 1080)),
                 modernization_planned=random.choice([True, False]),
                 bandwidth_requirements_mbps=random.randint(10, 1000),
                 latency_requirements_ms=random.randint(10, 200),
                 vpn_requirements=random.choice([True, False]),
-                monitoring_tools=["Datadog", "New Relic", "CloudWatch"][: random.randint(1, 3)],
-                support_hours=random.choice(["24x7", "Business Hours", "Extended Hours"]),
-                preferred_migration_strategy=random.choice(["Big Bang", "Phased", "Hybrid"]),
+                monitoring_tools=["Datadog", "New Relic", "CloudWatch"][
+                    : random.randint(1, 3)
+                ],
+                support_hours=random.choice(
+                    ["24x7", "Business Hours", "Extended Hours"]
+                ),
+                preferred_migration_strategy=random.choice(
+                    ["Big Bang", "Phased", "Hybrid"]
+                ),
                 acceptable_downtime_hours=random.uniform(0.5, 8.0),
                 data_migration_approach=random.choice(["Online", "Offline", "CDC"]),
                 expected_cost_savings_percent=random.uniform(10, 40),
@@ -289,35 +319,36 @@ async def create_assessments(db: AsyncSession, projects: List[Project], users: L
                 recommendation_score=random.uniform(0.7, 0.95),
                 recommendation_reasoning=f"Based on the assessment, {app_data['recommendation'].value} is recommended due to {app_data['architecture']} architecture and {app_data['criticality']} criticality.",
                 assessed_by=users[1].id if i % 2 == 0 else users[2].id,
-                assessment_date=datetime.now(timezone.utc) - timedelta(days=random.randint(1, 30)),
-                notes=f"Initial assessment for {app_data['name']} migration planning."
+                assessment_date=datetime.now(timezone.utc)
+                - timedelta(days=random.randint(1, 30)),
+                notes=f"Initial assessment for {app_data['name']} migration planning.",
             )
-            
+
             db.add(assessment)
             print(f"Created assessment: {assessment.application_name}")
         else:
             print(f"Assessment already exists: {existing_assessment.application_name}")
-    
+
     await db.commit()
 
 
 async def main():
     """Run seed data script"""
     print("Starting seed data creation...")
-    
+
     # Initialize database
     await init_db()
-    
+
     async with AsyncSessionLocal() as db:
         # Create users
         users = await create_users(db)
-        
+
         # Create projects
         projects = await create_projects(db, users)
-        
+
         # Create assessments
         await create_assessments(db, projects, users)
-    
+
     print("\nSeed data creation completed!")
     print("\nLogin credentials:")
     print("  Admin: admin@example.com / admin123")

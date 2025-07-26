@@ -5,7 +5,6 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
-import os
 import sys
 from pathlib import Path
 
@@ -17,13 +16,6 @@ from app.core.config import settings
 from app.core.database import Base
 
 # Import all models to ensure they're registered with Base
-from app.models import (
-    User, UserRole, 
-    Application, 
-    CollectionFlow,
-    Project, ProjectMember,
-    ApplicationAssessment, MigrationRecommendation
-)
 
 # this is the Alembic Config object
 config = context.config
@@ -89,6 +81,7 @@ async def run_async_migrations() -> None:
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
     import asyncio
+
     asyncio.run(run_async_migrations())
 
 

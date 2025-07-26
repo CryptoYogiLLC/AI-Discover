@@ -7,12 +7,12 @@ from app.models.project import Project, ProjectMember
 from app.models.assessment import ApplicationAssessment, MigrationRecommendation
 
 __all__ = [
-    "User", 
+    "User",
     "UserRole",
-    "Application", 
+    "Application",
     "CollectionFlow",
     "Project",
     "ProjectMember",
     "ApplicationAssessment",
-    "MigrationRecommendation"
+    "MigrationRecommendation",
 ]

@@ -10,6 +10,7 @@ from app.models.user import UserRole
 
 class TokenPayload(BaseModel):
     """JWT token payload"""
+
     sub: str  # User ID
     role: UserRole
     type: str  # "access" or "refresh"
@@ -18,6 +19,7 @@ class TokenPayload(BaseModel):
 
 class Token(BaseModel):
     """Token response"""
+
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
@@ -25,18 +27,21 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     """Token data extracted from JWT"""
+
     user_id: Optional[str] = None
     role: Optional[UserRole] = None
 
 
 class LoginRequest(BaseModel):
     """Login request schema"""
+
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=1)
 
 
 class UserBase(BaseModel):
     """Base user schema"""
+
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=50)
     full_name: Optional[str] = None
@@ -46,11 +51,13 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     """User creation schema"""
+
     password: str = Field(..., min_length=8)
 
 
 class UserUpdate(BaseModel):
     """User update schema"""
+
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
     role: Optional[UserRole] = None
@@ -60,16 +67,18 @@ class UserUpdate(BaseModel):
 
 class UserInDB(UserBase):
     """User in database schema"""
+
     id: UUID
     is_ldap_user: bool
     created_at: datetime
     updated_at: datetime
     last_login_at: Optional[datetime] = None
-    
+
     class Config:
         from_attributes = True
 
 
 class UserResponse(UserInDB):
     """User response schema (without sensitive data)"""
+
     pass

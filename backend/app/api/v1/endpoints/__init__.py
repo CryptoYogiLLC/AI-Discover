@@ -12,11 +12,11 @@ from app.api.v1.endpoints import (
 )
 
 __all__ = [
-    "auth", 
-    "users", 
-    "applications", 
-    "collection_flows", 
-    "adapters", 
+    "auth",
+    "users",
+    "applications",
+    "collection_flows",
+    "adapters",
     "discovery",
     "projects",
     "assessments",

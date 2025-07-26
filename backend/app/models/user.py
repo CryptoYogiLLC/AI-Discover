@@ -12,6 +12,7 @@ from app.core.database import Base
 
 class UserRole(str, enum.Enum):
     """User role enumeration"""
+
     ADMIN = "admin"
     COLLABORATOR = "collaborator"
     VIEWER = "viewer"
@@ -34,7 +35,11 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login_at = Column(DateTime, nullable=True)
-    
+
     # Relationships
-    project_memberships = relationship("ProjectMember", back_populates="user", cascade="all, delete-orphan")
-    created_projects = relationship("Project", back_populates="created_by_user", foreign_keys="Project.created_by")
+    project_memberships = relationship(
+        "ProjectMember", back_populates="user", cascade="all, delete-orphan"
+    )
+    created_projects = relationship(
+        "Project", back_populates="created_by_user", foreign_keys="Project.created_by"
+    )

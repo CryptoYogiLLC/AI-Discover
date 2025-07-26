@@ -102,48 +102,39 @@ async def health_check() -> Dict[str, Any]:
     from app.core.config import settings
     import redis.asyncio as redis
     from sqlalchemy import text
-    
+
     health_status = {
         "status": "healthy",
         "version": settings.VERSION,
         "environment": settings.ENVIRONMENT,
-        "checks": {}
+        "checks": {},
     }
-    
+
     # Check database connectivity
     try:
         async with get_db() as db:
-            result = await db.execute(text("SELECT 1"))
+            await db.execute(text("SELECT 1"))
             health_status["checks"]["database"] = {
                 "status": "healthy",
-                "type": "postgresql"
+                "type": "postgresql",
             }
     except Exception as e:
         health_status["status"] = "unhealthy"
-        health_status["checks"]["database"] = {
-            "status": "unhealthy",
-            "error": str(e)
-        }
-    
+        health_status["checks"]["database"] = {"status": "unhealthy", "error": str(e)}
+
     # Check Redis connectivity
     try:
         redis_client = await redis.from_url(settings.REDIS_URL)
         await redis_client.ping()
         await redis_client.close()
-        health_status["checks"]["redis"] = {
-            "status": "healthy",
-            "type": "redis"
-        }
+        health_status["checks"]["redis"] = {"status": "healthy", "type": "redis"}
     except Exception as e:
         health_status["status"] = "unhealthy"
-        health_status["checks"]["redis"] = {
-            "status": "unhealthy",
-            "error": str(e)
-        }
-    
+        health_status["checks"]["redis"] = {"status": "unhealthy", "error": str(e)}
+
     # Check if OpenAI API key is configured
     health_status["checks"]["openai"] = {
         "status": "configured" if settings.OPENAI_API_KEY else "not_configured"
     }
-    
+
     return health_status
