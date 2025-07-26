@@ -1,0 +1,117 @@
+groups:
+  - name: application
+    interval: 30s
+    rules:
+      # Backend API alerts
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "Backend API is down"
+          description: "Backend API has been down for more than 2 minutes"
+
+      - alert: BackendHighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="backend"}[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "Backend API high response time"
+          description: "95th percentile response time is above 1 second for 5 minutes"
+
+      - alert: BackendHighErrorRate
+        expr: rate(http_requests_total{job="backend",status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "Backend API high error rate"
+          description: "Error rate is above 5% for 5 minutes"
+
+      # Database alerts
+      - alert: PostgresDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgres
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been down for more than 1 minute"
+
+      - alert: PostgresHighConnections
+        expr: pg_stat_database_numbackends{datname="ai_discover_production"} / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL high connection usage"
+          description: "Connection usage is above 80% for 5 minutes"
+
+      - alert: PostgresSlowQueries
+        expr: rate(pg_stat_statements_mean_time_seconds{datname="ai_discover_production"}[5m]) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL slow queries detected"
+          description: "Average query time is above 1 second for 5 minutes"
+
+      # Redis alerts
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis is down"
+          description: "Redis has been down for more than 1 minute"
+
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Redis high memory usage"
+          description: "Memory usage is above 90% for 5 minutes"
+
+      # Celery alerts
+      - alert: CeleryWorkerDown
+        expr: flower_worker_online == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: celery
+        annotations:
+          summary: "Celery worker is down"
+          description: "No Celery workers online for 5 minutes"
+
+      - alert: CeleryHighQueueSize
+        expr: flower_queue_length > 1000
+        for: 10m
+        labels:
+          severity: warning
+          service: celery
+        annotations:
+          summary: "Celery queue size is high"
+          description: "Queue size is above 1000 tasks for 10 minutes"
+
+      - alert: CeleryTaskFailures
+        expr: rate(flower_task_failed_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: celery
+        annotations:
+          summary: "High Celery task failure rate"
+          description: "Task failure rate is above 10% for 5 minutes"
