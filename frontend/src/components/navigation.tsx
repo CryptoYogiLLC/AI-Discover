@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
   FolderOpen,
@@ -17,8 +17,8 @@ import {
   Shield,
   Users,
   ChevronDown,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,85 +26,85 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { useAuthStore } from '@/store/auth'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/dropdown-menu";
+import { useAuthStore } from "@/store/auth";
+import { cn } from "@/lib/utils";
 
 type NavItem = {
-  name: string
-  href: string
-  icon: React.ComponentType<{ className?: string }>
-  roles: Array<'admin' | 'user' | 'viewer'>
-}
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  roles: Array<"admin" | "user" | "viewer">;
+};
 
 const navItems: NavItem[] = [
   {
-    name: 'Dashboard',
-    href: '/dashboard',
+    name: "Dashboard",
+    href: "/dashboard",
     icon: Home,
-    roles: ['admin', 'user', 'viewer'],
+    roles: ["admin", "user", "viewer"],
   },
   {
-    name: 'Projects',
-    href: '/projects',
+    name: "Projects",
+    href: "/projects",
     icon: FolderOpen,
-    roles: ['admin', 'user'],
+    roles: ["admin", "user"],
   },
   {
-    name: 'Assessments',
-    href: '/assessments',
+    name: "Assessments",
+    href: "/assessments",
     icon: FileSearch,
-    roles: ['admin', 'user'],
+    roles: ["admin", "user"],
   },
   {
-    name: 'Reports',
-    href: '/reports',
+    name: "Reports",
+    href: "/reports",
     icon: BarChart3,
-    roles: ['admin', 'user', 'viewer'],
+    roles: ["admin", "user", "viewer"],
   },
   {
-    name: 'Settings',
-    href: '/settings',
+    name: "Settings",
+    href: "/settings",
     icon: Settings,
-    roles: ['admin', 'user'],
+    roles: ["admin", "user"],
   },
-]
+];
 
 const adminOnlyItems: NavItem[] = [
   {
-    name: 'Users',
-    href: '/admin/users',
+    name: "Users",
+    href: "/admin/users",
     icon: Users,
-    roles: ['admin'],
+    roles: ["admin"],
   },
   {
-    name: 'Security',
-    href: '/admin/security',
+    name: "Security",
+    href: "/admin/security",
     icon: Shield,
-    roles: ['admin'],
+    roles: ["admin"],
   },
-]
+];
 
 export function Navigation() {
-  const pathname = usePathname()
-  const router = useRouter()
-  const { user, logout } = useAuthStore()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuthStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    logout()
-    router.push('/login')
-  }
+    logout();
+    router.push("/login");
+  };
 
   const filteredNavItems = navItems.filter((item) =>
-    user?.role ? item.roles.includes(user.role) : false
-  )
+    user?.role ? item.roles.includes(user.role) : false,
+  );
 
   const filteredAdminItems = adminOnlyItems.filter((item) =>
-    user?.role ? item.roles.includes(user.role) : false
-  )
+    user?.role ? item.roles.includes(user.role) : false,
+  );
 
-  const allItems = [...filteredNavItems, ...filteredAdminItems]
+  const allItems = [...filteredNavItems, ...filteredAdminItems];
 
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
@@ -124,24 +124,24 @@ export function Navigation() {
             {/* Desktop Navigation */}
             <div className="hidden md:ml-6 md:flex md:space-x-1">
               {filteredNavItems.map((item) => {
-                const Icon = item.icon
-                const isActive = pathname === item.href
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      'inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                      "inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
                       isActive
-                        ? 'bg-primary/10 text-primary dark:bg-primary/20'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ? "bg-primary/10 text-primary dark:bg-primary/20"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700",
                     )}
-                    aria-current={isActive ? 'page' : undefined}
+                    aria-current={isActive ? "page" : undefined}
                   >
                     <Icon className="mr-2 h-4 w-4" />
                     {item.name}
                   </Link>
-                )
+                );
               })}
 
               {/* Admin Dropdown */}
@@ -159,7 +159,7 @@ export function Navigation() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-48">
                     {filteredAdminItems.map((item) => {
-                      const Icon = item.icon
+                      const Icon = item.icon;
                       return (
                         <DropdownMenuItem key={item.name} asChild>
                           <Link
@@ -170,7 +170,7 @@ export function Navigation() {
                             {item.name}
                           </Link>
                         </DropdownMenuItem>
-                      )
+                      );
                     })}
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -230,7 +230,7 @@ export function Navigation() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isMobileMenuOpen}
               >
                 {isMobileMenuOpen ? (
@@ -249,37 +249,37 @@ export function Navigation() {
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
             className="md:hidden border-t border-gray-200 dark:border-gray-700"
           >
             <div className="px-2 pt-2 pb-3 space-y-1">
               {allItems.map((item) => {
-                const Icon = item.icon
-                const isActive = pathname === item.href
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                      'flex items-center px-3 py-2 text-base font-medium rounded-md transition-colors',
+                      "flex items-center px-3 py-2 text-base font-medium rounded-md transition-colors",
                       isActive
-                        ? 'bg-primary/10 text-primary dark:bg-primary/20'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ? "bg-primary/10 text-primary dark:bg-primary/20"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700",
                     )}
-                    aria-current={isActive ? 'page' : undefined}
+                    aria-current={isActive ? "page" : undefined}
                   >
                     <Icon className="mr-3 h-5 w-5" />
                     {item.name}
                   </Link>
-                )
+                );
               })}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
     </nav>
-  )
+  );
 }

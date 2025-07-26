@@ -1,76 +1,91 @@
-'use client'
+"use client";
 
-import { useAuthStore } from '@/store/auth'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { BarChart3, FolderOpen, FileSearch, Clock, Database, FileUp, FileText, Plus } from 'lucide-react'
-import Link from 'next/link'
+import { useAuthStore } from "@/store/auth";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  BarChart3,
+  FolderOpen,
+  FileSearch,
+  Clock,
+  Database,
+  FileUp,
+  FileText,
+  Plus,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardPage() {
-  const { user } = useAuthStore()
+  const { user } = useAuthStore();
 
   const stats = [
     {
-      title: 'Active Discoveries',
-      value: '3',
+      title: "Active Discoveries",
+      value: "3",
       icon: Database,
-      description: 'In progress',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100 dark:bg-blue-900/20',
+      description: "In progress",
+      color: "text-blue-600",
+      bgColor: "bg-blue-100 dark:bg-blue-900/20",
     },
     {
-      title: 'Total Applications',
-      value: '47',
+      title: "Total Applications",
+      value: "47",
       icon: FolderOpen,
-      description: 'Discovered so far',
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100 dark:bg-purple-900/20',
+      description: "Discovered so far",
+      color: "text-purple-600",
+      bgColor: "bg-purple-100 dark:bg-purple-900/20",
     },
     {
-      title: 'Assessment Progress',
-      value: '78%',
+      title: "Assessment Progress",
+      value: "78%",
       icon: FileSearch,
-      description: '37 of 47 assessed',
-      color: 'text-green-600',
-      bgColor: 'bg-green-100 dark:bg-green-900/20',
+      description: "37 of 47 assessed",
+      color: "text-green-600",
+      bgColor: "bg-green-100 dark:bg-green-900/20",
     },
     {
-      title: 'Avg. Processing Time',
-      value: '2.4h',
+      title: "Avg. Processing Time",
+      value: "2.4h",
       icon: Clock,
-      description: 'Per assessment',
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+      description: "Per assessment",
+      color: "text-orange-600",
+      bgColor: "bg-orange-100 dark:bg-orange-900/20",
     },
-  ]
+  ];
 
   const quickActions = [
     {
-      title: 'Start Smart Discovery',
-      description: 'Automatically discover applications',
+      title: "Start Smart Discovery",
+      description: "Automatically discover applications",
       icon: Database,
-      href: '/discovery/new',
+      href: "/discovery/new",
     },
     {
-      title: 'Manual Data Entry',
-      description: 'Add application details manually',
+      title: "Manual Data Entry",
+      description: "Add application details manually",
       icon: FileText,
-      href: '/applications/new',
+      href: "/applications/new",
     },
     {
-      title: 'Import from File',
-      description: 'Upload CSV or Excel files',
+      title: "Import from File",
+      description: "Upload CSV or Excel files",
       icon: FileUp,
-      href: '/import',
+      href: "/import",
     },
     {
-      title: 'View Reports',
-      description: 'Access generated reports',
+      title: "View Reports",
+      description: "Access generated reports",
       icon: BarChart3,
-      href: '/reports',
+      href: "/reports",
     },
-  ]
+  ];
 
   return (
     <div className="space-y-8">
@@ -80,14 +95,14 @@ export default function DashboardPage() {
           Application Discovery Dashboard
         </h1>
         <p className="text-muted-foreground mt-2">
-          Welcome back, {user?.name || 'User'}. Here's your discovery overview.
+          Welcome back, {user?.name || "User"}. Here's your discovery overview.
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => {
-          const Icon = stat.icon
+          const Icon = stat.icon;
           return (
             <Card key={stat.title}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -95,7 +110,10 @@ export default function DashboardPage() {
                   {stat.title}
                 </CardTitle>
                 <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                  <Icon className={`h-4 w-4 ${stat.color}`} aria-hidden="true" />
+                  <Icon
+                    className={`h-4 w-4 ${stat.color}`}
+                    aria-hidden="true"
+                  />
                 </div>
               </CardHeader>
               <CardContent>
@@ -105,7 +123,7 @@ export default function DashboardPage() {
                 </p>
               </CardContent>
             </Card>
-          )
+          );
         })}
       </div>
 
@@ -114,9 +132,12 @@ export default function DashboardPage() {
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {quickActions.map((action) => {
-            const Icon = action.icon
+            const Icon = action.icon;
             return (
-              <Card key={action.title} className="relative hover:shadow-lg transition-shadow">
+              <Card
+                key={action.title}
+                className="relative hover:shadow-lg transition-shadow"
+              >
                 <Link href={action.href} className="absolute inset-0 z-10">
                   <span className="sr-only">{action.title}</span>
                 </Link>
@@ -130,7 +151,11 @@ export default function DashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <Button variant="ghost" className="p-0 h-auto font-medium text-primary hover:text-primary/80" asChild>
+                  <Button
+                    variant="ghost"
+                    className="p-0 h-auto font-medium text-primary hover:text-primary/80"
+                    asChild
+                  >
                     <span className="flex items-center">
                       Get started
                       <Plus className="ml-1 h-3 w-3" aria-hidden="true" />
@@ -138,7 +163,7 @@ export default function DashboardPage() {
                   </Button>
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
       </div>

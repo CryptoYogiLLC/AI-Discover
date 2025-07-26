@@ -1,37 +1,37 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
-import { Navigation } from '@/components/navigation'
-import { useAuthStore } from '@/store/auth'
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { Navigation } from "@/components/navigation";
+import { useAuthStore } from "@/store/auth";
 
-const publicRoutes = ['/login', '/register', '/forgot-password']
+const publicRoutes = ["/login", "/register", "/forgot-password"];
 
 export function AuthLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const { isAuthenticated, isLoading } = useAuthStore()
+  const router = useRouter();
+  const pathname = usePathname();
+  const { isAuthenticated, isLoading } = useAuthStore();
 
   useEffect(() => {
     if (!isLoading) {
-      const isPublicRoute = publicRoutes.includes(pathname)
-      
+      const isPublicRoute = publicRoutes.includes(pathname);
+
       if (!isAuthenticated && !isPublicRoute) {
-        router.push('/login')
+        router.push("/login");
       } else if (isAuthenticated && isPublicRoute) {
-        router.push('/dashboard')
+        router.push("/dashboard");
       }
     }
-  }, [isAuthenticated, isLoading, pathname, router])
+  }, [isAuthenticated, isLoading, pathname, router]);
 
   // Show nothing while checking auth status
   if (isLoading) {
-    return null
+    return null;
   }
 
   // For public routes, render without navigation
   if (publicRoutes.includes(pathname)) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
   // For authenticated routes, render with navigation
@@ -45,9 +45,9 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           </div>
         </main>
       </div>
-    )
+    );
   }
 
   // Fallback (should not reach here due to useEffect redirect)
-  return null
+  return null;
 }

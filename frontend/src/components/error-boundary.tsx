@@ -1,49 +1,67 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { AlertTriangle, RefreshCw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import React from "react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface ErrorBoundaryState {
-  hasError: boolean
-  error: Error | null
+  hasError: boolean;
+  error: Error | null;
 }
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode
-  fallback?: React.ComponentType<{ error: Error; reset: () => void }>
+  children: React.ReactNode;
+  fallback?: React.ComponentType<{ error: Error; reset: () => void }>;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
-    super(props)
-    this.state = { hasError: false, error: null }
+    super(props);
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo)
+    console.error("Error caught by boundary:", error, errorInfo);
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, error: null })
-  }
+    this.setState({ hasError: false, error: null });
+  };
 
   render() {
     if (this.state.hasError && this.state.error) {
-      const FallbackComponent = this.props.fallback || DefaultErrorFallback
-      return <FallbackComponent error={this.state.error} reset={this.handleReset} />
+      const FallbackComponent = this.props.fallback || DefaultErrorFallback;
+      return (
+        <FallbackComponent error={this.state.error} reset={this.handleReset} />
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }
 
-function DefaultErrorFallback({ error, reset }: { error: Error; reset: () => void }) {
+function DefaultErrorFallback({
+  error,
+  reset,
+}: {
+  error: Error;
+  reset: () => void;
+}) {
   return (
     <div className="flex items-center justify-center min-h-[400px] p-4">
       <Card className="max-w-md w-full">
@@ -53,7 +71,8 @@ function DefaultErrorFallback({ error, reset }: { error: Error; reset: () => voi
             <CardTitle>Something went wrong</CardTitle>
           </div>
           <CardDescription>
-            An unexpected error occurred. Please try again or contact support if the problem persists.
+            An unexpected error occurred. Please try again or contact support if
+            the problem persists.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -62,7 +81,7 @@ function DefaultErrorFallback({ error, reset }: { error: Error; reset: () => voi
               Error details
             </summary>
             <pre className="mt-2 text-xs overflow-auto">
-              {error.message || 'Unknown error'}
+              {error.message || "Unknown error"}
             </pre>
           </details>
         </CardContent>
@@ -74,5 +93,5 @@ function DefaultErrorFallback({ error, reset }: { error: Error; reset: () => voi
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

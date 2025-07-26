@@ -1,21 +1,21 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { AlertCircle, RefreshCw, Home } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { useEffect } from "react";
+import { AlertCircle, RefreshCw, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
@@ -41,7 +41,7 @@ export default function Error({
             </p>
           </div>
         )}
-        
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button onClick={reset}>
             <RefreshCw className="mr-2 h-4 w-4" />
@@ -54,12 +54,12 @@ export default function Error({
             </Link>
           </Button>
         </div>
-        
+
         <div className="pt-8">
           <p className="text-sm text-gray-500 dark:text-gray-500">
-            If the problem persists,{' '}
-            <Link 
-              href="/support" 
+            If the problem persists,{" "}
+            <Link
+              href="/support"
               className="text-primary hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
             >
               contact our support team
@@ -68,5 +68,5 @@ export default function Error({
         </div>
       </div>
     </div>
-  )
+  );
 }
