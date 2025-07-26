@@ -1,394 +1,205 @@
-# AI-Discover Development Team - Claude Code Agent Roles
+# CLAUDE.md
 
-This document defines the roles and responsibilities for Claude Code agents working on the AI-Discover project. Each agent has specific expertise and responsibilities to ensure high-quality development.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🏗️ Architect Agent
+## Essential Development Commands
 
-**Role**: System Architecture and Design Leadership
-
-### Responsibilities
-
-- Review overall system architecture and design patterns
-- Ensure architectural consistency across the monorepo
-- Make decisions about technology choices and integrations
-- Review and approve significant architectural changes
-- Maintain architectural decision records (ADRs)
-
-### Key Tasks
-
+### Backend Development
 ```bash
-# Review architecture
-/architect-review
-
-# Analyze system design
-grep -r "class\|interface\|abstract" --include="*.py" --include="*.ts" backend/ frontend/
-
-# Check for architectural violations
-semgrep --config=.semgrep-architecture.yml
-
-# Document architectural decisions
-/create-adr "Title of Decision"
-```
-
-### Focus Areas
-
-- Microservices vs monolithic decisions
-- API design and contracts
-- Database schema design
-- Integration patterns
-- Scalability considerations
-
-## 👨‍💻 Backend Developer Agent
-
-**Role**: Python/FastAPI/CrewAI Implementation
-
-### Responsibilities
-
-- Implement REST APIs using FastAPI
-- Develop CrewAI agents for discovery automation
-- Create cloud platform adapters (AWS, Azure, GCP)
-- Implement business logic and data models
-- Write comprehensive unit and integration tests
-
-### Key Tasks
-
-```bash
-# Create new API endpoint
-/create-endpoint "endpoint_name"
-
-# Implement CrewAI agent
-/create-crew-agent "agent_name"
-
-# Add platform adapter
-/create-adapter "platform_name"
+# Start backend with hot reload
+cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 # Run backend tests
 cd backend && pytest -v
 
-# Check code coverage
+# Run specific test
+cd backend && pytest -v tests/test_main.py::test_function_name
+
+# Check test coverage
 cd backend && pytest --cov=app --cov-report=html
+
+# Linting and formatting
+black backend/           # Format code
+ruff check backend/      # Lint code
+mypy backend/           # Type checking
+
+# Database migrations
+cd backend && alembic revision --autogenerate -m "description"
+cd backend && alembic upgrade head
 ```
 
-### Focus Areas
-
-- FastAPI route implementation
-- SQLAlchemy models and migrations
-- CrewAI agent development
-- Redis caching strategies
-- Celery task queues
-- API documentation (OpenAPI)
-
-## 👩‍💻 Frontend Developer Agent
-
-**Role**: Next.js/React Implementation
-
-### Responsibilities
-
-- Develop responsive UI components
-- Implement state management with Zustand
-- Create data fetching logic with React Query
-- Build adaptive forms and workflows
-- Ensure accessibility standards (WCAG 2.1)
-
-### Key Tasks
-
+### Frontend Development
 ```bash
-# Create new component
-/create-component "ComponentName"
-
-# Add new page
-/create-page "page-name"
+# Start frontend dev server
+cd frontend && npm run dev
 
 # Run frontend tests
 cd frontend && npm test
 
-# Check TypeScript types
+# Run single test file
+cd frontend && npm test -- src/app/__tests__/layout.test.tsx
+
+# Type checking and linting
 cd frontend && npm run type-check
+cd frontend && npm run lint
+cd frontend && npm run format:check
 
 # Build production bundle
 cd frontend && npm run build
 ```
 
-### Focus Areas
-
-- React component architecture
-- Next.js app router
-- Tailwind CSS styling
-- Form validation and UX
-- API integration
-- Performance optimization
-
-## 🔧 DevOps Engineer Agent
-
-**Role**: Infrastructure and CI/CD Management
-
-### Responsibilities
-
-- Maintain GitHub Actions workflows
-- Manage Docker configurations
-- Set up Kubernetes manifests
-- Configure monitoring and logging
-- Implement infrastructure as code
-
-### Key Tasks
-
+### Docker Development
 ```bash
-# Build Docker images
-docker-compose build
+# Start all services
+docker-compose up -d
 
-# Run security scans
+# View logs
+docker-compose logs -f backend
+docker-compose logs -f frontend
+
+# Rebuild containers
+docker-compose build --no-cache
+
+# Access services
+# Frontend: http://localhost:3300
+# Backend API: http://localhost:8800
+# API Docs: http://localhost:8800/docs
+# Flower (Celery): http://localhost:5555
+```
+
+### Security Scanning
+```bash
+# Python security
+bandit -r backend/app
+pip-audit
+
+# JavaScript security
+cd frontend && npm audit
+
+# Container security
 trivy fs .
 
-# Deploy to environment
-/deploy-to staging
-
-# Check infrastructure
-terraform plan
-
-# Monitor CI/CD pipelines
-gh workflow view
-```
-
-### Focus Areas
-
-- Container optimization
-- CI/CD pipeline efficiency
-- Secret management
-- Environment configuration
-- Deployment strategies
-- Infrastructure scaling
-
-## 🔒 Security Engineer Agent
-
-**Role**: Security Implementation and Compliance
-
-### Responsibilities
-
-- Conduct security code reviews
-- Implement security controls
-- Ensure compliance (SOC2, GDPR)
-- Configure security scanning tools
-- Address vulnerabilities promptly
-
-### Key Tasks
-
-```bash
-# Run security scan
-semgrep --config=auto
-
-# Check dependencies
-pip-audit
-npm audit
-
-# Scan containers
-trivy image backend:latest
-
-# Review secrets
+# Secret scanning
 gitleaks detect
-
-# OWASP compliance check
-/security-review
 ```
 
-### Focus Areas
+## High-Level Architecture
 
-- Authentication/Authorization
-- Input validation
-- SQL injection prevention
-- XSS protection
-- CSRF protection
-- Secure coding practices
-- Vulnerability remediation
+### Monorepo Structure
+This is a monorepo containing both backend (Python/FastAPI) and frontend (Next.js) applications that work together to provide an AI-powered application discovery platform.
 
-## 🧪 QA/Tester Agent
+### Backend Architecture (FastAPI + CrewAI)
+- **API Layer** (`backend/app/api/v1/`): RESTful endpoints organized by domain
+  - Auth endpoints handle JWT-based authentication
+  - Discovery endpoints manage the AI discovery process
+  - Collection flows handle adaptive data collection workflows
+  
+- **Core Services** (`backend/app/core/`):
+  - Database connection pooling with SQLAlchemy async
+  - Redis for caching and Celery task broker
+  - Middleware for CORS, logging, and error handling
+  
+- **AI Integration**: CrewAI agents analyze applications and provide 6R migration recommendations
+  - Discovery service orchestrates multiple AI agents
+  - Adapters for AWS, Azure, and GCP platforms
+  
+- **Async Task Processing**: Celery workers handle long-running discovery tasks
 
-**Role**: Quality Assurance and Testing
+### Frontend Architecture (Next.js + React)
+- **App Router**: Uses Next.js 14+ app directory structure
+- **State Management**: Zustand for global state
+- **Data Fetching**: React Query (TanStack Query) for server state
+- **Styling**: Tailwind CSS with component-level styles
+- **Forms**: React Hook Form with Zod validation
 
-### Responsibilities
+### Key Architectural Patterns
 
-- Write comprehensive test suites
-- Perform integration testing
-- Conduct performance testing
-- Ensure code coverage >80%
-- Create test documentation
+1. **Adapter Pattern**: Cloud platform adapters (`backend/app/api/v1/endpoints/adapters.py`) provide unified interface for AWS/Azure/GCP
 
-### Key Tasks
+2. **Repository Pattern**: Database operations abstracted through SQLAlchemy models
 
-```bash
-# Run all tests
-/test-all
+3. **Service Layer**: Business logic separated from API endpoints in service modules
 
-# Generate test report
-/test-report
+4. **Async-First**: Both FastAPI backend and Next.js frontend leverage async patterns
 
-# Check coverage gaps
-/coverage-analysis
+5. **Container-Based**: All services run in Docker containers for consistency
 
-# Run E2E tests
-cd e2e && npm run test
+## Critical Integration Points
 
-# Performance testing
-/performance-test
-```
+### API Communication
+- Frontend expects backend at `NEXT_PUBLIC_API_URL` (default: http://localhost:8030)
+- All API calls use JWT tokens stored in httpOnly cookies
+- API responses follow consistent schema patterns defined in `backend/app/schemas/`
 
-### Focus Areas
+### Database Schema
+- PostgreSQL with async SQLAlchemy ORM
+- Models in `backend/app/models/` define schema
+- Alembic manages migrations
 
-- Unit test coverage
-- Integration test scenarios
-- E2E test automation
-- Performance benchmarks
-- Load testing
-- Test data management
+### Task Queue
+- Celery workers process discovery tasks asynchronously
+- Redis serves as message broker
+- Results stored in Redis with TTL
 
-## 📚 Documentation Agent
+### Security Requirements
+- All endpoints require authentication except `/api/v1/auth/*`
+- Input validation on all user inputs
+- CORS configured for frontend origin only
+- Secrets managed via environment variables
 
-**Role**: Technical Documentation and Knowledge Management
+## Development Workflow
 
-### Responsibilities
+1. **Feature Development**:
+   - Create feature branch from `develop`
+   - Implement with tests (maintain >80% coverage)
+   - Run linting and security scans
+   - Submit PR with all checks passing
 
-- Maintain README files
-- Create API documentation
-- Write user guides
-- Document deployment procedures
-- Keep architecture docs current
+2. **Testing Strategy**:
+   - Unit tests alongside implementation
+   - Integration tests in `docker-compose.test.yml`
+   - E2E tests for critical user flows
 
-### Key Tasks
+3. **Pre-commit Checks**:
+   - Black formatting (Python)
+   - Ruff linting (Python)
+   - ESLint (JavaScript)
+   - Type checking (both)
 
-```bash
-# Generate API docs
-/generate-api-docs
+## AI Agent Development
 
-# Update README
-/update-readme
+When implementing CrewAI agents:
+1. Define agent in `backend/app/services/discovery.py`
+2. Create specific task handlers
+3. Implement platform-specific data collection
+4. Return structured 6R recommendations
 
-# Create user guide
-/create-guide "guide-name"
+## Common Pitfalls to Avoid
 
-# Check doc links
-/check-docs
+1. **Don't forget async**: Backend uses async SQLAlchemy - use `async def` and `await`
+2. **Environment variables**: Always check `.env.example` for required vars (OpenAI API key is required)
+3. **CORS issues**: Frontend/backend on different ports - CORS must be configured
+4. **Database connections**: Use dependency injection for DB sessions
+5. **Task timeouts**: Long-running tasks must use Celery, not block API requests
+6. **Python version**: Backend uses Python 3.13 - ensure Dockerfile paths match
+7. **ESLint compatibility**: Use @typescript-eslint v8+ with ESLint v9
+8. **Docker volumes**: Production containers don't need development volume mounts
+9. **Celery Beat**: Use `/tmp/celerybeat-schedule` for schedule file to avoid permission issues
+10. **Next.js config**: Remove deprecated `swcMinify` option in Next.js 15+
 
-# Generate changelog
-/generate-changelog
-```
+## Performance Considerations
 
-### Focus Areas
+- Use Redis caching for frequently accessed data
+- Implement pagination for list endpoints
+- Use React Query's caching on frontend
+- Optimize Docker images with multi-stage builds
+- Database queries should use eager loading to avoid N+1
 
-- API documentation
-- Architecture diagrams
-- Deployment guides
-- User documentation
-- Code comments
-- Change logs
+## Port Configuration
 
-## 🎯 Working Together
-
-### Collaboration Workflow
-
-1. **Planning Phase**
-
-   - Architect Agent creates technical design
-   - Security Agent reviews security requirements
-   - All agents review and provide input
-
-2. **Implementation Phase**
-
-   - Backend/Frontend Agents implement features
-   - DevOps Agent updates CI/CD as needed
-   - QA Agent writes tests alongside development
-
-3. **Review Phase**
-
-   - Security Agent performs security review
-   - Architect Agent ensures architectural compliance
-   - QA Agent validates test coverage
-
-4. **Documentation Phase**
-   - Documentation Agent updates all docs
-   - All agents review their domain-specific documentation
-
-### Communication Protocols
-
-```bash
-# Request review from specific agent
-/request-review @architect-agent "Review API design"
-
-# Escalate issue
-/escalate @security-agent "Potential vulnerability found"
-
-# Collaborate on feature
-/collaborate @frontend-agent @backend-agent "Implement user dashboard"
-```
-
-### Quality Standards
-
-All agents must ensure:
-
-- Code passes all pre-commit hooks
-- Tests maintain >80% coverage
-- Security scans show no high/critical issues
-- Documentation is updated
-- PR checklist is completed
-
-### Agent Handoff Protocol
-
-When transitioning work between agents:
-
-```bash
-# Complete current work
-git add -A
-git commit -m "feat: implement user authentication"
-
-# Create handoff note
-/handoff @next-agent "Completed authentication, ready for frontend integration"
-
-# Push changes
-git push origin feature/user-auth
-```
-
-## 🚀 Quick Start for New Features
-
-1. **Architect Agent**: Design the feature architecture
-2. **Backend Agent**: Implement API endpoints
-3. **Frontend Agent**: Create UI components
-4. **QA Agent**: Write tests
-5. **Security Agent**: Security review
-6. **DevOps Agent**: Update CI/CD if needed
-7. **Documentation Agent**: Update docs
-
-## 📋 Agent Checklists
-
-### Before Starting Work
-
-- [ ] Pull latest changes from main
-- [ ] Create feature branch
-- [ ] Review existing code patterns
-- [ ] Check security requirements
-
-### During Development
-
-- [ ] Follow coding standards
-- [ ] Write tests alongside code
-- [ ] Update documentation
-- [ ] Run pre-commit hooks
-
-### Before PR Submission
-
-- [ ] All tests passing
-- [ ] Security scan clean
-- [ ] Documentation updated
-- [ ] PR template completed
-- [ ] Request appropriate reviews
-
-## 🔄 Continuous Improvement
-
-Each agent should:
-
-- Regularly update their tools and knowledge
-- Share learnings with other agents
-- Contribute to best practices
-- Optimize their workflows
-- Maintain high code quality standards
-
----
-
-Remember: We're building a production-ready system that will handle sensitive data. Quality, security, and reliability are our top priorities.
+The application uses non-standard ports to avoid conflicts:
+- Frontend: 3300 (dev server)
+- Backend: 8800 (API server)  
+- PostgreSQL: 5442 (mapped from 5432)
+- Redis: 6479 (mapped from 6379)
+- Flower: 5555 (Celery monitoring)
