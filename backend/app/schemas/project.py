@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 from uuid import UUID
 
 
-
 class ProjectBase(BaseModel):
     """Base project schema"""
 

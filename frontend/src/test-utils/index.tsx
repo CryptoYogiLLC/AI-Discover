@@ -113,6 +113,7 @@ export const mockApiError = (message: string, status = 400, delay = 0) => {
 
 // Custom matchers
 export const expectToBeInDocument = (element: HTMLElement) => {
+  // eslint-disable-next-line no-undef
   expect(document.body).toContainElement(element);
 };
 
@@ -137,6 +138,7 @@ export const waitForLoadingToFinish = async () => {
     const loadingElements = document.querySelectorAll(
       '[data-testid="loading"]',
     );
+    // eslint-disable-next-line no-undef
     expect(loadingElements).toHaveLength(0);
   });
 };
