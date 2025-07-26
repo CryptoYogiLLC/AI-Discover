@@ -12,11 +12,14 @@ RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
 # Copy package files with proper ownership
 COPY --chown=nextjs:nodejs package.json package-lock.json* ./
 
-# Set npm cache directory to a writable location for the user
-RUN mkdir -p /app/.npm && chown -R nextjs:nodejs /app/.npm
+# Create directories with proper permissions before switching user
+RUN mkdir -p /app/.npm /app/node_modules && \
+    chown -R nextjs:nodejs /app/.npm /app/node_modules /app
 
 # Switch to non-root user
 USER nextjs
+
+# Set npm cache directory
 ENV NPM_CONFIG_CACHE=/app/.npm
 
 # Install dependencies with security flag
