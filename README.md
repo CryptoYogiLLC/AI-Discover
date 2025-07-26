@@ -23,9 +23,26 @@ ai-discover/
 └── scripts/            # Development and deployment scripts
 ```
 
+## 🚨 Important: Development Setup
+
+**Before making any commits**, you MUST run the development setup to install pre-commit hooks:
+
+```bash
+./scripts/setup-dev.sh
+```
+
+This ensures:
+
+- Code quality checks run automatically on every commit
+- Consistent code formatting across all contributors
+- Early detection of issues before CI/CD
+
+Without this setup, your commits may fail CI/CD checks on GitHub.
+
 ## 🛠️ Technology Stack
 
 ### Backend
+
 - **Language**: Python 3.11+
 - **Framework**: FastAPI
 - **AI Framework**: CrewAI
@@ -34,6 +51,7 @@ ai-discover/
 - **Task Queue**: Celery
 
 ### Frontend
+
 - **Framework**: Next.js 14+
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
@@ -41,6 +59,7 @@ ai-discover/
 - **API Client**: React Query
 
 ### Infrastructure
+
 - **Containerization**: Docker
 - **Orchestration**: Kubernetes
 - **CI/CD**: GitHub Actions
@@ -50,6 +69,7 @@ ai-discover/
 ## 🚦 Getting Started
 
 ### Prerequisites
+
 - Docker and Docker Compose
 - Python 3.11+
 - Node.js 18+
@@ -58,25 +78,35 @@ ai-discover/
 ### Quick Start
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/[your-org]/ai-discover.git
 cd ai-discover
 ```
 
-2. Set up development environment:
+2. Set up development environment (**REQUIRED** for contributors):
+
 ```bash
 ./scripts/setup-dev.sh
 ```
 
+⚠️ **Important**: This step installs pre-commit hooks that enforce code quality standards. Without it:
+
+- Your commits won't be checked locally
+- CI/CD will likely fail when you push
+- You'll experience slow feedback loops
+
 3. Start the application:
+
 ```bash
 docker-compose up -d
 ```
 
 4. Access the application:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Documentation: http://localhost:8000/docs
+
+- Frontend: <http://localhost:3000>
+- Backend API: <http://localhost:8000>
+- API Documentation: <http://localhost:8000/docs>
 
 ## 🤖 AI Development Team
 

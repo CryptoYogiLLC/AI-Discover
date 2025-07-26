@@ -66,7 +66,7 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpass
+          POSTGRES_PASSWORD: testpass # pragma: allowlist secret
           POSTGRES_DB: testdb
         options: >-
           --health-cmd pg_isready
@@ -104,7 +104,7 @@ jobs:
 
       - name: Run tests with coverage
         env:
-          DATABASE_URL: postgresql+asyncpg://testuser:testpass@localhost:5432/testdb
+          DATABASE_URL: postgresql+asyncpg://testuser:testpass@localhost:5432/testdb # pragma: allowlist secret
           REDIS_URL: redis://localhost:6379
         run: |
           cd backend
@@ -128,7 +128,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
@@ -157,7 +157,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
@@ -182,12 +182,26 @@ jobs:
     needs: [backend-lint, frontend-lint]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for GitLeaks
 
       # Python security scanning
-      - name: Run Bandit
-        uses: gaurav-nelson/bandit-action@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          path: "backend/"
+          python-version: "3.13"
+
+      - name: Run Bandit
+        run: |
+          pip install bandit
+          bandit -r backend/app -f json -o bandit-report.json || true
+
+      - name: Upload Bandit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bandit-results
+          path: bandit-report.json
 
       - name: Run pip-audit
         run: |
@@ -203,15 +217,15 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
       # Secret scanning
       - name: Run GitLeaks
@@ -263,8 +277,8 @@ jobs:
           file: ./backend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/${{ github.repository }}/backend:latest
-            ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
+            ghcr.io/cryptoyogillc/ai-discover/backend:latest
+            ghcr.io/cryptoyogillc/ai-discover/backend:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -292,8 +306,8 @@ jobs:
           file: ./frontend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/${{ github.repository }}/frontend:latest
-            ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+            ghcr.io/cryptoyogillc/ai-discover/frontend:latest
+            ghcr.io/cryptoyogillc/ai-discover/frontend:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

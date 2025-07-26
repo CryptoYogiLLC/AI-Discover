@@ -5,6 +5,7 @@
 This document provides detailed implementation specifications to address ambiguities identified in the high-level design documents. It ensures faithful implementation that aligns with architectural principles and business requirements.
 
 ## Table of Contents
+
 1. [Critical Attributes Framework](#critical-attributes-framework)
 2. [Agent and Crew Composition](#agent-and-crew-composition)
 3. [Confidence Scoring Methodology](#confidence-scoring-methodology)
@@ -20,6 +21,7 @@ This document provides detailed implementation specifications to address ambigui
 The success of ADCS is measured against collecting these specific data points required for accurate 6R recommendations:
 
 #### Infrastructure Attributes (6 attributes)
+
 1. **Operating System & Version** - Required for compatibility assessment
 2. **CPU/Memory/Storage Specifications** - Required for rightsizing
 3. **Network Configuration** - Required for connectivity planning
@@ -28,6 +30,7 @@ The success of ADCS is measured against collecting these specific data points re
 6. **Availability/Uptime Requirements** - Required for SLA planning
 
 #### Application Attributes (8 attributes)
+
 7. **Technology Stack** - Programming languages, frameworks, runtime versions
 8. **Architecture Pattern** - Monolith, microservices, SOA classification
 9. **Integration Dependencies** - External APIs, databases, message queues
@@ -38,12 +41,14 @@ The success of ADCS is measured against collecting these specific data points re
 14. **Security and Compliance Requirements** - Regulatory constraints, security protocols
 
 #### Business Context Attributes (4 attributes)
+
 15. **Business Criticality Score** - Revenue impact, operational importance
 16. **Change Tolerance** - User adaptability, training requirements
 17. **Compliance and Regulatory Constraints** - Industry-specific requirements
 18. **Stakeholder Impact Analysis** - User base size, organizational dependencies
 
 #### Technical Debt Attributes (4 attributes)
+
 19. **Code Quality Metrics** - Maintainability index, technical debt ratio
 20. **Security Vulnerability Assessment** - CVE count, severity classification
 21. **End-of-Life Technology Assessment** - Unsupported versions, deprecated features
@@ -61,6 +66,7 @@ The success of ADCS is measured against collecting these specific data points re
 **The tier assessment process is entirely agentic - no hard-coded logic should be implemented.** The Platform Detection Crew's agents collaboratively evaluate the environment and make recommendations based on their analysis. The system does not use procedural if/else statements or hard-coded checks.
 
 **Agentic Process Flow:**
+
 1. **Asset Intelligence Agent** discovers available platforms and access levels using specialized tools
 2. **Platform Detection Agent** evaluates automation capabilities through intelligent assessment
 3. **Pattern Recognition Agent** synthesizes findings and recommends the optimal tier with justification
@@ -71,13 +77,14 @@ The success of ADCS is measured against collecting these specific data points re
 ### Detailed CrewAI Agent Integration
 
 #### Platform Detection Crew
+
 ```python
 class PlatformDetectionCrew:
     """
     Determines automation tier and platform capabilities
     Leverages existing agents with specialized tasks
     """
-    
+
     def __init__(self):
         # Existing specialist agents with new tools
         self.asset_intelligence_agent = AssetIntelligenceAgent(
@@ -87,7 +94,7 @@ class PlatformDetectionCrew:
                 ServiceDiscoveryTool()
             ]
         )
-        
+
         self.pattern_recognition_agent = PatternRecognitionAgent(
             tools=[
                 InfrastructurePatternAnalyzer(),
@@ -95,7 +102,7 @@ class PlatformDetectionCrew:
                 ArchitectureClassifier()
             ]
         )
-        
+
         # New specialized agent
         self.platform_detection_agent = PlatformDetectionAgent(
             tools=[
@@ -105,7 +112,7 @@ class PlatformDetectionCrew:
                 OnPremiseCapabilityAssessor()
             ]
         )
-    
+
     def create_crew(self) -> Crew:
         return Crew(
             agents=[
@@ -137,13 +144,14 @@ class PlatformDetectionCrew:
 ```
 
 #### Gap Analysis Crew
+
 ```python
 class GapAnalysisCrew:
     """
     Identifies missing critical attributes and generates targeted questionnaires
     Leverages existing validation expertise with new gap detection capabilities
     """
-    
+
     def __init__(self):
         # Existing specialist agents
         self.asset_intelligence_agent = AssetIntelligenceAgent(
@@ -153,7 +161,7 @@ class GapAnalysisCrew:
                 DataCompletenessEvaluator()
             ]
         )
-        
+
         self.data_validation_expert = DataValidationExpert(
             tools=[
                 AttributeValidationEngine(),
@@ -161,7 +169,7 @@ class GapAnalysisCrew:
                 ConfidenceAssessmentTool()
             ]
         )
-        
+
         # New specialized agent
         self.gap_analysis_agent = GapAnalysisAgent(
             tools=[
@@ -170,7 +178,7 @@ class GapAnalysisCrew:
                 QuestionPrioritizationEngine()
             ]
         )
-    
+
     def create_crew(self) -> Crew:
         return Crew(
             agents=[
@@ -204,29 +212,30 @@ class GapAnalysisCrew:
 ### Agent Tool Specifications
 
 #### Asset Intelligence Agent Tools
+
 ```python
 class CriticalAttributeAssessor(BaseTool):
     name = "critical_attribute_assessor"
     description = "Evaluates collected data against the 22 critical attributes framework"
-    
+
     def _run(self, collected_data: Dict) -> AttributeAssessment:
         """
         Maps collected data to critical attributes framework
         Returns completeness scores for each of the 22 attributes
         """
         assessment = AttributeAssessment()
-        
+
         # Infrastructure Attributes (1-6)
         assessment.infrastructure.os_version = self._assess_os_data(collected_data)
         assessment.infrastructure.specifications = self._assess_specs_data(collected_data)
         # ... continue for all 22 attributes
-        
+
         return assessment
 
 class BusinessContextAnalyzer(BaseTool):
     name = "business_context_analyzer"
     description = "Analyzes business context to prioritize data collection efforts"
-    
+
     def _run(self, application_metadata: Dict) -> BusinessContextAnalysis:
         """
         Evaluates business criticality, user impact, and compliance requirements
@@ -251,7 +260,7 @@ class ConfidenceScoreCalculator:
     Calculates confidence scores using deterministic methodology
     Ensures consistent scoring across all assessments
     """
-    
+
     CRITICAL_ATTRIBUTE_WEIGHTS = {
         # Infrastructure attributes (total weight: 0.25)
         'os_version': 0.05,
@@ -260,7 +269,7 @@ class ConfidenceScoreCalculator:
         'virtualization': 0.04,
         'performance_baseline': 0.04,
         'availability_requirements': 0.03,
-        
+
         # Application attributes (total weight: 0.45)
         'technology_stack': 0.08,
         'architecture_pattern': 0.07,
@@ -270,43 +279,43 @@ class ConfidenceScoreCalculator:
         'business_logic_complexity': 0.05,
         'configuration_complexity': 0.04,
         'security_requirements': 0.04,
-        
+
         # Business context attributes (total weight: 0.20)
         'business_criticality': 0.08,
         'change_tolerance': 0.05,
         'compliance_constraints': 0.04,
         'stakeholder_impact': 0.03,
-        
+
         # Technical debt attributes (total weight: 0.10)
         'code_quality': 0.03,
         'security_vulnerabilities': 0.03,
         'eol_technology': 0.02,
         'documentation_quality': 0.02
     }
-    
+
     def calculate_confidence_score(
-        self, 
+        self,
         collected_attributes: Dict[str, AttributeData]
     ) -> ConfidenceScore:
         """
         Calculate overall confidence score for 6R recommendations
-        
+
         Formula:
         confidence_score = Σ(attribute_weight × attribute_quality_score × attribute_completeness)
-        
+
         Where:
         - attribute_weight: Predefined weight for each critical attribute
         - attribute_quality_score: Quality assessment (0.0-1.0) based on data source and validation
         - attribute_completeness: Binary completeness (0.0 or 1.0)
         """
-        
+
         total_weighted_score = 0.0
         total_possible_weight = 0.0
         attribute_scores = {}
-        
+
         for attribute_name, weight in self.CRITICAL_ATTRIBUTE_WEIGHTS.items():
             attribute_data = collected_attributes.get(attribute_name)
-            
+
             if attribute_data is None:
                 # Missing attribute
                 attribute_score = 0.0
@@ -316,27 +325,27 @@ class ConfidenceScoreCalculator:
                 quality_score = self._assess_attribute_quality(attribute_data)
                 completeness = 1.0
                 attribute_score = weight * quality_score * completeness
-                
+
             attribute_scores[attribute_name] = {
                 'weight': weight,
                 'quality_score': quality_score if attribute_data else 0.0,
                 'completeness': completeness,
                 'weighted_score': attribute_score
             }
-            
+
             total_weighted_score += attribute_score
             total_possible_weight += weight
-        
+
         # Calculate final confidence percentage
         confidence_percentage = (total_weighted_score / total_possible_weight) * 100
-        
+
         return ConfidenceScore(
             overall_confidence=confidence_percentage,
             attribute_breakdown=attribute_scores,
             recommendation_readiness=self._assess_recommendation_readiness(confidence_percentage),
             missing_critical_attributes=self._identify_missing_critical_attributes(attribute_scores)
         )
-    
+
     def _assess_attribute_quality(self, attribute_data: AttributeData) -> float:
         """
         Assess quality of collected attribute data
@@ -348,7 +357,7 @@ class ConfidenceScoreCalculator:
             'data_completeness': self._assess_field_completeness(attribute_data.fields),
             'validation_status': self._assess_validation_status(attribute_data.validation)
         }
-        
+
         # Weighted average of quality factors
         return (
             quality_factors['data_source_reliability'] * 0.3 +
@@ -356,7 +365,7 @@ class ConfidenceScoreCalculator:
             quality_factors['data_completeness'] * 0.3 +
             quality_factors['validation_status'] * 0.2
         )
-    
+
     def _assess_recommendation_readiness(self, confidence_percentage: float) -> str:
         """
         Determine recommendation readiness based on confidence threshold
@@ -374,6 +383,7 @@ class ConfidenceScoreCalculator:
 ### Quality Score Components
 
 #### Data Source Reliability Scoring
+
 ```python
 def _assess_source_reliability(self, source: str) -> float:
     """
@@ -396,7 +406,7 @@ def _assess_data_freshness(self, collected_at: datetime) -> float:
     Score data freshness (recency)
     """
     age_days = (datetime.utcnow() - collected_at).days
-    
+
     if age_days <= 1:
         return 1.0
     elif age_days <= 7:
@@ -431,14 +441,14 @@ sequenceDiagram
     CredentialManager-->>PlatformAdapter: credentials
     PlatformAdapter->>Platform: authenticate(credentials)
     Platform-->>PlatformAdapter: 401 Authentication Failed
-    
+
     Note over PlatformAdapter: Handle authentication failure
     PlatformAdapter->>AuditLogger: log_auth_failure(platform, error)
     PlatformAdapter->>CollectionOrchestrator: AuthenticationError(platform, retry_possible=true)
-    
+
     CollectionOrchestrator->>UI: notify_authentication_failure(platform, retry_options)
     UI->>User: Display "Authentication failed for AWS. Would you like to update credentials or skip this platform?"
-    
+
     alt User chooses to update credentials
         User->>UI: update_credentials()
         UI->>CredentialManager: store_new_credentials(platform, credentials)
@@ -466,14 +476,14 @@ sequenceDiagram
     PlatformAdapter->>Platform: list_ec2_instances()
     Platform-->>PlatformAdapter: 200 OK (first batch)
     PlatformAdapter->>StateManager: save_partial_results(batch_1)
-    
+
     PlatformAdapter->>Platform: list_ec2_instances(next_token)
     Note over Platform: API timeout after 30 seconds
     Platform-->>PlatformAdapter: Timeout Error
-    
+
     Note over PlatformAdapter: Handle timeout with retry logic
     PlatformAdapter->>PlatformAdapter: increment_retry_count()
-    
+
     alt Retry count < max_retries (3)
         PlatformAdapter->>Platform: list_ec2_instances(next_token) [retry]
         alt Retry succeeds
@@ -499,11 +509,11 @@ class CollectionFlowStateManager:
     Manages Collection Flow state transitions during failures
     Ensures data consistency and recovery capabilities
     """
-    
+
     async def handle_adapter_failure(
-        self, 
-        flow_id: UUID, 
-        adapter_id: str, 
+        self,
+        flow_id: UUID,
+        adapter_id: str,
         error: AdapterError,
         partial_data: Optional[Dict] = None
     ) -> FailureHandlingResult:
@@ -513,14 +523,14 @@ class CollectionFlowStateManager:
         async with AsyncSessionLocal() as session:
             # Retrieve current flow state
             flow = await self.get_collection_flow(flow_id, session)
-            
+
             # Determine failure handling strategy
             if error.is_retryable and error.retry_count < error.max_retries:
                 # Transient failure - schedule retry
                 await self._schedule_adapter_retry(
                     flow_id, adapter_id, error.retry_delay, session
                 )
-                
+
                 # Update flow status to indicate retry in progress
                 flow.status = "retrying"
                 flow.metadata.update({
@@ -528,19 +538,19 @@ class CollectionFlowStateManager:
                     'retry_scheduled_at': datetime.utcnow() + timedelta(seconds=error.retry_delay),
                     'retry_count': error.retry_count + 1
                 })
-                
+
                 return FailureHandlingResult(
                     action="retry_scheduled",
                     user_notification=None,
                     flow_status="retrying"
                 )
-                
+
             elif partial_data and len(partial_data) > 0:
                 # Partial success - save collected data and continue
                 await self._save_partial_collection_data(
                     flow_id, adapter_id, partial_data, session
                 )
-                
+
                 # Mark adapter as partially completed
                 flow.metadata.setdefault('adapter_results', {})[adapter_id] = {
                     'status': 'partial_success',
@@ -548,14 +558,14 @@ class CollectionFlowStateManager:
                     'error': error.to_dict(),
                     'completed_at': datetime.utcnow()
                 }
-                
+
                 # Continue with other adapters
                 return FailureHandlingResult(
                     action="continue_with_partial_data",
                     user_notification=f"Partial data collected from {adapter_id}. Continuing with other platforms.",
                     flow_status="running"
                 )
-                
+
             else:
                 # Complete failure - mark adapter as failed and continue
                 flow.metadata.setdefault('adapter_results', {})[adapter_id] = {
@@ -563,7 +573,7 @@ class CollectionFlowStateManager:
                     'error': error.to_dict(),
                     'failed_at': datetime.utcnow()
                 }
-                
+
                 # Check if any adapters remain
                 remaining_adapters = self._get_remaining_adapters(flow)
                 if remaining_adapters:
@@ -580,7 +590,7 @@ class CollectionFlowStateManager:
                         user_notification="Automated collection completed with some failures. Proceeding to gap analysis.",
                         flow_status="gap_analysis_pending"
                     )
-            
+
             await session.commit()
 ```
 
@@ -591,6 +601,7 @@ class CollectionFlowStateManager:
 Referenced from ADR-014, here are the specific implementation details:
 
 #### Extended Backend Container
+
 ```dockerfile
 # backend/Dockerfile.collection
 FROM migration_backend:latest
@@ -623,22 +634,23 @@ ENTRYPOINT ["/app/collection-entrypoint.sh"]
 ```
 
 #### Service Discovery Configuration
+
 ```yaml
 # config/collection-service-config.yml
 collection_service:
   enabled: ${COLLECTION_SERVICE_ENABLED:-false}
-  
+
 adapters:
   aws:
     enabled: ${AWS_ADAPTER_ENABLED:-false}
     max_concurrent_requests: 10
     rate_limit_per_second: 5
-  
+
   azure:
     enabled: ${AZURE_ADAPTER_ENABLED:-false}
     max_concurrent_requests: 10
     rate_limit_per_second: 5
-  
+
   gcp:
     enabled: ${GCP_ADAPTER_ENABLED:-false}
     max_concurrent_requests: 10
@@ -647,7 +659,7 @@ adapters:
 deployment:
   mode: ${DEPLOYMENT_MODE:-saas}
   vault_provider: ${VAULT_PROVIDER:-aws_secrets_manager}
-  
+
 logging:
   collection_service:
     level: INFO
@@ -656,9 +668,10 @@ logging:
 ```
 
 #### Docker Compose Integration
+
 ```yaml
 # docker-compose.collection.yml
-version: '3.8'
+version: "3.8"
 
 services:
   migration_backend:
@@ -722,10 +735,10 @@ interface AdaptiveFormProps {
 interface AdaptiveFormBehavior {
   // Dynamic field generation based on gap analysis
   generateDynamicFields(gaps: DataGap[]): FormField[];
-  
+
   // Conditional field display logic
   evaluateConditionalFields(formState: FormState, field: FormField): boolean;
-  
+
   // Progressive disclosure implementation
   determineVisibleSections(completedSections: string[], currentAnswers: FormAnswers): string[];
 }
@@ -733,22 +746,22 @@ interface AdaptiveFormBehavior {
 class AdaptiveFormComponent extends React.Component<AdaptiveFormProps, AdaptiveFormState> {
   /**
    * Adaptive Form Implementation Specification
-   * 
+   *
    * The form adapts based on:
    * 1. Gap analysis results (which of the 22 critical attributes are missing)
    * 2. Application context (technology stack, architecture pattern, business criticality)
    * 3. User responses (conditional field display)
    * 4. Business rules (required fields based on compliance requirements)
    */
-  
+
   private generateAdaptiveFields(): FormField[] {
     const { gapAnalysis, applicationContext } = this.props;
     const fields: FormField[] = [];
-    
+
     // Generate fields for each missing critical attribute
     for (const gap of gapAnalysis.critical_gaps) {
       const fieldConfig = this.getFieldConfigForAttribute(gap.attribute_name);
-      
+
       // Customize field based on application context
       if (gap.attribute_name === 'technology_stack') {
         // Technology stack field adapts based on detected patterns
@@ -758,16 +771,16 @@ class AdaptiveFormComponent extends React.Component<AdaptiveFormProps, AdaptiveF
           fieldConfig.options = DATABASE_TECHNOLOGY_OPTIONS;
         }
       }
-      
+
       // Add conditional display logic
       fieldConfig.displayCondition = this.generateDisplayCondition(gap, applicationContext);
-      
+
       fields.push(fieldConfig);
     }
-    
+
     return fields;
   }
-  
+
   private generateDisplayCondition(gap: DataGap, context: ApplicationContext): ConditionalDisplayRule {
     /**
      * Example: If user selects "Windows Server" as OS, show AD integration questions
@@ -779,10 +792,10 @@ class AdaptiveFormComponent extends React.Component<AdaptiveFormProps, AdaptiveF
       values: gap.trigger_values
     };
   }
-  
+
   render() {
     const { bulkMode } = this.props;
-    
+
     if (bulkMode) {
       return (
         <BulkDataEntryGrid
@@ -819,18 +832,18 @@ interface ModalSequenceProps {
 class ModalSequenceComponent extends React.Component<ModalSequenceProps, ModalSequenceState> {
   /**
    * Modal Sequence Implementation Specification
-   * 
+   *
    * Guided behavior:
    * 1. Dynamic modal sizing based on question count (1-6: single, 7-12: dual, 13+: triple)
    * 2. Sequential flow with validation at each step
    * 3. Progress tracking with completion requirements
    * 4. Adaptive question flow based on previous answers
    */
-  
+
   private calculateModalSequence(): ModalConfiguration[] {
     const { questionnaire } = this.props;
     const totalQuestions = questionnaire.questions.length;
-    
+
     // Dynamic modal sizing algorithm
     if (totalQuestions <= 6) {
       return [
@@ -873,10 +886,10 @@ class ModalSequenceComponent extends React.Component<ModalSequenceProps, ModalSe
       ];
     }
   }
-  
+
   private renderCurrentModal(): JSX.Element {
     const currentModal = this.state.modalSequence[this.state.currentModalIndex];
-    
+
     return (
       <Modal
         title={currentModal.title}
@@ -884,14 +897,14 @@ class ModalSequenceComponent extends React.Component<ModalSequenceProps, ModalSe
         onClose={this.handleModalCancel}
         preventCloseOnBackdrop={true} // Mandatory completion
       >
-        <ProgressIndicator 
+        <ProgressIndicator
           current={this.state.currentModalIndex + 1}
           total={this.state.modalSequence.length}
           questionsCompleted={this.state.totalAnsweredQuestions}
           totalQuestions={this.props.questionnaire.questions.length}
         />
-        
-        <QuestionSections 
+
+        <QuestionSections
           sections={currentModal.sections}
           questions={currentModal.questions}
           answers={this.state.currentAnswers}
@@ -899,7 +912,7 @@ class ModalSequenceComponent extends React.Component<ModalSequenceProps, ModalSe
           validation={this.state.validationErrors}
           adaptiveLogic={this.adaptiveQuestionLogic}
         />
-        
+
         <ModalNavigation
           canProceed={this.validateCurrentModal()}
           onNext={this.handleNextModal}
@@ -910,7 +923,7 @@ class ModalSequenceComponent extends React.Component<ModalSequenceProps, ModalSe
       </Modal>
     );
   }
-  
+
   private adaptiveQuestionLogic = (question: Question, currentAnswers: Answers): QuestionDisplayState => {
     /**
      * Example adaptive logic:
@@ -918,17 +931,17 @@ class ModalSequenceComponent extends React.Component<ModalSequenceProps, ModalSe
      * - If architecture_pattern is "microservices", show container orchestration questions
      * - If compliance_requirements includes "HIPAA", show healthcare-specific questions
      */
-    
+
     if (question.conditional_logic) {
       const dependentAnswer = currentAnswers[question.conditional_logic.dependent_field];
-      
+
       if (question.conditional_logic.show_when_values.includes(dependentAnswer)) {
         return { visible: true, required: question.conditional_logic.required };
       } else {
         return { visible: false, required: false };
       }
     }
-    
+
     return { visible: true, required: question.required };
   };
 }
@@ -943,7 +956,7 @@ class CollectionFlowStateMachine:
     """
     Manages Collection Flow state transitions with explicit handling of all scenarios
     """
-    
+
     VALID_TRANSITIONS = {
         'pending': ['platform_detection', 'cancelled'],
         'platform_detection': ['automated_collection', 'gap_analysis', 'failed'],
@@ -957,34 +970,34 @@ class CollectionFlowStateMachine:
         'cancelled': [],
         'handoff_to_discovery': []
     }
-    
+
     async def transition_state(
-        self, 
-        flow_id: UUID, 
-        from_state: str, 
+        self,
+        flow_id: UUID,
+        from_state: str,
         to_state: str,
         transition_data: Optional[Dict] = None
     ) -> StateTransitionResult:
         """
         Execute state transition with validation and side effects
         """
-        
+
         # Validate transition is allowed
         if to_state not in self.VALID_TRANSITIONS.get(from_state, []):
             raise InvalidStateTransitionError(
                 f"Invalid transition from {from_state} to {to_state}"
             )
-        
+
         async with AsyncSessionLocal() as session:
             flow = await self.get_collection_flow(flow_id, session)
-            
+
             # Execute pre-transition side effects
             await self._execute_pre_transition_effects(flow, from_state, to_state, transition_data)
-            
+
             # Update flow state
             flow.status = to_state
             flow.updated_at = datetime.utcnow()
-            
+
             # Add transition to history
             transition_record = StateTransition(
                 flow_id=flow_id,
@@ -994,66 +1007,65 @@ class CollectionFlowStateMachine:
                 transitioned_at=datetime.utcnow()
             )
             session.add(transition_record)
-            
+
             # Execute post-transition side effects
             await self._execute_post_transition_effects(flow, from_state, to_state, transition_data)
-            
+
             await session.commit()
-            
+
             return StateTransitionResult(
                 success=True,
                 new_state=to_state,
                 side_effects_executed=True
             )
-    
+
     async def _execute_pre_transition_effects(
-        self, 
-        flow: CollectionFlow, 
-        from_state: str, 
+        self,
+        flow: CollectionFlow,
+        from_state: str,
         to_state: str,
         transition_data: Optional[Dict]
     ):
         """Execute side effects before state transition"""
-        
+
         if to_state == 'automated_collection':
             # Initialize adapter configurations
             await self._initialize_adapters(flow)
-            
+
         elif to_state == 'gap_analysis':
             # Calculate confidence scores for collected data
             await self._calculate_interim_confidence_scores(flow)
-            
+
         elif to_state == 'manual_collection':
             # Generate adaptive questionnaires
             await self._generate_questionnaires(flow, transition_data.get('gap_analysis_results'))
-            
+
         elif to_state == 'completed':
             # Calculate final confidence scores
             await self._calculate_final_confidence_scores(flow)
-            
+
         elif to_state == 'handoff_to_discovery':
             # Prepare data for Discovery Flow
             await self._prepare_discovery_handoff_data(flow)
-    
+
     async def _execute_post_transition_effects(
-        self, 
-        flow: CollectionFlow, 
-        from_state: str, 
+        self,
+        flow: CollectionFlow,
+        from_state: str,
         to_state: str,
         transition_data: Optional[Dict]
     ):
         """Execute side effects after state transition"""
-        
+
         # Send notifications
         await self._send_state_transition_notifications(flow, from_state, to_state)
-        
+
         # Update UI state
         await self._broadcast_state_update(flow)
-        
+
         # Trigger next phase if applicable
         if to_state == 'completed':
             await self._trigger_discovery_flow_creation(flow)
 ```
 
 This detailed specification addresses all the implementation ambiguities identified by Gemini 2.5 Pro, providing concrete guidance for faithful implementation that aligns with architectural principles and delivers the intended business value.
-

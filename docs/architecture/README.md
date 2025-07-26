@@ -10,60 +10,60 @@ graph TB
         UI[Next.js Frontend]
         CLI[CLI Tools]
     end
-    
+
     subgraph "API Gateway"
         APIGW[FastAPI Gateway]
     end
-    
+
     subgraph "Application Layer"
         AUTH[Auth Service]
         DISCOVERY[Discovery Service]
         COLLECTION[Collection Service]
         ASSESSMENT[Assessment Service]
     end
-    
+
     subgraph "AI Layer"
         CREWS[CrewAI Agents]
         ADAPTERS[Platform Adapters]
     end
-    
+
     subgraph "Data Layer"
         PG[(PostgreSQL)]
         REDIS[(Redis Cache)]
         S3[Object Storage]
     end
-    
+
     subgraph "External Services"
         AWS[AWS APIs]
         AZURE[Azure APIs]
         GCP[GCP APIs]
         OPENAI[OpenAI API]
     end
-    
+
     UI --> APIGW
     CLI --> APIGW
     APIGW --> AUTH
     APIGW --> DISCOVERY
     APIGW --> COLLECTION
     APIGW --> ASSESSMENT
-    
+
     DISCOVERY --> CREWS
     COLLECTION --> ADAPTERS
-    
+
     ADAPTERS --> AWS
     ADAPTERS --> AZURE
     ADAPTERS --> GCP
-    
+
     CREWS --> OPENAI
-    
+
     AUTH --> PG
     DISCOVERY --> PG
     COLLECTION --> PG
     ASSESSMENT --> PG
-    
+
     AUTH --> REDIS
     DISCOVERY --> REDIS
-    
+
     COLLECTION --> S3
 ```
 
@@ -127,7 +127,7 @@ graph LR
         VALID[Input Validation]
         AUDIT[Audit Logging]
     end
-    
+
     REQUEST[Client Request] --> WAF
     WAF --> TLS
     TLS --> AUTH
@@ -179,26 +179,31 @@ Services:
 ## Design Principles
 
 ### 1. Separation of Concerns
+
 - Clear boundaries between layers
 - Single responsibility principle
 - Dependency injection
 
 ### 2. Security First
+
 - Defense in depth
 - Least privilege access
 - Encryption at rest and in transit
 
 ### 3. Scalability
+
 - Stateless services
 - Async processing
 - Efficient caching
 
 ### 4. Maintainability
+
 - Comprehensive testing
 - Clear documentation
 - Consistent coding standards
 
 ### 5. Observability
+
 - Structured logging
 - Distributed tracing
 - Metrics collection
@@ -214,11 +219,11 @@ class CloudAdapter(ABC):
     @abstractmethod
     async def discover_resources(self) -> List[Resource]:
         pass
-    
+
     @abstractmethod
     async def get_resource_details(self, resource_id: str) -> ResourceDetails:
         pass
-    
+
     @abstractmethod
     async def validate_credentials(self) -> bool:
         pass
@@ -233,7 +238,7 @@ class DiscoveryAgent:
         ResourceAnalyzer(),
         DependencyMapper(),
     ]
-    
+
     async def analyze_environment(self) -> EnvironmentAssessment:
         # Agent logic here
         pass
@@ -243,17 +248,20 @@ class DiscoveryAgent:
 
 ### Optimization Strategies
 
-1. **Database**: 
+1. **Database**:
+
    - Connection pooling
    - Query optimization
    - Proper indexing
 
 2. **Caching**:
+
    - Redis for session data
    - API response caching
    - Static asset caching
 
 3. **Async Processing**:
+
    - Async API endpoints
    - Background task processing
    - Parallel data collection

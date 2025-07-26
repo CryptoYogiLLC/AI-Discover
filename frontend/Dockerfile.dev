@@ -1,0 +1,42 @@
+# Development Dockerfile for frontend
+FROM node:24-alpine
+
+# Install necessary packages
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+
+# Copy package files with proper ownership
+COPY --chown=nextjs:nodejs package.json package-lock.json* ./
+
+# Create directories with proper permissions before switching user
+RUN mkdir -p /app/.npm /app/node_modules && \
+    chown -R nextjs:nodejs /app/.npm /app/node_modules /app
+
+# Switch to non-root user
+USER nextjs
+
+# Set npm cache directory
+ENV NPM_CONFIG_CACHE=/app/.npm
+
+# Install dependencies with security flag
+RUN npm ci --ignore-scripts
+
+# Copy source files
+COPY --chown=nextjs:nodejs . .
+
+# Copy health check script
+COPY --chown=nextjs:nodejs healthcheck.js ./
+
+# Expose port
+EXPOSE 3300
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD ["node", "healthcheck.js"]
+
+# Development server
+CMD ["npm", "run", "dev"]

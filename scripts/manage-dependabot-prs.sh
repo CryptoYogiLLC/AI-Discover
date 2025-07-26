@@ -16,17 +16,17 @@ NC='\033[0m' # No Color
 # Function to categorize PRs
 categorize_prs() {
     echo -e "\n${BLUE}📊 Categorizing PRs...${NC}"
-    
+
     # Get all Dependabot PRs
     MAJOR_UPDATES=()
     MINOR_UPDATES=()
     PATCH_UPDATES=()
     SECURITY_UPDATES=()
-    
+
     while IFS= read -r pr; do
         PR_NUM=$(echo "$pr" | cut -f1)
         PR_TITLE=$(echo "$pr" | cut -f2)
-        
+
         if [[ "$PR_TITLE" == *"security"* ]] || [[ "$PR_TITLE" == *"vulnerability"* ]]; then
             SECURITY_UPDATES+=("$PR_NUM: $PR_TITLE")
         elif [[ "$PR_TITLE" == *"major"* ]] || [[ "$PR_TITLE" =~ [0-9]+\.[0-9]+\.[0-9]+\ to\ [0-9]+\. ]]; then
@@ -37,16 +37,16 @@ categorize_prs() {
             PATCH_UPDATES+=("$PR_NUM: $PR_TITLE")
         fi
     done < <(gh pr list --repo CryptoYogiLLC/AI-Discover --author "app/dependabot" --limit 50 --json number,title --jq '.[] | "\(.number)\t\(.title)"')
-    
+
     echo -e "\n${RED}🚨 Security Updates (${#SECURITY_UPDATES[@]}):${NC}"
     printf '%s\n' "${SECURITY_UPDATES[@]}"
-    
+
     echo -e "\n${YELLOW}⚠️  Major Updates (${#MAJOR_UPDATES[@]}):${NC}"
     printf '%s\n' "${MAJOR_UPDATES[@]}"
-    
+
     echo -e "\n${BLUE}ℹ️  Minor Updates (${#MINOR_UPDATES[@]}):${NC}"
     printf '%s\n' "${MINOR_UPDATES[@]}"
-    
+
     echo -e "\n${GREEN}✓ Patch Updates (${#PATCH_UPDATES[@]}):${NC}"
     printf '%s\n' "${PATCH_UPDATES[@]}"
 }
@@ -55,14 +55,14 @@ categorize_prs() {
 review_pr() {
     local pr_num=$1
     echo -e "\n${BLUE}🔍 Reviewing PR #$pr_num...${NC}"
-    
+
     # Get PR details
     PR_INFO=$(gh pr view "$pr_num" --repo CryptoYogiLLC/AI-Discover --json title,body,files)
-    
+
     # Check CI status
     echo "Checking CI status..."
     gh pr checks "$pr_num" --repo CryptoYogiLLC/AI-Discover
-    
+
     # Prompt for action
     echo -e "\n${YELLOW}What would you like to do?${NC}"
     echo "1) Approve and merge"
@@ -70,7 +70,7 @@ review_pr() {
     echo "3) Request changes"
     echo "4) Skip"
     read -p "Enter choice (1-4): " choice
-    
+
     case $choice in
         1)
             gh pr review "$pr_num" --repo CryptoYogiLLC/AI-Discover --approve
@@ -95,14 +95,14 @@ review_pr() {
 # Function to batch approve safe updates
 batch_approve_safe() {
     echo -e "\n${GREEN}🚀 Batch approving safe updates...${NC}"
-    
+
     # Get all patch updates
     while IFS= read -r pr; do
         PR_NUM=$(echo "$pr" | cut -f1)
         echo "Approving PR #$PR_NUM..."
         gh pr review "$PR_NUM" --repo CryptoYogiLLC/AI-Discover --approve || true
     done < <(gh pr list --repo CryptoYogiLLC/AI-Discover --author "app/dependabot" --limit 50 --json number,title --jq '.[] | select(.title | test("patch|Bump.*from.*to.*\\.[0-9]+$")) | "\(.number)\t\(.title)"')
-    
+
     echo -e "${GREEN}✅ Batch approval complete${NC}"
 }
 
@@ -117,9 +117,9 @@ main_menu() {
         echo "4) Run security audit on all PRs"
         echo "5) Generate PR summary report"
         echo "6) Exit"
-        
+
         read -p "Enter choice (1-6): " choice
-        
+
         case $choice in
             1)
                 categorize_prs

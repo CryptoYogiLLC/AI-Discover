@@ -1,4 +1,9 @@
-version: '3.8'
+# Docker Compose configuration for AI-Discover
+#
+# SECURITY NOTE: This configuration is for LOCAL DEVELOPMENT ONLY.
+# Default passwords and secrets must be replaced with secure values
+# in production environments. Use environment variables to provide
+# secure credentials.
 
 services:
   # PostgreSQL Database
@@ -7,7 +12,7 @@ services:
     container_name: ai-discover-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5442:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -26,7 +31,7 @@ services:
     container_name: ai-discover-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "6479:6379"
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
@@ -44,8 +49,10 @@ services:
     container_name: ai-discover-backend
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8800:8800"
     environment:
+      # Note: Default values are for local development only.
+      # Production deployments must use secure credentials via environment variables.
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_discover}
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY:-your-secret-key-here-change-in-production}
@@ -65,27 +72,27 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./backend:/app:ro
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8800 --reload
 
   # Frontend Application
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: ai-discover-frontend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3300:3300"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_URL=http://localhost:8030
+      - PORT=3300
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app:ro
+      - ./frontend:/app
       - /app/node_modules
       - /app/.next
-    command: npm run dev
 
   # Celery Worker
   celery:
@@ -95,6 +102,8 @@ services:
     container_name: ai-discover-celery
     restart: unless-stopped
     environment:
+      # Note: Default values are for local development only.
+      # Production deployments must use secure credentials via environment variables.
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_discover}
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
@@ -105,7 +114,7 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./backend:/app:ro
+      - ./backend:/app
     command: celery -A app.core.celery worker --loglevel=info
 
   # Celery Beat Scheduler
@@ -116,6 +125,8 @@ services:
     container_name: ai-discover-celery-beat
     restart: unless-stopped
     environment:
+      # Note: Default values are for local development only.
+      # Production deployments must use secure credentials via environment variables.
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_discover}
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
@@ -126,8 +137,8 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./backend:/app:ro
-    command: celery -A app.core.celery beat --loglevel=info
+      - ./backend:/app
+    command: celery -A app.core.celery beat --loglevel=info --schedule=/tmp/celerybeat-schedule
 
   # Flower - Celery Monitoring
   flower:

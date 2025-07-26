@@ -5,6 +5,7 @@ Thank you for your interest in contributing to AI-Discover! This document provid
 ## 🤝 Code of Conduct
 
 By participating in this project, you agree to abide by our code of conduct:
+
 - Be respectful and inclusive
 - Welcome newcomers and help them get started
 - Focus on constructive criticism
@@ -14,11 +15,14 @@ By participating in this project, you agree to abide by our code of conduct:
 
 1. Fork the repository
 2. Clone your fork:
+
    ```bash
    git clone https://github.com/[your-username]/ai-discover.git
    cd ai-discover
    ```
+
 3. Set up the development environment:
+
    ```bash
    ./scripts/setup-dev.sh
    ```
@@ -32,6 +36,7 @@ git checkout -b feature/your-feature-name
 ```
 
 Branch naming conventions:
+
 - `feature/` - New features
 - `fix/` - Bug fixes
 - `docs/` - Documentation updates
@@ -42,6 +47,7 @@ Branch naming conventions:
 ### 2. Make Your Changes
 
 Follow these guidelines:
+
 - Write clean, readable code
 - Follow existing code patterns
 - Add tests for new functionality
@@ -57,6 +63,7 @@ git commit -m "type(scope): description"
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -66,6 +73,7 @@ Types:
 - `chore`: Maintenance tasks
 
 Examples:
+
 ```bash
 git commit -m "feat(backend): add AWS adapter for EC2 discovery"
 git commit -m "fix(frontend): resolve form validation issue"
@@ -124,6 +132,7 @@ git push origin feature/your-feature-name
 - Follow SOLID principles
 
 Example:
+
 ```python
 from typing import List, Optional
 from fastapi import Depends
@@ -137,11 +146,11 @@ async def create_user(
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
     """Create a new user in the database.
-    
+
     Args:
         user_data: User creation data
         db: Database session
-        
+
     Returns:
         Created user data
     """
@@ -158,6 +167,7 @@ async def create_user(
 - Use proper state management (Zustand)
 
 Example:
+
 ```typescript
 interface ButtonProps {
   variant?: 'primary' | 'secondary';
@@ -166,11 +176,11 @@ interface ButtonProps {
   children: React.ReactNode;
 }
 
-export function Button({ 
-  variant = 'primary', 
-  size = 'md', 
-  onClick, 
-  children 
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  onClick,
+  children
 }: ButtonProps) {
   return (
     <button
@@ -204,7 +214,7 @@ from httpx import AsyncClient
 async def test_create_user(async_client: AsyncClient):
     response = await async_client.post(
         "/api/v1/users",
-        json={"email": "test@example.com", "password": "secure123"}
+        json={"email": "test@example.com", "password": "secure123"}  # pragma: allowlist secret
     )
     assert response.status_code == 201
     assert response.json()["email"] == "test@example.com"
@@ -225,7 +235,7 @@ describe('Button', () => {
   it('calls onClick when clicked', () => {
     const handleClick = jest.fn();
     render(<Button onClick={handleClick}>Click me</Button>);
-    
+
     fireEvent.click(screen.getByText('Click me'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -254,6 +264,7 @@ describe('Button', () => {
 ### Bug Reports
 
 Include:
+
 - Clear description of the issue
 - Steps to reproduce
 - Expected vs actual behavior
@@ -263,6 +274,7 @@ Include:
 ### Feature Requests
 
 Include:
+
 - Use case description
 - Proposed solution
 - Alternative solutions considered
@@ -278,6 +290,7 @@ Include:
 ## 🎉 Recognition
 
 Contributors will be:
+
 - Listed in CONTRIBUTORS.md
 - Mentioned in release notes
 - Given credit in commits

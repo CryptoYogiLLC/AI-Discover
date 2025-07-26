@@ -47,7 +47,7 @@ jobs:
         uses: actions/labeler@v5
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          
+
       - name: Add update type label
         run: |
           if [[ "${{ needs.check-dependabot.outputs.update-type }}" == "version-update:semver-major" ]]; then
