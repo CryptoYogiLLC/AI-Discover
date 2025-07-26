@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Essential Development Commands
 
 ### Backend Development
+
 ```bash
 # Start backend with hot reload
 cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -29,6 +30,7 @@ cd backend && alembic upgrade head
 ```
 
 ### Frontend Development
+
 ```bash
 # Start frontend dev server
 cd frontend && npm run dev
@@ -49,6 +51,7 @@ cd frontend && npm run build
 ```
 
 ### Docker Development
+
 ```bash
 # Start all services
 docker-compose up -d
@@ -68,6 +71,7 @@ docker-compose build --no-cache
 ```
 
 ### Security Scanning
+
 ```bash
 # Python security
 bandit -r backend/app
@@ -86,26 +90,32 @@ gitleaks detect
 ## High-Level Architecture
 
 ### Monorepo Structure
+
 This is a monorepo containing both backend (Python/FastAPI) and frontend (Next.js) applications that work together to provide an AI-powered application discovery platform.
 
 ### Backend Architecture (FastAPI + CrewAI)
+
 - **API Layer** (`backend/app/api/v1/`): RESTful endpoints organized by domain
+
   - Auth endpoints handle JWT-based authentication
   - Discovery endpoints manage the AI discovery process
   - Collection flows handle adaptive data collection workflows
-  
+
 - **Core Services** (`backend/app/core/`):
+
   - Database connection pooling with SQLAlchemy async
   - Redis for caching and Celery task broker
   - Middleware for CORS, logging, and error handling
-  
+
 - **AI Integration**: CrewAI agents analyze applications and provide 6R migration recommendations
+
   - Discovery service orchestrates multiple AI agents
   - Adapters for AWS, Azure, and GCP platforms
-  
+
 - **Async Task Processing**: Celery workers handle long-running discovery tasks
 
 ### Frontend Architecture (Next.js + React)
+
 - **App Router**: Uses Next.js 14+ app directory structure
 - **State Management**: Zustand for global state
 - **Data Fetching**: React Query (TanStack Query) for server state
@@ -127,21 +137,25 @@ This is a monorepo containing both backend (Python/FastAPI) and frontend (Next.j
 ## Critical Integration Points
 
 ### API Communication
-- Frontend expects backend at `NEXT_PUBLIC_API_URL` (default: http://localhost:8030)
+
+- Frontend expects backend at `NEXT_PUBLIC_API_URL` (default: <http://localhost:8030>)
 - All API calls use JWT tokens stored in httpOnly cookies
 - API responses follow consistent schema patterns defined in `backend/app/schemas/`
 
 ### Database Schema
+
 - PostgreSQL with async SQLAlchemy ORM
 - Models in `backend/app/models/` define schema
 - Alembic manages migrations
 
 ### Task Queue
+
 - Celery workers process discovery tasks asynchronously
 - Redis serves as message broker
 - Results stored in Redis with TTL
 
 ### Security Requirements
+
 - All endpoints require authentication except `/api/v1/auth/*`
 - Input validation on all user inputs
 - CORS configured for frontend origin only
@@ -150,12 +164,14 @@ This is a monorepo containing both backend (Python/FastAPI) and frontend (Next.j
 ## Development Workflow
 
 1. **Feature Development**:
+
    - Create feature branch from `develop`
    - Implement with tests (maintain >80% coverage)
    - Run linting and security scans
    - Submit PR with all checks passing
 
 2. **Testing Strategy**:
+
    - Unit tests alongside implementation
    - Integration tests in `docker-compose.test.yml`
    - E2E tests for critical user flows
@@ -169,6 +185,7 @@ This is a monorepo containing both backend (Python/FastAPI) and frontend (Next.j
 ## AI Agent Development
 
 When implementing CrewAI agents:
+
 1. Define agent in `backend/app/services/discovery.py`
 2. Create specific task handlers
 3. Implement platform-specific data collection
@@ -198,8 +215,9 @@ When implementing CrewAI agents:
 ## Port Configuration
 
 The application uses non-standard ports to avoid conflicts:
+
 - Frontend: 3300 (dev server)
-- Backend: 8800 (API server)  
+- Backend: 8800 (API server)
 - PostgreSQL: 5442 (mapped from 5432)
 - Redis: 6479 (mapped from 6379)
 - Flower: 5555 (Celery monitoring)
