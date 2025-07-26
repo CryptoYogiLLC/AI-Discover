@@ -1,7 +1,24 @@
 import { NextResponse } from "next/server";
 
+interface HealthCheck {
+  status: string;
+  version?: string;
+  environment?: string;
+  error?: string;
+}
+
+interface HealthStatus {
+  status: string;
+  timestamp: string;
+  environment: string | undefined;
+  checks: {
+    frontend: HealthCheck;
+    backend?: HealthCheck;
+  };
+}
+
 export async function GET() {
-  const healthStatus = {
+  const healthStatus: HealthStatus = {
     status: "healthy",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
