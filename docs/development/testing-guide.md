@@ -82,10 +82,10 @@ from tests.utils.test_helpers import TestHelpers
 
 class TestFeature:
     """Test feature functionality."""
-    
+
     @pytest.mark.asyncio
     async def test_feature_behavior(
-        self, 
+        self,
         async_client: AsyncClient,
         test_user: User,
         mock_redis
@@ -93,10 +93,10 @@ class TestFeature:
         """Test specific behavior."""
         # Arrange
         data = {"key": "value"}
-        
+
         # Act
         response = await async_client.post("/api/v1/feature", json=data)
-        
+
         # Assert
         assert response.status_code == 200
         result = response.json()
@@ -116,12 +116,12 @@ describe("Feature Component", () => {
     // Arrange
     const mockData = { id: 1, name: "Test" };
     jest.mocked(apiCall).mockResolvedValue(mockApiResponse(mockData));
-    
+
     // Act
     const { user } = render(<Feature />);
     const button = screen.getByRole("button", { name: /submit/i });
     await user.click(button);
-    
+
     // Assert
     await waitFor(() => {
       expect(screen.getByText(mockData.name)).toBeInTheDocument();
@@ -133,18 +133,21 @@ describe("Feature Component", () => {
 ## Test Categories
 
 ### Unit Tests
+
 - Test individual functions/components in isolation
 - Mock all external dependencies
 - Should be fast and deterministic
 - Aim for high coverage of business logic
 
 ### Integration Tests
+
 - Test interaction between components
 - Use real database (test database)
 - Test API endpoints end-to-end
 - May include external service mocks
 
 ### E2E Tests (Future)
+
 - Test complete user workflows
 - Run against deployed application
 - Simulate real user behavior
@@ -155,6 +158,7 @@ describe("Feature Component", () => {
 ### Backend Fixtures (pytest)
 
 Available fixtures in `conftest.py`:
+
 - `async_client`: HTTP client for API testing
 - `test_db`: Database session for test
 - `test_user`: Regular user fixture
@@ -167,6 +171,7 @@ Available fixtures in `conftest.py`:
 ### Frontend Test Utils
 
 Available in `src/test-utils/`:
+
 - `render`: Custom render with providers
 - `generateMockUser`: Create test user data
 - `generateMockDiscovery`: Create test discovery data
@@ -189,11 +194,13 @@ Both backend and frontend require **80% code coverage**:
 After running tests with coverage:
 
 **Backend:**
+
 - Terminal: Coverage shown in test output
 - HTML: Open `backend/htmlcov/index.html`
 - XML: `backend/coverage.xml` (for CI)
 
 **Frontend:**
+
 - Terminal: Coverage shown in test output
 - HTML: Open `frontend/coverage/lcov-report/index.html`
 - JSON: `frontend/coverage/coverage-summary.json`
@@ -201,16 +208,19 @@ After running tests with coverage:
 ## Testing Best Practices
 
 ### 1. Follow AAA Pattern
+
 - **Arrange**: Set up test data and conditions
 - **Act**: Execute the code being tested
 - **Assert**: Verify the results
 
 ### 2. Keep Tests Independent
+
 - Each test should be able to run in isolation
 - Don't depend on test execution order
 - Clean up after tests (handled by fixtures)
 
 ### 3. Use Descriptive Names
+
 ```python
 # Good
 async def test_user_can_login_with_valid_credentials():
@@ -220,17 +230,21 @@ async def test_login():
 ```
 
 ### 4. Test One Thing
+
 Each test should verify a single behavior or requirement.
 
 ### 5. Use Fixtures and Utilities
+
 Don't repeat setup code - use the provided fixtures and utilities.
 
 ### 6. Mock External Dependencies
+
 - Mock API calls to external services
 - Mock time-dependent operations
 - Mock file system operations
 
 ### 7. Test Edge Cases
+
 - Empty inputs
 - Invalid data
 - Boundary conditions
@@ -270,11 +284,13 @@ cd frontend && npm test -- --verbose
 ## Continuous Integration
 
 Tests run automatically on:
+
 - Every push to `main` or `develop`
 - Every pull request
 - Manual workflow dispatch
 
 Failed tests will:
+
 - Block PR merging
 - Prevent deployment
 - Notify via GitHub Actions

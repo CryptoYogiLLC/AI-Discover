@@ -9,27 +9,30 @@ This document provides a comprehensive security hardening checklist for producti
 ### 1. Secrets Management
 
 - [ ] **Generate Strong Secrets**
+
   ```bash
   # Generate SECRET_KEY
   openssl rand -hex 32
-  
+
   # Generate database passwords
   openssl rand -base64 32
-  
+
   # Generate Redis password
   openssl rand -base64 32
   ```
 
 - [ ] **Never Use Default Passwords**
+
   - Change all default passwords in `.env.production`
   - Ensure no passwords contain dictionary words
   - Use minimum 16 characters with mixed case, numbers, and symbols
 
 - [ ] **Secure Storage**
+
   ```bash
   # Encrypt .env.production file
   gpg --symmetric --cipher-algo AES256 .env.production
-  
+
   # Store encrypted backup
   aws s3 cp .env.production.gpg s3://secure-bucket/backups/
   ```
@@ -43,15 +46,17 @@ This document provides a comprehensive security hardening checklist for producti
 ### 2. SSL/TLS Configuration
 
 - [ ] **Valid SSL Certificates**
+
   ```bash
   # Verify certificate
   openssl x509 -in nginx/ssl/cert.pem -text -noout
-  
+
   # Check expiration
   openssl x509 -in nginx/ssl/cert.pem -noout -dates
   ```
 
 - [ ] **Strong TLS Configuration**
+
   ```nginx
   # In nginx.conf
   ssl_protocols TLSv1.2 TLSv1.3;
@@ -61,6 +66,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Enable HSTS**
+
   ```nginx
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
   ```
@@ -68,6 +74,7 @@ This document provides a comprehensive security hardening checklist for producti
 ### 3. Network Security
 
 - [ ] **Firewall Configuration**
+
   ```bash
   # UFW setup
   sudo ufw default deny incoming
@@ -79,6 +86,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **SSH Hardening**
+
   ```bash
   # Edit /etc/ssh/sshd_config
   PermitRootLogin no
@@ -88,10 +96,11 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Fail2Ban Configuration**
+
   ```bash
   # Install fail2ban
   sudo apt-get install fail2ban
-  
+
   # Configure for SSH and nginx
   sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
   sudo systemctl enable fail2ban
@@ -102,6 +111,7 @@ This document provides a comprehensive security hardening checklist for producti
 ### 4. API Security
 
 - [ ] **Rate Limiting**
+
   ```nginx
   # In nginx.conf
   limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
@@ -109,6 +119,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **CORS Configuration**
+
   ```python
   # Only allow specific origins
   BACKEND_CORS_ORIGINS = ["https://your-domain.com"]
@@ -122,6 +133,7 @@ This document provides a comprehensive security hardening checklist for producti
 ### 5. Database Security
 
 - [ ] **Connection Security**
+
   ```bash
   # Force SSL connections
   docker-compose -f docker-compose.prod.yml exec postgres \
@@ -130,18 +142,20 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **User Privileges**
+
   ```sql
   -- Create application user with limited privileges
   CREATE USER app_user WITH PASSWORD 'strong_password';
   GRANT CONNECT ON DATABASE ai_discover_production TO app_user;
   GRANT USAGE ON SCHEMA public TO app_user;
   GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
-  
+
   -- Revoke unnecessary privileges
   REVOKE CREATE ON SCHEMA public FROM PUBLIC;
   ```
 
 - [ ] **Backup Encryption**
+
   ```bash
   # Encrypt backups
   pg_dump $DATABASE_URL | gpg --symmetric --cipher-algo AES256 > backup.sql.gpg
@@ -150,6 +164,7 @@ This document provides a comprehensive security hardening checklist for producti
 ### 6. Container Security
 
 - [ ] **Non-Root Users**
+
   ```dockerfile
   # In Dockerfile
   RUN useradd -m -u 1000 appuser
@@ -157,6 +172,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Read-Only Filesystems**
+
   ```yaml
   # In docker-compose.prod.yml
   services:
@@ -167,6 +183,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Security Scanning**
+
   ```bash
   # Scan images for vulnerabilities
   trivy image ai-discover/backend:latest
@@ -178,6 +195,7 @@ This document provides a comprehensive security hardening checklist for producti
 ### 7. Monitoring and Logging
 
 - [ ] **Centralized Logging**
+
   ```yaml
   # In docker-compose.prod.yml
   logging:
@@ -188,11 +206,13 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Security Monitoring**
+
   - Enable audit logging
   - Monitor failed authentication attempts
   - Alert on suspicious patterns
 
 - [ ] **Log Rotation**
+
   ```bash
   # Configure logrotate
   cat > /etc/logrotate.d/ai-discover << EOF
@@ -210,10 +230,12 @@ This document provides a comprehensive security hardening checklist for producti
 ### 8. Access Control
 
 - [ ] **Multi-Factor Authentication**
+
   - Enable MFA for all admin accounts
   - Use TOTP or hardware tokens
 
 - [ ] **Role-Based Access Control**
+
   ```python
   # Implement RBAC in application
   ROLES = {
@@ -224,6 +246,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Session Security**
+
   ```python
   # Secure session configuration
   SESSION_COOKIE_SECURE = True
@@ -234,6 +257,7 @@ This document provides a comprehensive security hardening checklist for producti
 ### 9. Data Protection
 
 - [ ] **Encryption at Rest**
+
   ```bash
   # Encrypt database volume
   cryptsetup luksFormat /dev/sdb1
@@ -241,6 +265,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Encryption in Transit**
+
   - All internal communication over TLS
   - Redis with password authentication
   - PostgreSQL with SSL required
@@ -255,16 +280,19 @@ This document provides a comprehensive security hardening checklist for producti
 ### 10. Compliance Requirements
 
 - [ ] **GDPR Compliance**
+
   - Data retention policies
   - Right to erasure implementation
   - Privacy policy endpoint
 
 - [ ] **SOC2 Requirements**
+
   - Access logging
   - Change management
   - Incident response plan
 
 - [ ] **Security Headers**
+
   ```nginx
   # Security headers in nginx
   add_header X-Frame-Options "SAMEORIGIN" always;
@@ -277,16 +305,19 @@ This document provides a comprehensive security hardening checklist for producti
 ### 11. Regular Security Tasks
 
 - [ ] **Daily Tasks**
+
   - Review authentication logs
   - Check for failed login attempts
   - Monitor resource usage
 
 - [ ] **Weekly Tasks**
+
   - Review security alerts
   - Check for system updates
   - Audit user access
 
 - [ ] **Monthly Tasks**
+
   - Security patches
   - Certificate renewal check
   - Vulnerability scanning
@@ -301,16 +332,18 @@ This document provides a comprehensive security hardening checklist for producti
 ### 12. Vulnerability Testing
 
 - [ ] **Dependency Scanning**
+
   ```bash
   # Python dependencies
   pip-audit
   bandit -r backend/
-  
+
   # JavaScript dependencies
   cd frontend && npm audit
   ```
 
 - [ ] **Container Scanning**
+
   ```bash
   # Scan all images
   for image in $(docker-compose -f docker-compose.prod.yml config | grep 'image:' | awk '{print $2}'); do
@@ -319,6 +352,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Secret Scanning**
+
   ```bash
   # Scan for secrets
   gitleaks detect --source . --verbose
@@ -327,6 +361,7 @@ This document provides a comprehensive security hardening checklist for producti
 ### 13. Penetration Testing
 
 - [ ] **API Security Testing**
+
   ```bash
   # OWASP ZAP
   docker run -t owasp/zap2docker-stable zap-api-scan.py \
@@ -345,18 +380,20 @@ This document provides a comprehensive security hardening checklist for producti
 ### 14. Incident Response Plan
 
 - [ ] **Detection**
+
   - Monitoring alerts configured
   - Log analysis automated
   - Anomaly detection enabled
 
 - [ ] **Response Procedures**
+
   ```bash
   # Emergency shutdown
   ./scripts/emergency-shutdown.sh
-  
+
   # Rotate credentials
   ./scripts/rotate-all-credentials.sh
-  
+
   # Preserve evidence
   ./scripts/collect-forensics.sh
   ```
@@ -371,6 +408,7 @@ This document provides a comprehensive security hardening checklist for producti
 ### 15. Automated Security
 
 - [ ] **CI/CD Security**
+
   ```yaml
   # In .github/workflows/security.yml
   - name: Security Scan
@@ -381,6 +419,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Automated Patching**
+
   ```bash
   # Unattended upgrades
   sudo apt-get install unattended-upgrades
@@ -388,6 +427,7 @@ This document provides a comprehensive security hardening checklist for producti
   ```
 
 - [ ] **Security Monitoring**
+
   ```yaml
   # Prometheus alerts
   - alert: SuspiciousActivity

@@ -39,7 +39,7 @@ class CrewContext(BaseModel):
     target_type: str
     target_id: str
     metadata: Dict[str, Any] = Field(default_factory=dict)
-    
+
 class BaseCrewOutput(BaseModel):
     """Base output model for all crews"""
     success: bool
@@ -50,33 +50,33 @@ class BaseCrewOutput(BaseModel):
 
 class BaseCrew(ABC):
     """Base class for all AI-Discover crews"""
-    
+
     def __init__(self, context: CrewContext):
         self.context = context
         self.agents: List[Agent] = []
         self.tasks: List[Task] = []
         self._setup_agents()
         self._setup_tasks()
-        
+
     @abstractmethod
     def _setup_agents(self) -> None:
         """Initialize crew agents"""
         pass
-        
+
     @abstractmethod
     def _setup_tasks(self) -> None:
         """Initialize crew tasks"""
         pass
-        
+
     @abstractmethod
     def get_crew_config(self) -> Dict[str, Any]:
         """Return crew configuration"""
         pass
-        
+
     def create_crew(self) -> Crew:
         """Create and configure the crew"""
         config = self.get_crew_config()
-        
+
         return Crew(
             agents=self.agents,
             tasks=self.tasks,
@@ -87,26 +87,26 @@ class BaseCrew(ABC):
             max_rpm=config.get('max_rpm', 10),
             share_crew=config.get('share_crew', False)
         )
-        
+
     async def execute(self, inputs: Dict[str, Any]) -> BaseCrewOutput:
         """Execute the crew with given inputs"""
         try:
             crew = self.create_crew()
-            
+
             # Add context to inputs
             enriched_inputs = {
                 **inputs,
                 'context': self.context.model_dump()
             }
-            
+
             # Execute crew
             result = await crew.kickoff_async(inputs=enriched_inputs)
-            
+
             # Parse and return results
             return self._parse_crew_output(result)
-            
+
         except Exception as e:
-            logger.error(f"Crew execution failed: {str(e)}", 
+            logger.error(f"Crew execution failed: {str(e)}",
                         crew=self.__class__.__name__,
                         context=self.context.model_dump())
             return BaseCrewOutput(
@@ -115,7 +115,7 @@ class BaseCrew(ABC):
                 results={},
                 errors=[str(e)]
             )
-            
+
     @abstractmethod
     def _parse_crew_output(self, raw_output: Any) -> BaseCrewOutput:
         """Parse raw crew output into structured format"""
@@ -166,14 +166,14 @@ from app.agents.base_agent import BaseAgent
 
 class AssetIntelligenceAgent(BaseAgent):
     """Agent specialized in discovering and analyzing infrastructure assets"""
-    
+
     def __init__(self, llm: Optional[ChatOpenAI] = None):
         super().__init__(
             role="Asset Intelligence Specialist",
             goal="Discover and analyze all infrastructure assets, services, and dependencies to provide comprehensive visibility",
-            backstory="""You are an expert in cloud infrastructure and application discovery. 
-            With years of experience across AWS, Azure, and GCP, you excel at identifying 
-            assets, understanding their relationships, and detecting patterns that others miss. 
+            backstory="""You are an expert in cloud infrastructure and application discovery.
+            With years of experience across AWS, Azure, and GCP, you excel at identifying
+            assets, understanding their relationships, and detecting patterns that others miss.
             You approach discovery methodically, ensuring no asset is overlooked.""",
             llm=llm or ChatOpenAI(model="gpt-4", temperature=0.1),
             tools=self._get_tools(),
@@ -181,7 +181,7 @@ class AssetIntelligenceAgent(BaseAgent):
             allow_delegation=False,
             max_iter=10
         )
-        
+
     def _get_tools(self) -> List:
         """Initialize agent tools"""
         return [
@@ -189,19 +189,19 @@ class AssetIntelligenceAgent(BaseAgent):
             ServiceDiscoveryTool(),
             CredentialValidator()
         ]
-        
+
     def create_discovery_task(self, target: Dict[str, Any]) -> Dict[str, Any]:
         """Create a discovery task for the agent"""
         return {
             "description": f"""Discover all assets for {target['type']} {target['id']}.
-            
+
             Requirements:
             1. Scan all available cloud platforms
             2. Identify compute, storage, network, and database resources
             3. Map service dependencies and integrations
             4. Document access levels and permissions
             5. Note any discovery limitations or access issues
-            
+
             Output a comprehensive asset inventory with:
             - Resource IDs and metadata
             - Service configurations
@@ -226,14 +226,14 @@ from app.agents.base_agent import BaseAgent
 
 class PlatformDetectionAgent(BaseAgent):
     """Agent specialized in assessing platform capabilities and automation potential"""
-    
+
     def __init__(self, llm: Optional[ChatOpenAI] = None):
         super().__init__(
             role="Platform Capability Assessor",
             goal="Evaluate platform capabilities, API availability, and automation potential to determine optimal collection strategies",
-            backstory="""You are a platform integration expert who understands the nuances 
-            of different cloud environments and their APIs. You excel at quickly assessing 
-            what's possible in any given environment and recommending the most efficient 
+            backstory="""You are a platform integration expert who understands the nuances
+            of different cloud environments and their APIs. You excel at quickly assessing
+            what's possible in any given environment and recommending the most efficient
             data collection approach. Your assessments are always practical and actionable.""",
             llm=llm or ChatOpenAI(model="gpt-4", temperature=0.2),
             tools=self._get_tools(),
@@ -241,7 +241,7 @@ class PlatformDetectionAgent(BaseAgent):
             allow_delegation=True,
             max_iter=8
         )
-        
+
     def _get_tools(self) -> List:
         """Initialize agent tools"""
         return [
@@ -249,27 +249,27 @@ class PlatformDetectionAgent(BaseAgent):
             APIEndpointValidator(),
             EnvironmentAnalyzer()
         ]
-        
+
     def create_assessment_task(self, discovered_assets: Dict[str, Any]) -> Dict[str, Any]:
         """Create a platform assessment task"""
         return {
             "description": f"""Assess platform capabilities based on discovered assets.
-            
+
             Assets: {discovered_assets}
-            
+
             Evaluate:
             1. API availability and access levels
             2. Automation capabilities for each platform
             3. Data collection methods available
             4. Security constraints and limitations
             5. Integration complexity
-            
+
             Determine the appropriate automation tier (1-4) with:
             - Tier 1: Full API access, modern cloud-native
             - Tier 2: Partial API access, mixed environment
             - Tier 3: Limited access, file-based collection
             - Tier 4: Manual only, air-gapped environment
-            
+
             Provide detailed justification for tier selection.
             """,
             "expected_output": "Tier assessment with capabilities and justification",
@@ -289,14 +289,14 @@ from app.agents.base_agent import BaseAgent
 
 class PatternRecognitionAgent(BaseAgent):
     """Agent specialized in identifying patterns and making intelligent recommendations"""
-    
+
     def __init__(self, llm: Optional[ChatOpenAI] = None):
         super().__init__(
             role="Pattern Recognition Specialist",
             goal="Identify patterns, anomalies, and optimization opportunities to provide intelligent recommendations",
-            backstory="""You are a pattern recognition expert with deep experience in 
-            analyzing complex systems. You excel at identifying commonalities, detecting 
-            anomalies, and recognizing opportunities that lead to better outcomes. Your 
+            backstory="""You are a pattern recognition expert with deep experience in
+            analyzing complex systems. You excel at identifying commonalities, detecting
+            anomalies, and recognizing opportunities that lead to better outcomes. Your
             insights often reveal hidden connections and optimization paths.""",
             llm=llm or ChatOpenAI(model="gpt-4", temperature=0.3),
             tools=self._get_tools(),
@@ -304,7 +304,7 @@ class PatternRecognitionAgent(BaseAgent):
             allow_delegation=False,
             max_iter=6
         )
-        
+
     def _get_tools(self) -> List:
         """Initialize agent tools"""
         return [
@@ -312,24 +312,24 @@ class PatternRecognitionAgent(BaseAgent):
             SimilarityDetector(),
             AnomalyIdentifier()
         ]
-        
-    def create_synthesis_task(self, 
-                            asset_data: Dict[str, Any], 
+
+    def create_synthesis_task(self,
+                            asset_data: Dict[str, Any],
                             platform_assessment: Dict[str, Any]) -> Dict[str, Any]:
         """Create a synthesis task combining discoveries"""
         return {
             "description": f"""Synthesize findings to create optimal collection strategy.
-            
+
             Asset Data: {asset_data}
             Platform Assessment: {platform_assessment}
-            
+
             Analyze:
             1. Identify patterns in the infrastructure
             2. Detect anomalies or special cases
             3. Recognize similar applications for bulk processing
             4. Find optimization opportunities
             5. Recommend collection priorities
-            
+
             Create a comprehensive strategy that:
             - Maximizes automation efficiency
             - Groups similar assets for bulk processing
@@ -354,14 +354,14 @@ from app.agents.base_agent import BaseAgent
 
 class DataQualityAgent(BaseAgent):
     """Agent specialized in ensuring data quality and completeness"""
-    
+
     def __init__(self, llm: Optional[ChatOpenAI] = None):
         super().__init__(
             role="Data Quality Assurance Specialist",
             goal="Ensure collected data meets quality standards and identify gaps for accurate 6R recommendations",
-            backstory="""You are a data quality expert who understands the critical 
-            importance of complete and accurate data for migration decisions. You have 
-            a keen eye for detail and never let incomplete or inconsistent data pass 
+            backstory="""You are a data quality expert who understands the critical
+            importance of complete and accurate data for migration decisions. You have
+            a keen eye for detail and never let incomplete or inconsistent data pass
             through. Your validation ensures confident 6R recommendations.""",
             llm=llm or ChatOpenAI(model="gpt-4", temperature=0.1),
             tools=self._get_tools(),
@@ -369,7 +369,7 @@ class DataQualityAgent(BaseAgent):
             allow_delegation=False,
             max_iter=5
         )
-        
+
     def _get_tools(self) -> List:
         """Initialize agent tools"""
         return [
@@ -377,16 +377,16 @@ class DataQualityAgent(BaseAgent):
             GapAnalyzer(),
             QualityScorer()
         ]
-        
+
     def create_validation_task(self, collected_data: Dict[str, Any]) -> Dict[str, Any]:
         """Create a data validation task"""
         return {
             "description": f"""Validate collected data quality and completeness.
-            
+
             Data: {collected_data}
-            
+
             Validate against 22 critical attributes:
-            
+
             Infrastructure (6):
             1. Operating System & Version
             2. CPU/Memory/Storage Specifications
@@ -394,7 +394,7 @@ class DataQualityAgent(BaseAgent):
             4. Virtualization Platform
             5. Performance Baseline
             6. Availability Requirements
-            
+
             Application (8):
             7. Technology Stack
             8. Architecture Pattern
@@ -404,25 +404,25 @@ class DataQualityAgent(BaseAgent):
             12. Business Logic Complexity
             13. Configuration Complexity
             14. Security Requirements
-            
+
             Business Context (4):
             15. Business Criticality
             16. Change Tolerance
             17. Compliance Constraints
             18. Stakeholder Impact
-            
+
             Technical Debt (4):
             19. Code Quality Metrics
             20. Security Vulnerabilities
             21. EOL Technology
             22. Documentation Quality
-            
+
             For each attribute:
             - Check if present and valid
             - Assess data quality (0-1 score)
             - Identify critical gaps
             - Suggest collection methods for missing data
-            
+
             Calculate overall completeness and confidence scores.
             """,
             "expected_output": "Data quality report with gaps and recommendations",
@@ -455,19 +455,19 @@ class TierAssessmentOutput(BaseCrewOutput):
 
 class PlatformDetectionCrew(BaseCrew):
     """Crew for detecting platform capabilities and recommending automation tier"""
-    
+
     def _setup_agents(self) -> None:
         """Initialize crew agents"""
         self.asset_intel = AssetIntelligenceAgent()
         self.platform_detector = PlatformDetectionAgent()
         self.pattern_recognizer = PatternRecognitionAgent()
-        
+
         self.agents = [
             self.asset_intel.agent,
             self.platform_detector.agent,
             self.pattern_recognizer.agent
         ]
-        
+
     def _setup_tasks(self) -> None:
         """Initialize crew tasks"""
         # Task 1: Asset Discovery
@@ -478,7 +478,7 @@ class PlatformDetectionCrew(BaseCrew):
             expected_output="Comprehensive asset inventory with metadata",
             agent=self.asset_intel.agent
         )
-        
+
         # Task 2: Platform Assessment
         self.assessment_task = Task(
             description="""Assess platform capabilities based on discovered assets.
@@ -488,7 +488,7 @@ class PlatformDetectionCrew(BaseCrew):
             agent=self.platform_detector.agent,
             context=[self.discovery_task]
         )
-        
+
         # Task 3: Strategy Synthesis
         self.synthesis_task = Task(
             description="""Synthesize findings into optimal collection strategy.
@@ -498,13 +498,13 @@ class PlatformDetectionCrew(BaseCrew):
             agent=self.pattern_recognizer.agent,
             context=[self.discovery_task, self.assessment_task]
         )
-        
+
         self.tasks = [
             self.discovery_task,
             self.assessment_task,
             self.synthesis_task
         ]
-        
+
     def get_crew_config(self) -> Dict[str, Any]:
         """Return crew configuration"""
         return {
@@ -515,12 +515,12 @@ class PlatformDetectionCrew(BaseCrew):
             'max_rpm': 15,
             'share_crew': False
         }
-        
+
     def _parse_crew_output(self, raw_output: Any) -> TierAssessmentOutput:
         """Parse crew output into structured format"""
         # Extract results from final task output
         results = raw_output.tasks_output[-1].raw_output
-        
+
         return TierAssessmentOutput(
             success=True,
             confidence=results.get('confidence', 0.8),
@@ -561,27 +561,27 @@ class DiscoveryOutput(BaseCrewOutput):
 
 class DiscoveryCrew(BaseCrew):
     """Crew for executing discovery based on determined tier"""
-    
+
     def __init__(self, context: CrewContext, tier: int, strategy: Dict[str, Any]):
         self.tier = tier
         self.strategy = strategy
         super().__init__(context)
-        
+
     def _setup_agents(self) -> None:
         """Initialize crew agents based on tier"""
         self.asset_intel = AssetIntelligenceAgent()
         self.data_quality = DataQualityAgent()
         self.pattern_recognizer = PatternRecognitionAgent()
-        
+
         # Configure agents based on tier
         self._configure_agents_for_tier()
-        
+
         self.agents = [
             self.asset_intel.agent,
             self.data_quality.agent,
             self.pattern_recognizer.agent
         ]
-        
+
     def _configure_agents_for_tier(self) -> None:
         """Configure agent tools based on automation tier"""
         if self.tier == 1:
@@ -601,21 +601,21 @@ class DiscoveryCrew(BaseCrew):
                 DataCollectorTool(mode='file')
             )
         # Tier 4 uses manual collection handled separately
-        
+
     def _setup_tasks(self) -> None:
         """Initialize discovery tasks"""
         # Task 1: Data Collection
         self.collection_task = Task(
             description=f"""Execute data collection using tier {self.tier} strategy.
             Strategy: {self.strategy}
-            
+
             Collect all available data for the 22 critical attributes.
             Use appropriate collection methods based on tier capabilities.
             Document any collection failures or limitations.""",
             expected_output="Collected data with source attribution",
             agent=self.asset_intel.agent
         )
-        
+
         # Task 2: Data Validation
         self.validation_task = Task(
             description="""Validate collected data quality and completeness.
@@ -625,7 +625,7 @@ class DiscoveryCrew(BaseCrew):
             agent=self.data_quality.agent,
             context=[self.collection_task]
         )
-        
+
         # Task 3: Pattern Analysis
         self.analysis_task = Task(
             description="""Analyze collected data for patterns and insights.
@@ -635,13 +635,13 @@ class DiscoveryCrew(BaseCrew):
             agent=self.pattern_recognizer.agent,
             context=[self.collection_task, self.validation_task]
         )
-        
+
         self.tasks = [
             self.collection_task,
             self.validation_task,
             self.analysis_task
         ]
-        
+
     def get_crew_config(self) -> Dict[str, Any]:
         """Return crew configuration adjusted for tier"""
         base_config = {
@@ -651,7 +651,7 @@ class DiscoveryCrew(BaseCrew):
             'cache': True,
             'share_crew': False
         }
-        
+
         # Adjust configuration based on tier
         if self.tier == 1:
             base_config['max_rpm'] = 20  # Higher for full automation
@@ -661,15 +661,15 @@ class DiscoveryCrew(BaseCrew):
             base_config['max_rpm'] = 10
         else:  # Tier 4
             base_config['max_rpm'] = 5
-            
+
         return base_config
-        
+
     def _parse_crew_output(self, raw_output: Any) -> DiscoveryOutput:
         """Parse crew output into structured format"""
         collection_output = raw_output.tasks_output[0].raw_output
         validation_output = raw_output.tasks_output[1].raw_output
         analysis_output = raw_output.tasks_output[2].raw_output
-        
+
         return DiscoveryOutput(
             success=True,
             confidence=validation_output.get('overall_confidence', 0.0),
@@ -714,30 +714,30 @@ class AssessmentOutput(BaseCrewOutput):
 
 class AssessmentCrew(BaseCrew):
     """Crew for generating 6R recommendations based on discovered data"""
-    
+
     def __init__(self, context: CrewContext, discovery_data: Dict[str, Any]):
         self.discovery_data = discovery_data
         super().__init__(context)
-        
+
     def _setup_agents(self) -> None:
         """Initialize assessment agents"""
         self.migration_strategist = MigrationStrategyAgent()
         self.risk_assessor = RiskAssessmentAgent()
         self.recommender = RecommendationAgent()
-        
+
         self.agents = [
             self.migration_strategist.agent,
             self.risk_assessor.agent,
             self.recommender.agent
         ]
-        
+
     def _setup_tasks(self) -> None:
         """Initialize assessment tasks"""
         # Task 1: Migration Strategy Analysis
         self.strategy_task = Task(
             description=f"""Analyze applications for 6R migration strategies.
             Data: {self.discovery_data}
-            
+
             For each application, evaluate:
             - Rehost (Lift & Shift) feasibility
             - Replatform opportunities
@@ -745,12 +745,12 @@ class AssessmentCrew(BaseCrew):
             - Repurchase options
             - Retire candidates
             - Retain necessities
-            
+
             Consider technical, business, and risk factors.""",
             expected_output="Migration strategy analysis for each application",
             agent=self.migration_strategist.agent
         )
-        
+
         # Task 2: Risk Assessment
         self.risk_task = Task(
             description="""Assess risks for each migration strategy.
@@ -760,7 +760,7 @@ class AssessmentCrew(BaseCrew):
             agent=self.risk_assessor.agent,
             context=[self.strategy_task]
         )
-        
+
         # Task 3: Final Recommendations
         self.recommendation_task = Task(
             description="""Generate final 6R recommendations.
@@ -771,13 +771,13 @@ class AssessmentCrew(BaseCrew):
             agent=self.recommender.agent,
             context=[self.strategy_task, self.risk_task]
         )
-        
+
         self.tasks = [
             self.strategy_task,
             self.risk_task,
             self.recommendation_task
         ]
-        
+
     def get_crew_config(self) -> Dict[str, Any]:
         """Return crew configuration"""
         return {
@@ -788,13 +788,13 @@ class AssessmentCrew(BaseCrew):
             'max_rpm': 10,
             'share_crew': True  # Share insights across organization
         }
-        
+
     def _parse_crew_output(self, raw_output: Any) -> AssessmentOutput:
         """Parse crew output into structured format"""
         strategy_output = raw_output.tasks_output[0].raw_output
         risk_output = raw_output.tasks_output[1].raw_output
         recommendation_output = raw_output.tasks_output[2].raw_output
-        
+
         return AssessmentOutput(
             success=True,
             confidence=recommendation_output.get('overall_confidence', 0.0),
@@ -836,20 +836,20 @@ class BaseToolInput(BaseModel):
 
 class BaseAIDiscoverTool(BaseTool, ABC):
     """Base class for all AI-Discover tools"""
-    
+
     name: str = "BaseAIDiscoverTool"
     description: str = "Base tool for AI-Discover"
     args_schema: Type[BaseModel] = BaseToolInput
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._setup()
-        
+
     @abstractmethod
     def _setup(self) -> None:
         """Initialize tool-specific resources"""
         pass
-        
+
     def _run(self, **kwargs) -> Any:
         """Execute the tool"""
         try:
@@ -860,12 +860,12 @@ class BaseAIDiscoverTool(BaseTool, ABC):
         except Exception as e:
             logger.error(f"Tool execution failed: {self.name}", error=str(e))
             return self._handle_error(e)
-            
+
     @abstractmethod
     def _execute(self, **kwargs) -> Any:
         """Implement tool logic"""
         pass
-        
+
     def _handle_error(self, error: Exception) -> Dict[str, Any]:
         """Handle tool execution errors"""
         return {
@@ -898,12 +898,12 @@ class CloudScannerInput(BaseToolInput):
 
 class CloudPlatformScanner(BaseAIDiscoverTool):
     """Tool for scanning cloud platforms and discovering resources"""
-    
+
     name: str = "cloud_platform_scanner"
     description: str = """Scans cloud platforms to discover infrastructure resources.
     Supports AWS, Azure, and GCP. Returns detailed resource inventory."""
     args_schema = CloudScannerInput
-    
+
     def _setup(self) -> None:
         """Initialize cloud clients"""
         self.scanners = {
@@ -911,8 +911,8 @@ class CloudPlatformScanner(BaseAIDiscoverTool):
             'azure': self._scan_azure,
             'gcp': self._scan_gcp
         }
-        
-    def _execute(self, platform: str, resource_types: List[str], 
+
+    def _execute(self, platform: str, resource_types: List[str],
                 region: Optional[str] = None, **kwargs) -> Dict[str, Any]:
         """Execute cloud scanning"""
         if platform not in self.scanners:
@@ -920,11 +920,11 @@ class CloudPlatformScanner(BaseAIDiscoverTool):
                 'success': False,
                 'error': f'Unsupported platform: {platform}'
             }
-            
+
         try:
             scanner = self.scanners[platform]
             resources = scanner(resource_types, region)
-            
+
             return {
                 'success': True,
                 'platform': platform,
@@ -938,18 +938,18 @@ class CloudPlatformScanner(BaseAIDiscoverTool):
             }
         except Exception as e:
             return self._handle_error(e)
-            
+
     def _scan_aws(self, resource_types: List[str], region: Optional[str]) -> List[Dict[str, Any]]:
         """Scan AWS resources"""
         resources = []
-        
+
         # Initialize AWS session
         session = boto3.Session(region_name=region or settings.AWS_DEFAULT_REGION)
-        
+
         if 'compute' in resource_types:
             ec2 = session.client('ec2')
             instances = ec2.describe_instances()
-            
+
             for reservation in instances['Reservations']:
                 for instance in reservation['Instances']:
                     resources.append({
@@ -968,16 +968,16 @@ class CloudPlatformScanner(BaseAIDiscoverTool):
                             'architecture': instance['Architecture']
                         }
                     })
-                    
+
         if 'storage' in resource_types:
             s3 = session.client('s3')
             buckets = s3.list_buckets()
-            
+
             for bucket in buckets['Buckets']:
                 # Get bucket details
                 location = s3.get_bucket_location(Bucket=bucket['Name'])
                 versioning = s3.get_bucket_versioning(Bucket=bucket['Name'])
-                
+
                 resources.append({
                     'type': 'storage',
                     'service': 's3',
@@ -989,11 +989,11 @@ class CloudPlatformScanner(BaseAIDiscoverTool):
                         'versioning': versioning.get('Status', 'Disabled')
                     }
                 })
-                
+
         if 'database' in resource_types:
             rds = session.client('rds')
             databases = rds.describe_db_instances()
-            
+
             for db in databases['DBInstances']:
                 resources.append({
                     'type': 'database',
@@ -1011,21 +1011,21 @@ class CloudPlatformScanner(BaseAIDiscoverTool):
                         'endpoint': db.get('Endpoint', {}).get('Address')
                     }
                 })
-                
+
         return resources
-        
+
     def _scan_azure(self, resource_types: List[str], region: Optional[str]) -> List[Dict[str, Any]]:
         """Scan Azure resources"""
         # Implementation for Azure scanning
         # Similar structure to AWS scanning
         pass
-        
+
     def _scan_gcp(self, resource_types: List[str], region: Optional[str]) -> List[Dict[str, Any]]:
         """Scan GCP resources"""
         # Implementation for GCP scanning
         # Similar structure to AWS scanning
         pass
-        
+
     def _get_tag_value(self, tags: List[Dict], key: str) -> Optional[str]:
         """Extract tag value from tag list"""
         for tag in tags:
@@ -1056,12 +1056,12 @@ class PatternAnalyzerInput(BaseToolInput):
 
 class PatternAnalyzer(BaseAIDiscoverTool):
     """Tool for analyzing patterns in application data"""
-    
+
     name: str = "pattern_analyzer"
     description: str = """Analyzes patterns in application data to identify similarities,
     anomalies, and groupings for efficient bulk processing."""
     args_schema = PatternAnalyzerInput
-    
+
     def _setup(self) -> None:
         """Initialize analysis components"""
         self.scaler = StandardScaler()
@@ -1070,8 +1070,8 @@ class PatternAnalyzer(BaseAIDiscoverTool):
             'anomaly': self._detect_anomalies,
             'clustering': self._cluster_applications
         }
-        
-    def _execute(self, applications: List[Dict[str, Any]], 
+
+    def _execute(self, applications: List[Dict[str, Any]],
                 analysis_type: str = "similarity",
                 threshold: float = 0.8, **kwargs) -> Dict[str, Any]:
         """Execute pattern analysis"""
@@ -1080,17 +1080,17 @@ class PatternAnalyzer(BaseAIDiscoverTool):
                 'success': False,
                 'error': 'No applications provided for analysis'
             }
-            
+
         if analysis_type not in self.analyzers:
             return {
                 'success': False,
                 'error': f'Unknown analysis type: {analysis_type}'
             }
-            
+
         try:
             analyzer = self.analyzers[analysis_type]
             results = analyzer(applications, threshold)
-            
+
             return {
                 'success': True,
                 'analysis_type': analysis_type,
@@ -1103,60 +1103,60 @@ class PatternAnalyzer(BaseAIDiscoverTool):
             }
         except Exception as e:
             return self._handle_error(e)
-            
-    def _analyze_similarity(self, applications: List[Dict[str, Any]], 
+
+    def _analyze_similarity(self, applications: List[Dict[str, Any]],
                           threshold: float) -> Dict[str, Any]:
         """Analyze application similarities"""
         # Extract features for comparison
         features = self._extract_features(applications)
-        
+
         # Calculate similarity matrix
         similarity_matrix = self._calculate_similarity_matrix(features)
-        
+
         # Find similar groups
         similar_groups = []
         processed = set()
-        
+
         for i, app1 in enumerate(applications):
             if i in processed:
                 continue
-                
+
             group = [app1]
             processed.add(i)
-            
+
             for j, app2 in enumerate(applications[i+1:], i+1):
                 if j not in processed and similarity_matrix[i][j] >= threshold:
                     group.append(app2)
                     processed.add(j)
-                    
+
             if len(group) > 1:
                 similar_groups.append({
                     'group_size': len(group),
                     'applications': [app['name'] for app in group],
                     'common_attributes': self._find_common_attributes(group),
                     'average_similarity': float(np.mean([
-                        similarity_matrix[i][j] 
-                        for j in range(len(applications)) 
+                        similarity_matrix[i][j]
+                        for j in range(len(applications))
                         if applications[j] in group and i != j
                     ]))
                 })
-                
+
         return {
             'similar_groups': similar_groups,
             'total_groups': len(similar_groups),
             'grouped_applications': sum(g['group_size'] for g in similar_groups),
             'ungrouped_applications': len(applications) - sum(g['group_size'] for g in similar_groups)
         }
-        
-    def _detect_anomalies(self, applications: List[Dict[str, Any]], 
+
+    def _detect_anomalies(self, applications: List[Dict[str, Any]],
                          threshold: float) -> Dict[str, Any]:
         """Detect anomalous applications"""
         features = self._extract_features(applications)
-        
+
         # Use isolation forest or similar for anomaly detection
         anomalies = []
         anomaly_scores = self._calculate_anomaly_scores(features)
-        
+
         for i, (app, score) in enumerate(zip(applications, anomaly_scores)):
             if score > threshold:
                 anomalies.append({
@@ -1164,32 +1164,32 @@ class PatternAnalyzer(BaseAIDiscoverTool):
                     'anomaly_score': float(score),
                     'anomalous_attributes': self._identify_anomalous_attributes(app, features[i])
                 })
-                
+
         return {
             'anomalies': anomalies,
             'anomaly_count': len(anomalies),
             'anomaly_rate': len(anomalies) / len(applications) if applications else 0
         }
-        
-    def _cluster_applications(self, applications: List[Dict[str, Any]], 
+
+    def _cluster_applications(self, applications: List[Dict[str, Any]],
                             threshold: float) -> Dict[str, Any]:
         """Cluster applications into groups"""
         features = self._extract_features(applications)
-        
+
         # Determine optimal number of clusters
         n_clusters = self._determine_optimal_clusters(features)
-        
+
         # Perform clustering
         kmeans = KMeans(n_clusters=n_clusters, random_state=42)
         clusters = kmeans.fit_predict(features)
-        
+
         # Organize results
         cluster_groups = {}
         for i, cluster_id in enumerate(clusters):
             if cluster_id not in cluster_groups:
                 cluster_groups[cluster_id] = []
             cluster_groups[cluster_id].append(applications[i])
-            
+
         # Analyze each cluster
         cluster_analysis = []
         for cluster_id, apps in cluster_groups.items():
@@ -1200,29 +1200,29 @@ class PatternAnalyzer(BaseAIDiscoverTool):
                 'characteristics': self._analyze_cluster_characteristics(apps),
                 'recommended_strategy': self._recommend_cluster_strategy(apps)
             })
-            
+
         return {
             'clusters': cluster_analysis,
             'optimal_clusters': n_clusters,
             'clustering_quality': float(kmeans.inertia_)
         }
-        
+
     def _extract_features(self, applications: List[Dict[str, Any]]) -> np.ndarray:
         """Extract numerical features from applications"""
         # Implementation to convert application attributes to numerical features
         # This would involve encoding categorical variables, normalizing numerical ones
         pass
-        
+
     def _calculate_similarity_matrix(self, features: np.ndarray) -> np.ndarray:
         """Calculate pairwise similarity between applications"""
         # Implementation using cosine similarity or similar metric
         pass
-        
+
     def _find_common_attributes(self, applications: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Find common attributes among a group of applications"""
         # Implementation to identify shared characteristics
         pass
-        
+
     def _get_feature_list(self) -> List[str]:
         """Get list of features used in analysis"""
         return [
@@ -1243,28 +1243,28 @@ from app.orchestration.base_pattern import BaseOrchestrationPattern
 
 class SequentialPattern(BaseOrchestrationPattern):
     """Sequential task execution with dependency management"""
-    
+
     def execute(self, tasks: List[Task]) -> Dict[str, Any]:
         """Execute tasks in sequence"""
         results = []
         context = {}
-        
+
         for i, task in enumerate(tasks):
             # Inject previous results as context
             if i > 0:
                 task.context = results[:i]
-                
+
             # Execute task
             result = task.execute(context)
             results.append(result)
-            
+
             # Update context for next task
             context.update(result.output)
-            
+
             # Check for early termination
             if self._should_terminate(result):
                 break
-                
+
         return {
             'pattern': 'sequential',
             'completed_tasks': len(results),
@@ -1272,7 +1272,7 @@ class SequentialPattern(BaseOrchestrationPattern):
             'results': results,
             'final_context': context
         }
-        
+
     def _should_terminate(self, result: Any) -> bool:
         """Check if execution should terminate early"""
         return result.get('terminate', False) or not result.get('success', True)
@@ -1289,21 +1289,21 @@ from app.orchestration.base_pattern import BaseOrchestrationPattern
 
 class ParallelPattern(BaseOrchestrationPattern):
     """Parallel task execution for independent tasks"""
-    
+
     def __init__(self, max_workers: int = 5):
         self.max_workers = max_workers
-        
+
     def execute(self, tasks: List[Task]) -> Dict[str, Any]:
         """Execute tasks in parallel"""
         results = {}
-        
+
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             # Submit all tasks
             future_to_task = {
-                executor.submit(task.execute): task 
+                executor.submit(task.execute): task
                 for task in tasks
             }
-            
+
             # Collect results as they complete
             for future in as_completed(future_to_task):
                 task = future_to_task[future]
@@ -1315,7 +1315,7 @@ class ParallelPattern(BaseOrchestrationPattern):
                         'success': False,
                         'error': str(e)
                     }
-                    
+
         return {
             'pattern': 'parallel',
             'completed_tasks': len(results),
@@ -1334,26 +1334,26 @@ from app.orchestration.base_pattern import BaseOrchestrationPattern
 
 class HierarchicalPattern(BaseOrchestrationPattern):
     """Hierarchical task execution with manager-worker pattern"""
-    
+
     def __init__(self, manager_agent: Agent):
         self.manager = manager_agent
-        
+
     def execute(self, tasks: List[Task]) -> Dict[str, Any]:
         """Execute tasks with hierarchical delegation"""
         # Manager analyzes and prioritizes tasks
         task_plan = self._create_task_plan(tasks)
-        
+
         # Execute tasks according to plan
         results = []
         for phase in task_plan['phases']:
             phase_results = self._execute_phase(phase)
             results.extend(phase_results)
-            
+
             # Manager reviews phase results
             review = self._review_phase_results(phase_results)
             if review.get('adjust_plan'):
                 task_plan = self._adjust_plan(task_plan, review)
-                
+
         return {
             'pattern': 'hierarchical',
             'completed_tasks': len(results),
@@ -1361,7 +1361,7 @@ class HierarchicalPattern(BaseOrchestrationPattern):
             'task_plan': task_plan,
             'results': results
         }
-        
+
     def _create_task_plan(self, tasks: List[Task]) -> Dict[str, Any]:
         """Manager creates execution plan"""
         planning_task = Task(
@@ -1370,15 +1370,15 @@ class HierarchicalPattern(BaseOrchestrationPattern):
             Consider resource constraints and optimization opportunities.""",
             agent=self.manager
         )
-        
+
         plan = planning_task.execute()
         return plan.output
-        
+
     def _execute_phase(self, phase: Dict[str, Any]) -> List[Any]:
         """Execute a phase of tasks"""
         # Implementation for phase execution
         pass
-        
+
     def _review_phase_results(self, results: List[Any]) -> Dict[str, Any]:
         """Manager reviews phase results"""
         # Implementation for result review
@@ -1402,11 +1402,11 @@ logger = structlog.get_logger()
 
 class RedisStateManager:
     """Manages crew and agent state in Redis"""
-    
+
     def __init__(self):
         self.redis_client: Optional[redis.Redis] = None
         self.default_ttl = 3600  # 1 hour default TTL
-        
+
     async def initialize(self):
         """Initialize Redis connection"""
         self.redis_client = await redis.from_url(
@@ -1414,102 +1414,102 @@ class RedisStateManager:
             encoding="utf-8",
             decode_responses=True
         )
-        
-    async def save_crew_state(self, crew_id: str, state: Dict[str, Any], 
+
+    async def save_crew_state(self, crew_id: str, state: Dict[str, Any],
                             ttl: Optional[int] = None) -> bool:
         """Save crew execution state"""
         key = f"crew:state:{crew_id}"
         ttl = ttl or self.default_ttl
-        
+
         try:
             # Add metadata
             state['last_updated'] = datetime.utcnow().isoformat()
             state['crew_id'] = crew_id
-            
+
             # Save to Redis
             await self.redis_client.setex(
                 key,
                 ttl,
                 json.dumps(state)
             )
-            
+
             # Add to crew index
             await self.redis_client.sadd(f"crew:index:{state.get('user_id')}", crew_id)
-            
+
             logger.info("Saved crew state", crew_id=crew_id)
             return True
-            
+
         except Exception as e:
             logger.error("Failed to save crew state", crew_id=crew_id, error=str(e))
             return False
-            
+
     async def get_crew_state(self, crew_id: str) -> Optional[Dict[str, Any]]:
         """Retrieve crew execution state"""
         key = f"crew:state:{crew_id}"
-        
+
         try:
             data = await self.redis_client.get(key)
             if data:
                 return json.loads(data)
             return None
-            
+
         except Exception as e:
             logger.error("Failed to get crew state", crew_id=crew_id, error=str(e))
             return None
-            
-    async def save_agent_memory(self, agent_id: str, memory_type: str, 
+
+    async def save_agent_memory(self, agent_id: str, memory_type: str,
                               memory_data: Dict[str, Any]) -> bool:
         """Save agent memory (short-term or long-term)"""
         key = f"agent:memory:{agent_id}:{memory_type}"
-        
+
         try:
             # Manage memory size
             if memory_type == "short_term":
                 # Keep only recent memories
                 await self._trim_memory(key, max_size=100)
-                
+
             # Add new memory
             memory_entry = {
                 'timestamp': datetime.utcnow().isoformat(),
                 'data': memory_data
             }
-            
+
             await self.redis_client.lpush(key, json.dumps(memory_entry))
-            
+
             # Set TTL based on memory type
             ttl = 3600 if memory_type == "short_term" else 86400  # 1 hour vs 24 hours
             await self.redis_client.expire(key, ttl)
-            
+
             return True
-            
+
         except Exception as e:
-            logger.error("Failed to save agent memory", 
-                        agent_id=agent_id, 
-                        memory_type=memory_type, 
+            logger.error("Failed to save agent memory",
+                        agent_id=agent_id,
+                        memory_type=memory_type,
                         error=str(e))
             return False
-            
-    async def get_agent_memory(self, agent_id: str, memory_type: str, 
+
+    async def get_agent_memory(self, agent_id: str, memory_type: str,
                              limit: int = 10) -> List[Dict[str, Any]]:
         """Retrieve agent memory"""
         key = f"agent:memory:{agent_id}:{memory_type}"
-        
+
         try:
             memories = await self.redis_client.lrange(key, 0, limit - 1)
             return [json.loads(m) for m in memories]
-            
+
         except Exception as e:
-            logger.error("Failed to get agent memory", 
-                        agent_id=agent_id, 
-                        memory_type=memory_type, 
+            logger.error("Failed to get agent memory",
+                        agent_id=agent_id,
+                        memory_type=memory_type,
                         error=str(e))
             return []
-            
-    async def save_shared_context(self, context_id: str, 
+
+    async def save_shared_context(self, context_id: str,
                                 context_data: Dict[str, Any]) -> bool:
         """Save shared context between agents"""
         key = f"context:shared:{context_id}"
-        
+
         try:
             await self.redis_client.hset(
                 key,
@@ -1518,25 +1518,25 @@ class RedisStateManager:
                     for k, v in context_data.items()
                 }
             )
-            
+
             # Set TTL
             await self.redis_client.expire(key, 7200)  # 2 hours
-            
+
             return True
-            
+
         except Exception as e:
-            logger.error("Failed to save shared context", 
-                        context_id=context_id, 
+            logger.error("Failed to save shared context",
+                        context_id=context_id,
                         error=str(e))
             return False
-            
+
     async def get_shared_context(self, context_id: str) -> Dict[str, Any]:
         """Retrieve shared context"""
         key = f"context:shared:{context_id}"
-        
+
         try:
             data = await self.redis_client.hgetall(key)
-            
+
             # Parse JSON fields
             result = {}
             for k, v in data.items():
@@ -1544,15 +1544,15 @@ class RedisStateManager:
                     result[k] = json.loads(v)
                 except:
                     result[k] = v
-                    
+
             return result
-            
+
         except Exception as e:
-            logger.error("Failed to get shared context", 
-                        context_id=context_id, 
+            logger.error("Failed to get shared context",
+                        context_id=context_id,
                         error=str(e))
             return {}
-            
+
     async def _trim_memory(self, key: str, max_size: int):
         """Trim memory list to maximum size"""
         await self.redis_client.ltrim(key, 0, max_size - 1)
@@ -1574,11 +1574,11 @@ logger = structlog.get_logger()
 
 class CheckpointManager:
     """Manages crew execution checkpoints for recovery"""
-    
+
     def __init__(self, db: AsyncSession, redis_manager: RedisStateManager):
         self.db = db
         self.redis = redis_manager
-        
+
     async def create_checkpoint(self, crew_id: str, crew_type: str,
                               state: Dict[str, Any]) -> Optional[str]:
         """Create execution checkpoint"""
@@ -1589,51 +1589,51 @@ class CheckpointManager:
                 state=json.dumps(state),
                 created_at=datetime.utcnow()
             )
-            
+
             self.db.add(checkpoint)
             await self.db.commit()
-            
+
             # Also save to Redis for fast access
             await self.redis.save_crew_state(
                 f"checkpoint:{checkpoint.id}",
                 state,
                 ttl=86400  # 24 hours
             )
-            
-            logger.info("Created checkpoint", 
+
+            logger.info("Created checkpoint",
                        checkpoint_id=checkpoint.id,
                        crew_id=crew_id)
-            
+
             return str(checkpoint.id)
-            
+
         except Exception as e:
-            logger.error("Failed to create checkpoint", 
-                        crew_id=crew_id, 
+            logger.error("Failed to create checkpoint",
+                        crew_id=crew_id,
                         error=str(e))
             await self.db.rollback()
             return None
-            
+
     async def restore_from_checkpoint(self, checkpoint_id: str) -> Optional[Dict[str, Any]]:
         """Restore crew state from checkpoint"""
         try:
             # Try Redis first
             state = await self.redis.get_crew_state(f"checkpoint:{checkpoint_id}")
-            
+
             if not state:
                 # Fallback to database
                 checkpoint = await self.db.get(Checkpoint, checkpoint_id)
                 if checkpoint:
                     state = json.loads(checkpoint.state)
-                    
+
             return state
-            
+
         except Exception as e:
-            logger.error("Failed to restore checkpoint", 
-                        checkpoint_id=checkpoint_id, 
+            logger.error("Failed to restore checkpoint",
+                        checkpoint_id=checkpoint_id,
                         error=str(e))
             return None
-            
-    async def list_checkpoints(self, crew_id: str, 
+
+    async def list_checkpoints(self, crew_id: str,
                              limit: int = 10) -> List[Dict[str, Any]]:
         """List available checkpoints for a crew"""
         try:
@@ -1642,7 +1642,7 @@ class CheckpointManager:
             ).order_by(
                 Checkpoint.created_at.desc()
             ).limit(limit).all()
-            
+
             return [
                 {
                     'id': str(cp.id),
@@ -1653,13 +1653,13 @@ class CheckpointManager:
                 }
                 for cp in checkpoints
             ]
-            
+
         except Exception as e:
-            logger.error("Failed to list checkpoints", 
-                        crew_id=crew_id, 
+            logger.error("Failed to list checkpoints",
+                        crew_id=crew_id,
                         error=str(e))
             return []
-            
+
     def _summarize_state(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """Create summary of checkpoint state"""
         return {
@@ -1704,7 +1704,7 @@ async def execute_platform_detection(
 ):
     """Execute platform detection crew"""
     crew_service = CrewService(db)
-    
+
     try:
         # Create crew context
         context = {
@@ -1713,7 +1713,7 @@ async def execute_platform_detection(
             'target_type': request.target_type,
             'target_id': request.target_id
         }
-        
+
         # Execute crew (async or background)
         if request.async_execution:
             execution_id = await crew_service.start_crew_async(
@@ -1721,7 +1721,7 @@ async def execute_platform_detection(
                 context=context,
                 inputs=request.inputs
             )
-            
+
             return CrewExecutionResponse(
                 execution_id=execution_id,
                 status='started',
@@ -1733,14 +1733,14 @@ async def execute_platform_detection(
                 context=context,
                 inputs=request.inputs
             )
-            
+
             return CrewExecutionResponse(
                 execution_id=result['execution_id'],
                 status='completed',
                 result=result['output'],
                 metadata=result['metadata']
             )
-            
+
     except Exception as e:
         logger.error("Platform detection execution failed", error=str(e))
         raise HTTPException(status_code=500, detail=str(e))
@@ -1753,16 +1753,16 @@ async def get_crew_execution_status(
 ):
     """Get crew execution status"""
     crew_service = CrewService(db)
-    
+
     status = await crew_service.get_execution_status(str(execution_id))
-    
+
     if not status:
         raise HTTPException(status_code=404, detail="Execution not found")
-        
+
     # Verify user has access
     if status['user_id'] != str(current_user.id):
         raise HTTPException(status_code=403, detail="Access denied")
-        
+
     return CrewStatusResponse(**status)
 
 @router.post("/executions/{execution_id}/cancel")
@@ -1773,15 +1773,15 @@ async def cancel_crew_execution(
 ):
     """Cancel crew execution"""
     crew_service = CrewService(db)
-    
+
     success = await crew_service.cancel_execution(
         str(execution_id),
         str(current_user.id)
     )
-    
+
     if not success:
         raise HTTPException(status_code=400, detail="Failed to cancel execution")
-        
+
     return {"message": "Execution cancelled successfully"}
 
 @router.get("/executions/{execution_id}/results")
@@ -1792,15 +1792,15 @@ async def get_crew_results(
 ):
     """Get detailed crew execution results"""
     crew_service = CrewService(db)
-    
+
     results = await crew_service.get_execution_results(
         str(execution_id),
         str(current_user.id)
     )
-    
+
     if not results:
         raise HTTPException(status_code=404, detail="Results not found")
-        
+
     return results
 ```
 
@@ -1827,7 +1827,7 @@ logger = structlog.get_logger()
 
 class CrewService:
     """Service for managing crew executions"""
-    
+
     def __init__(self, db: AsyncSession):
         self.db = db
         self.redis_manager = RedisStateManager()
@@ -1837,23 +1837,23 @@ class CrewService:
             'discovery': DiscoveryCrew,
             'assessment': AssessmentCrew
         }
-        
+
     async def execute_crew(self, crew_type: str, context: Dict[str, Any],
                          inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Execute crew synchronously"""
         if crew_type not in self.crew_registry:
             raise ValueError(f"Unknown crew type: {crew_type}")
-            
+
         execution_id = str(uuid4())
-        
+
         try:
             # Initialize Redis
             await self.redis_manager.initialize()
-            
+
             # Create crew instance
             crew_class = self.crew_registry[crew_type]
             crew = crew_class(context=context)
-            
+
             # Save initial state
             await self.redis_manager.save_crew_state(
                 execution_id,
@@ -1865,10 +1865,10 @@ class CrewService:
                     'started_at': datetime.utcnow().isoformat()
                 }
             )
-            
+
             # Execute crew
             result = await crew.execute(inputs)
-            
+
             # Save final state
             await self.redis_manager.save_crew_state(
                 execution_id,
@@ -1881,12 +1881,12 @@ class CrewService:
                     'completed_at': datetime.utcnow().isoformat()
                 }
             )
-            
+
             # Save to database
             await self._save_execution_record(
                 execution_id, crew_type, context, 'completed', result.model_dump()
             )
-            
+
             return {
                 'execution_id': execution_id,
                 'output': result.model_dump(),
@@ -1896,13 +1896,13 @@ class CrewService:
                     'token_usage': result.metadata.get('token_usage')
                 }
             }
-            
+
         except Exception as e:
-            logger.error("Crew execution failed", 
+            logger.error("Crew execution failed",
                         crew_type=crew_type,
                         execution_id=execution_id,
                         error=str(e))
-            
+
             # Save error state
             await self.redis_manager.save_crew_state(
                 execution_id,
@@ -1912,14 +1912,14 @@ class CrewService:
                     'failed_at': datetime.utcnow().isoformat()
                 }
             )
-            
+
             raise
-            
+
     async def start_crew_async(self, crew_type: str, context: Dict[str, Any],
                              inputs: Dict[str, Any]) -> str:
         """Start crew execution asynchronously"""
         execution_id = str(uuid4())
-        
+
         # Save initial state
         await self.redis_manager.initialize()
         await self.redis_manager.save_crew_state(
@@ -1932,13 +1932,13 @@ class CrewService:
                 'created_at': datetime.utcnow().isoformat()
             }
         )
-        
+
         # Queue task
         task = current_app.send_task(
             'app.tasks.crew_tasks.execute_crew_task',
             args=[crew_type, context, inputs, execution_id]
         )
-        
+
         # Update state with task ID
         await self.redis_manager.save_crew_state(
             execution_id,
@@ -1948,14 +1948,14 @@ class CrewService:
                 'queued_at': datetime.utcnow().isoformat()
             }
         )
-        
+
         return execution_id
-        
+
     async def get_execution_status(self, execution_id: str) -> Optional[Dict[str, Any]]:
         """Get crew execution status"""
         await self.redis_manager.initialize()
         state = await self.redis_manager.get_crew_state(execution_id)
-        
+
         if not state:
             # Check database
             execution = await self.db.get(CrewExecution, execution_id)
@@ -1966,23 +1966,23 @@ class CrewService:
                     'user_id': str(execution.user_id),
                     'created_at': execution.created_at.isoformat()
                 }
-                
+
         return state
-        
+
     async def cancel_execution(self, execution_id: str, user_id: str) -> bool:
         """Cancel crew execution"""
         state = await self.get_execution_status(execution_id)
-        
+
         if not state or state.get('user_id') != user_id:
             return False
-            
+
         if state['status'] not in ['pending', 'queued', 'running']:
             return False
-            
+
         # Cancel Celery task if exists
         if task_id := state.get('task_id'):
             current_app.control.revoke(task_id, terminate=True)
-            
+
         # Update state
         await self.redis_manager.save_crew_state(
             execution_id,
@@ -1992,22 +1992,22 @@ class CrewService:
                 'cancelled_at': datetime.utcnow().isoformat()
             }
         )
-        
+
         return True
-        
-    async def get_execution_results(self, execution_id: str, 
+
+    async def get_execution_results(self, execution_id: str,
                                   user_id: str) -> Optional[Dict[str, Any]]:
         """Get detailed execution results"""
         state = await self.get_execution_status(execution_id)
-        
+
         if not state or state.get('user_id') != user_id:
             return None
-            
+
         if state['status'] != 'completed':
             return None
-            
+
         return state.get('output')
-        
+
     async def _save_execution_record(self, execution_id: str, crew_type: str,
                                    context: Dict[str, Any], status: str,
                                    result: Optional[Dict[str, Any]] = None):
@@ -2023,12 +2023,12 @@ class CrewService:
                 result=result,
                 created_at=datetime.utcnow()
             )
-            
+
             self.db.add(execution)
             await self.db.commit()
-            
+
         except Exception as e:
-            logger.error("Failed to save execution record", 
+            logger.error("Failed to save execution record",
                         execution_id=execution_id,
                         error=str(e))
             await self.db.rollback()
@@ -2052,13 +2052,13 @@ class CrewTask(Task):
     """Base task class with database connection"""
     _db = None
     _redis = None
-    
+
     @property
     def db(self):
         if self._db is None:
             self._db = get_db_sync()
         return self._db
-        
+
     @property
     def redis(self):
         if self._redis is None:
@@ -2078,20 +2078,20 @@ def execute_crew_task(self, crew_type: str, context: Dict[str, Any],
                 'started_at': datetime.utcnow().isoformat()
             }
         )
-        
+
         # Create and execute crew
         crew_registry = {
             'platform_detection': PlatformDetectionCrew,
             'discovery': DiscoveryCrew,
             'assessment': AssessmentCrew
         }
-        
+
         crew_class = crew_registry[crew_type]
         crew = crew_class(context=context)
-        
+
         # Execute with progress updates
         result = crew.execute(inputs)
-        
+
         # Save results
         self.redis.save_crew_state(
             execution_id,
@@ -2101,17 +2101,17 @@ def execute_crew_task(self, crew_type: str, context: Dict[str, Any],
                 'completed_at': datetime.utcnow().isoformat()
             }
         )
-        
+
         logger.info("Crew execution completed",
                    execution_id=execution_id,
                    crew_type=crew_type)
-        
+
     except Exception as e:
         logger.error("Crew execution failed",
                     execution_id=execution_id,
                     crew_type=crew_type,
                     error=str(e))
-        
+
         self.redis.save_crew_state(
             execution_id,
             {
@@ -2120,7 +2120,7 @@ def execute_crew_task(self, crew_type: str, context: Dict[str, Any],
                 'failed_at': datetime.utcnow().isoformat()
             }
         )
-        
+
         raise
 ```
 
@@ -2137,7 +2137,7 @@ from app.core.config import settings
 
 class TokenOptimizer:
     """Optimizes token usage for LLM interactions"""
-    
+
     def __init__(self, model: str = "gpt-4"):
         self.encoding = tiktoken.encoding_for_model(model)
         self.max_tokens = settings.MAX_TOKENS_PER_REQUEST
@@ -2145,39 +2145,39 @@ class TokenOptimizer:
             chunk_size=2000,
             chunk_overlap=200
         )
-        
+
     def optimize_prompt(self, prompt: str, context: Dict[str, Any]) -> str:
         """Optimize prompt to fit within token limits"""
         # Count current tokens
         prompt_tokens = self.count_tokens(prompt)
         context_tokens = self.count_tokens(str(context))
-        
+
         total_tokens = prompt_tokens + context_tokens
-        
+
         if total_tokens <= self.max_tokens:
             return prompt
-            
+
         # Reduce context size
-        optimized_context = self._reduce_context(context, 
+        optimized_context = self._reduce_context(context,
                                                 self.max_tokens - prompt_tokens)
-        
+
         # If still too large, summarize prompt
         if self.count_tokens(str(optimized_context)) + prompt_tokens > self.max_tokens:
             prompt = self._summarize_prompt(prompt)
-            
+
         return prompt
-        
+
     def count_tokens(self, text: str) -> int:
         """Count tokens in text"""
         return len(self.encoding.encode(text))
-        
-    def _reduce_context(self, context: Dict[str, Any], 
+
+    def _reduce_context(self, context: Dict[str, Any],
                        target_tokens: int) -> Dict[str, Any]:
         """Reduce context to fit within token limit"""
         # Implementation to intelligently reduce context
         # Prioritize recent and relevant information
         pass
-        
+
     def _summarize_prompt(self, prompt: str) -> str:
         """Summarize prompt to reduce tokens"""
         # Implementation to summarize while preserving key information
@@ -2196,11 +2196,11 @@ from app.state.redis_state_manager import RedisStateManager
 
 class CacheManager:
     """Manages caching for crew operations"""
-    
+
     def __init__(self, redis_manager: RedisStateManager):
         self.redis = redis_manager
         self.default_ttl = 3600  # 1 hour
-        
+
     async def get_or_compute(self, key: str, compute_func: Callable,
                            ttl: Optional[int] = None) -> Any:
         """Get from cache or compute if missing"""
@@ -2208,20 +2208,20 @@ class CacheManager:
         cached = await self.get(key)
         if cached is not None:
             return cached
-            
+
         # Compute and cache
         result = await compute_func()
         await self.set(key, result, ttl)
-        
+
         return result
-        
+
     async def get(self, key: str) -> Optional[Any]:
         """Get value from cache"""
         cached = await self.redis.redis_client.get(f"cache:{key}")
         if cached:
             return json.loads(cached)
         return None
-        
+
     async def set(self, key: str, value: Any, ttl: Optional[int] = None):
         """Set value in cache"""
         ttl = ttl or self.default_ttl
@@ -2230,7 +2230,7 @@ class CacheManager:
             ttl,
             json.dumps(value)
         )
-        
+
     def generate_key(self, prefix: str, params: Dict[str, Any]) -> str:
         """Generate cache key from parameters"""
         # Sort params for consistent hashing
@@ -2250,46 +2250,46 @@ from app.core.config import settings
 
 class ParallelProcessor:
     """Handles parallel processing for crew operations"""
-    
+
     def __init__(self):
         self.thread_pool = ThreadPoolExecutor(max_workers=settings.MAX_WORKERS)
         self.process_pool = ProcessPoolExecutor(max_workers=settings.MAX_PROCESSES)
-        
+
     async def process_batch_threaded(self, items: List[Any],
                                    processor: Callable) -> List[Any]:
         """Process items in parallel using threads"""
         loop = asyncio.get_event_loop()
-        
+
         # Create tasks
         tasks = [
             loop.run_in_executor(self.thread_pool, processor, item)
             for item in items
         ]
-        
+
         # Wait for all tasks
         results = await asyncio.gather(*tasks)
-        
+
         return results
-        
+
     async def process_batch_multiprocess(self, items: List[Any],
                                        processor: Callable) -> List[Any]:
         """Process items in parallel using processes"""
         loop = asyncio.get_event_loop()
-        
+
         # Create tasks
         tasks = [
             loop.run_in_executor(self.process_pool, processor, item)
             for item in items
         ]
-        
+
         # Wait for all tasks
         results = await asyncio.gather(*tasks)
-        
+
         return results
-        
+
     def chunk_items(self, items: List[Any], chunk_size: int) -> List[List[Any]]:
         """Split items into chunks for processing"""
-        return [items[i:i + chunk_size] 
+        return [items[i:i + chunk_size]
                 for i in range(0, len(items), chunk_size)]
 ```
 
@@ -2322,7 +2322,7 @@ class ErrorCategory(Enum):
 
 class ErrorHandler:
     """Comprehensive error handling for crew operations"""
-    
+
     def __init__(self):
         self.retry_strategies = {
             ErrorCategory.NETWORK: self._network_retry_strategy,
@@ -2331,25 +2331,25 @@ class ErrorHandler:
             ErrorCategory.DATA_QUALITY: self._data_quality_strategy,
             ErrorCategory.SYSTEM: self._system_error_strategy
         }
-        
-    async def handle_error(self, error: Exception, 
+
+    async def handle_error(self, error: Exception,
                          context: Dict[str, Any]) -> Dict[str, Any]:
         """Handle error with appropriate strategy"""
         category = self._categorize_error(error)
         severity = self._assess_severity(error, category)
-        
+
         logger.error("Handling crew error",
                     category=category.value,
                     severity=severity.value,
                     error=str(error),
                     context=context)
-        
+
         # Get retry strategy
         strategy = self.retry_strategies.get(category, self._default_strategy)
-        
+
         # Execute strategy
         result = await strategy(error, context, severity)
-        
+
         return {
             'handled': result['success'],
             'category': category.value,
@@ -2359,11 +2359,11 @@ class ErrorHandler:
             'retry_delay': result.get('retry_delay', 0),
             'fallback_data': result.get('fallback_data')
         }
-        
+
     def _categorize_error(self, error: Exception) -> ErrorCategory:
         """Categorize error type"""
         error_str = str(error).lower()
-        
+
         if any(term in error_str for term in ['timeout', 'connection', 'network']):
             return ErrorCategory.NETWORK
         elif any(term in error_str for term in ['rate limit', 'quota', 'too many']):
@@ -2374,32 +2374,32 @@ class ErrorHandler:
             return ErrorCategory.DATA_QUALITY
         else:
             return ErrorCategory.SYSTEM
-            
-    def _assess_severity(self, error: Exception, 
+
+    def _assess_severity(self, error: Exception,
                         category: ErrorCategory) -> ErrorSeverity:
         """Assess error severity"""
         # Critical errors that block execution
         if category == ErrorCategory.AUTHENTICATION:
             return ErrorSeverity.CRITICAL
-            
+
         # High severity errors that need immediate attention
         if category == ErrorCategory.SYSTEM:
             return ErrorSeverity.HIGH
-            
+
         # Medium severity with workarounds
         if category in [ErrorCategory.API_LIMIT, ErrorCategory.NETWORK]:
             return ErrorSeverity.MEDIUM
-            
+
         # Low severity that can be handled gracefully
         return ErrorSeverity.LOW
-        
+
     async def _network_retry_strategy(self, error: Exception,
                                     context: Dict[str, Any],
                                     severity: ErrorSeverity) -> Dict[str, Any]:
         """Handle network errors with exponential backoff"""
         retry_count = context.get('retry_count', 0)
         max_retries = 3
-        
+
         if retry_count < max_retries:
             delay = 2 ** retry_count  # Exponential backoff
             return {
@@ -2415,14 +2415,14 @@ class ErrorHandler:
                 'retry': False,
                 'fallback_data': self._get_cached_data(context)
             }
-            
+
     async def _api_limit_retry_strategy(self, error: Exception,
                                       context: Dict[str, Any],
                                       severity: ErrorSeverity) -> Dict[str, Any]:
         """Handle API rate limits with smart backoff"""
         # Extract rate limit info if available
         reset_time = self._extract_rate_limit_reset(error)
-        
+
         if reset_time:
             delay = max(0, (reset_time - datetime.utcnow()).total_seconds())
             return {
@@ -2439,14 +2439,14 @@ class ErrorHandler:
                 'retry': True,
                 'retry_delay': 60
             }
-            
+
     async def _auth_retry_strategy(self, error: Exception,
                                  context: Dict[str, Any],
                                  severity: ErrorSeverity) -> Dict[str, Any]:
         """Handle authentication errors"""
         # Attempt to refresh credentials
         refreshed = await self._refresh_credentials(context)
-        
+
         if refreshed:
             return {
                 'success': True,
@@ -2460,14 +2460,14 @@ class ErrorHandler:
                 'action': 'Authentication failed, manual intervention required',
                 'retry': False
             }
-            
+
     async def _data_quality_strategy(self, error: Exception,
                                    context: Dict[str, Any],
                                    severity: ErrorSeverity) -> Dict[str, Any]:
         """Handle data quality issues"""
         # Attempt data cleaning/validation
         cleaned_data = self._clean_data(context.get('data', {}))
-        
+
         return {
             'success': True,
             'action': 'Data cleaned and validated',
@@ -2475,7 +2475,7 @@ class ErrorHandler:
             'retry_delay': 0,
             'fallback_data': cleaned_data
         }
-        
+
     async def _system_error_strategy(self, error: Exception,
                                    context: Dict[str, Any],
                                    severity: ErrorSeverity) -> Dict[str, Any]:
@@ -2484,7 +2484,7 @@ class ErrorHandler:
         logger.critical("System error occurred",
                        error=str(error),
                        context=context)
-        
+
         # Attempt graceful degradation
         return {
             'success': False,
@@ -2492,7 +2492,7 @@ class ErrorHandler:
             'retry': False,
             'fallback_data': self._get_minimal_data(context)
         }
-        
+
     async def _default_strategy(self, error: Exception,
                               context: Dict[str, Any],
                               severity: ErrorSeverity) -> Dict[str, Any]:
@@ -2502,27 +2502,27 @@ class ErrorHandler:
             'action': 'Unhandled error type, failing safely',
             'retry': False
         }
-        
+
     def _extract_rate_limit_reset(self, error: Exception) -> Optional[datetime]:
         """Extract rate limit reset time from error"""
         # Implementation to parse rate limit headers/response
         pass
-        
+
     async def _refresh_credentials(self, context: Dict[str, Any]) -> bool:
         """Attempt to refresh authentication credentials"""
         # Implementation to refresh tokens/credentials
         pass
-        
+
     def _clean_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Clean and validate data"""
         # Implementation to clean/validate data
         pass
-        
+
     def _get_cached_data(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Get cached fallback data"""
         # Implementation to retrieve cached data
         pass
-        
+
     def _get_minimal_data(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Get minimal required data for degraded operation"""
         # Implementation to provide minimal data
@@ -2543,51 +2543,51 @@ logger = structlog.get_logger()
 
 class RecoveryManager:
     """Manages crew recovery from failures"""
-    
+
     def __init__(self, checkpoint_manager: CheckpointManager,
                  error_handler: ErrorHandler):
         self.checkpoint_manager = checkpoint_manager
         self.error_handler = error_handler
-        
+
     async def recover_crew_execution(self, execution_id: str,
                                    error: Exception) -> Dict[str, Any]:
         """Attempt to recover failed crew execution"""
         logger.info("Attempting crew recovery", execution_id=execution_id)
-        
+
         # Get latest checkpoint
         checkpoints = await self.checkpoint_manager.list_checkpoints(execution_id)
-        
+
         if not checkpoints:
             return {
                 'recovered': False,
                 'reason': 'No checkpoints available'
             }
-            
+
         latest_checkpoint = checkpoints[0]
-        
+
         # Restore state
         state = await self.checkpoint_manager.restore_from_checkpoint(
             latest_checkpoint['id']
         )
-        
+
         if not state:
             return {
                 'recovered': False,
                 'reason': 'Failed to restore checkpoint'
             }
-            
+
         # Analyze error and determine recovery strategy
         error_result = await self.error_handler.handle_error(error, state)
-        
+
         if not error_result['should_retry']:
             return {
                 'recovered': False,
                 'reason': error_result['action_taken']
             }
-            
+
         # Prepare recovery state
         recovery_state = self._prepare_recovery_state(state, error_result)
-        
+
         return {
             'recovered': True,
             'checkpoint_id': latest_checkpoint['id'],
@@ -2595,12 +2595,12 @@ class RecoveryManager:
             'retry_delay': error_result['retry_delay'],
             'fallback_data': error_result.get('fallback_data')
         }
-        
+
     def _prepare_recovery_state(self, checkpoint_state: Dict[str, Any],
                               error_result: Dict[str, Any]) -> Dict[str, Any]:
         """Prepare state for recovery execution"""
         recovery_state = checkpoint_state.copy()
-        
+
         # Add recovery metadata
         recovery_state['recovery'] = {
             'attempt_number': checkpoint_state.get('recovery', {}).get('attempt_number', 0) + 1,
@@ -2608,15 +2608,15 @@ class RecoveryManager:
             'error_severity': error_result['severity'],
             'recovery_timestamp': datetime.utcnow().isoformat()
         }
-        
+
         # Apply fallback data if available
         if fallback_data := error_result.get('fallback_data'):
             recovery_state['fallback_data'] = fallback_data
-            
+
         # Skip completed tasks
         if 'completed_tasks' in recovery_state:
             recovery_state['skip_tasks'] = recovery_state['completed_tasks']
-            
+
         return recovery_state
 ```
 
@@ -2633,7 +2633,7 @@ from app.crews.base_crew import CrewContext
 
 class TestPlatformDetectionCrew:
     """Test platform detection crew"""
-    
+
     @pytest.fixture
     def crew_context(self):
         """Create test context"""
@@ -2644,7 +2644,7 @@ class TestPlatformDetectionCrew:
             target_type="application",
             target_id="test-app"
         )
-        
+
     @pytest.fixture
     def mock_cloud_scanner(self):
         """Mock cloud scanner tool"""
@@ -2660,24 +2660,24 @@ class TestPlatformDetectionCrew:
                 ]
             }
             yield mock
-            
+
     @pytest.mark.asyncio
     async def test_platform_detection_success(self, crew_context, mock_cloud_scanner):
         """Test successful platform detection"""
         crew = PlatformDetectionCrew(crew_context)
-        
+
         result = await crew.execute({
             'target': {
                 'type': 'application',
                 'id': 'test-app'
             }
         })
-        
+
         assert result.success
         assert result.recommended_tier in [1, 2, 3, 4]
         assert result.confidence >= 0.0 and result.confidence <= 1.0
         assert len(result.available_methods) > 0
-        
+
     @pytest.mark.asyncio
     async def test_platform_detection_with_limited_access(self, crew_context):
         """Test platform detection with limited access"""
@@ -2687,23 +2687,23 @@ class TestPlatformDetectionCrew:
                 'success': False,
                 'error': 'Access denied'
             }
-            
+
             crew = PlatformDetectionCrew(crew_context)
             result = await crew.execute({})
-            
+
             assert result.success
             assert result.recommended_tier >= 3  # Should recommend lower tier
             assert 'manual' in result.available_methods
-            
+
     @pytest.mark.asyncio
     async def test_crew_memory_persistence(self, crew_context):
         """Test crew memory is persisted correctly"""
         crew = PlatformDetectionCrew(crew_context)
-        
+
         # Execute crew multiple times
         result1 = await crew.execute({'iteration': 1})
         result2 = await crew.execute({'iteration': 2})
-        
+
         # Verify memory contains previous executions
         # This would check the crew's memory system
         assert crew.crew.memory is not None
@@ -2719,39 +2719,39 @@ from app.agents import AssetIntelligenceAgent
 
 class TestAssetIntelligenceAgent:
     """Test asset intelligence agent"""
-    
+
     @pytest.fixture
     def agent(self):
         """Create test agent"""
         with patch('langchain_openai.ChatOpenAI'):
             return AssetIntelligenceAgent()
-            
+
     def test_agent_initialization(self, agent):
         """Test agent is initialized correctly"""
         assert agent.agent.role == "Asset Intelligence Specialist"
         assert len(agent.agent.tools) > 0
         assert agent.agent.allow_delegation == False
-        
+
     def test_discovery_task_creation(self, agent):
         """Test discovery task creation"""
         task = agent.create_discovery_task({
             'type': 'application',
             'id': 'test-app'
         })
-        
+
         assert 'description' in task
         assert 'expected_output' in task
         assert task['agent'] == agent.agent
-        
+
     @pytest.mark.asyncio
     async def test_agent_tool_execution(self, agent):
         """Test agent executes tools correctly"""
         with patch.object(agent.agent.tools[0], '_execute') as mock_execute:
             mock_execute.return_value = {'success': True, 'data': 'test'}
-            
+
             # Simulate agent using tool
             result = await agent.agent.tools[0]._execute(platform='aws')
-            
+
             assert result['success']
             mock_execute.assert_called_once()
 ```
@@ -2769,16 +2769,16 @@ from app.models.user import User
 
 class TestCrewIntegration:
     """Integration tests for crew execution"""
-    
+
     @pytest.fixture
     async def authenticated_client(self, client: AsyncClient, test_user: User):
         """Create authenticated test client"""
         # Add authentication headers
         client.headers["Authorization"] = f"Bearer {test_user.token}"
         return client
-        
+
     @pytest.mark.asyncio
-    async def test_platform_detection_flow(self, authenticated_client: AsyncClient, 
+    async def test_platform_detection_flow(self, authenticated_client: AsyncClient,
                                          db: AsyncSession):
         """Test complete platform detection flow"""
         # Start platform detection
@@ -2791,14 +2791,14 @@ class TestCrewIntegration:
                 "async_execution": False
             }
         )
-        
+
         assert response.status_code == 200
         data = response.json()
-        
+
         assert data['status'] == 'completed'
         assert 'result' in data
         assert data['result']['recommended_tier'] in [1, 2, 3, 4]
-        
+
     @pytest.mark.asyncio
     async def test_async_crew_execution(self, authenticated_client: AsyncClient):
         """Test asynchronous crew execution"""
@@ -2812,19 +2812,19 @@ class TestCrewIntegration:
                 "async_execution": True
             }
         )
-        
+
         assert response.status_code == 200
         data = response.json()
-        
+
         assert data['status'] == 'started'
         assert 'execution_id' in data
-        
+
         # Check status
         execution_id = data['execution_id']
         status_response = await authenticated_client.get(
             f"/api/v1/crews/executions/{execution_id}/status"
         )
-        
+
         assert status_response.status_code == 200
         status_data = status_response.json()
         assert status_data['status'] in ['pending', 'queued', 'running', 'completed']
@@ -2886,7 +2886,7 @@ def track_crew_execution(crew_type: str):
         async def wrapper(*args, **kwargs) -> Any:
             active_crews.labels(crew_type=crew_type).inc()
             start_time = time.time()
-            
+
             try:
                 result = await func(*args, **kwargs)
                 crew_executions_total.labels(
@@ -2894,19 +2894,19 @@ def track_crew_execution(crew_type: str):
                     status='success'
                 ).inc()
                 return result
-                
+
             except Exception as e:
                 crew_executions_total.labels(
                     crew_type=crew_type,
                     status='failure'
                 ).inc()
                 raise
-                
+
             finally:
                 duration = time.time() - start_time
                 crew_execution_duration.labels(crew_type=crew_type).observe(duration)
                 active_crews.labels(crew_type=crew_type).dec()
-                
+
         return wrapper
     return decorator
 
@@ -2951,19 +2951,19 @@ def add_crew_context(logger, log_method, event_dict):
         event_dict['organization_id'] = crew_context.get('organization_id')
         event_dict['user_id'] = crew_context.get('user_id')
         event_dict['session_id'] = crew_context.get('session_id')
-        
+
     # Add execution context
     if execution_id := event_dict.get('execution_id'):
         event_dict['execution_id'] = execution_id
-        
+
     return event_dict
 
 class CrewAILogger:
     """Custom logger for CrewAI operations"""
-    
+
     def __init__(self, name: str):
         self.logger = structlog.get_logger(name)
-        
+
     def log_crew_start(self, crew_type: str, context: Dict[str, Any]):
         """Log crew execution start"""
         self.logger.info(
@@ -2972,7 +2972,7 @@ class CrewAILogger:
             crew_context=context,
             event_type="crew_start"
         )
-        
+
     def log_crew_complete(self, crew_type: str, context: Dict[str, Any],
                          result: Dict[str, Any], duration: float):
         """Log crew execution completion"""
@@ -2985,8 +2985,8 @@ class CrewAILogger:
             confidence=result.get('confidence', 0.0),
             event_type="crew_complete"
         )
-        
-    def log_agent_action(self, agent_name: str, action: str, 
+
+    def log_agent_action(self, agent_name: str, action: str,
                         details: Dict[str, Any]):
         """Log agent actions"""
         self.logger.info(
@@ -2996,7 +2996,7 @@ class CrewAILogger:
             details=details,
             event_type="agent_action"
         )
-        
+
     def log_tool_execution(self, tool_name: str, inputs: Dict[str, Any],
                           result: Dict[str, Any], duration: float):
         """Log tool execution"""
@@ -3045,7 +3045,7 @@ HTTPXClientInstrumentor().instrument()
 
 class CrewTracer:
     """Tracing for CrewAI operations"""
-    
+
     @staticmethod
     @contextmanager
     def trace_crew_execution(crew_type: str, context: Dict[str, Any]):
@@ -3061,7 +3061,7 @@ class CrewTracer:
             }
         ) as span:
             yield span
-            
+
     @staticmethod
     @contextmanager
     def trace_agent_task(agent_name: str, task_description: str):
@@ -3074,7 +3074,7 @@ class CrewTracer:
             }
         ) as span:
             yield span
-            
+
     @staticmethod
     @contextmanager
     def trace_tool_execution(tool_name: str, inputs: Dict[str, Any]):
@@ -3087,21 +3087,21 @@ class CrewTracer:
             }
         ) as span:
             yield span
-            
+
     @staticmethod
     def add_event(name: str, attributes: Optional[Dict[str, Any]] = None):
         """Add event to current span"""
         span = trace.get_current_span()
         if span:
             span.add_event(name, attributes=attributes or {})
-            
+
     @staticmethod
     def set_attribute(key: str, value: Any):
         """Set attribute on current span"""
         span = trace.get_current_span()
         if span:
             span.set_attribute(key, value)
-            
+
     @staticmethod
     def record_exception(exception: Exception):
         """Record exception in current span"""
@@ -3118,6 +3118,7 @@ class CrewTracer:
 **Objective**: Establish core CrewAI infrastructure
 
 1. **Week 1**
+
    - Set up base crew and agent classes
    - Implement state management with Redis
    - Create checkpoint system
@@ -3130,6 +3131,7 @@ class CrewTracer:
    - Integrate with FastAPI
 
 **Deliverables**:
+
 - Base crew/agent architecture
 - State persistence system
 - Error handling framework
@@ -3140,6 +3142,7 @@ class CrewTracer:
 **Objective**: Implement platform detection crew
 
 1. **Week 3**
+
    - Implement Asset Intelligence Agent
    - Implement Platform Detection Agent
    - Create cloud scanner tools
@@ -3152,6 +3155,7 @@ class CrewTracer:
    - Performance optimization
 
 **Deliverables**:
+
 - Complete Platform Detection Crew
 - Cloud scanning tools
 - Tier assessment system
@@ -3162,6 +3166,7 @@ class CrewTracer:
 **Objective**: Implement discovery execution crew
 
 1. **Week 5**
+
    - Implement discovery agents
    - Create data collection tools
    - Implement Data Quality Agent
@@ -3174,6 +3179,7 @@ class CrewTracer:
    - Optimize for scale
 
 **Deliverables**:
+
 - Complete Discovery Crew
 - Data collection tools
 - Bulk processing capability
@@ -3184,6 +3190,7 @@ class CrewTracer:
 **Objective**: Implement 6R assessment crew
 
 1. **Week 7**
+
    - Implement Migration Strategy Agent
    - Implement Risk Assessment Agent
    - Create recommendation logic
@@ -3196,6 +3203,7 @@ class CrewTracer:
    - Performance tuning
 
 **Deliverables**:
+
 - Complete Assessment Crew
 - 6R recommendation system
 - Full crew integration
@@ -3206,6 +3214,7 @@ class CrewTracer:
 **Objective**: Prepare for production deployment
 
 1. **Week 9**
+
    - Comprehensive testing
    - Performance optimization
    - Security hardening
@@ -3218,6 +3227,7 @@ class CrewTracer:
    - Team training
 
 **Deliverables**:
+
 - Production-ready system
 - Complete documentation
 - Monitoring dashboard
@@ -3226,12 +3236,14 @@ class CrewTracer:
 ### Success Metrics
 
 1. **Technical Metrics**
+
    - 95%+ test coverage
    - <2s average crew startup time
    - <30s platform detection completion
    - 99.9% uptime target
 
 2. **Business Metrics**
+
    - 70%+ automation achievement (Tier 1)
    - 90%+ data completeness
    - 85%+ recommendation confidence
@@ -3246,11 +3258,13 @@ class CrewTracer:
 ### Risk Mitigation
 
 1. **Technical Risks**
+
    - LLM API limits: Implement caching and rate limiting
    - Performance issues: Design for horizontal scaling
    - Integration complexity: Modular architecture
 
 2. **Operational Risks**
+
    - Team knowledge gaps: Comprehensive documentation
    - Deployment issues: Automated deployment pipeline
    - Monitoring gaps: Full observability stack

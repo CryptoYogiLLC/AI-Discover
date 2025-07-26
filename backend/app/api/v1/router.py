@@ -11,6 +11,9 @@ from app.api.v1.endpoints import (
     adapters,
     projects,
     assessments,
+    ai_assistance,
+    analytics,
+    data_entry,
 )
 
 api_router = APIRouter()
@@ -30,3 +33,8 @@ api_router.include_router(
 )
 api_router.include_router(discovery.router, prefix="/discovery", tags=["discovery"])
 api_router.include_router(adapters.router, prefix="/adapters", tags=["adapters"])
+api_router.include_router(
+    ai_assistance.router, prefix="/ai-assistance", tags=["ai-assistance"]
+)
+api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+api_router.include_router(data_entry.router, prefix="/data-entry", tags=["data-entry"])

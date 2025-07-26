@@ -9,6 +9,9 @@ from app.api.v1.endpoints import (
     discovery,
     projects,
     assessments,
+    ai_assistance,
+    data_entry,
+    analytics,
 )
 
 __all__ = [
@@ -20,4 +23,7 @@ __all__ = [
     "discovery",
     "projects",
     "assessments",
+    "ai_assistance",
+    "data_entry",
+    "analytics",
 ]

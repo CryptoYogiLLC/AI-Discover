@@ -5,6 +5,7 @@ This guide will help you set up pre-commit hooks for the AI-Discover project to 
 ## Overview
 
 Pre-commit hooks run automatically before each commit to check your code for:
+
 - Code formatting (Black for Python, Prettier for JS/TS)
 - Linting issues (Ruff for Python, ESLint for JS/TS)
 - Type checking (mypy for Python, TypeScript)
@@ -94,6 +95,7 @@ git commit --no-verify -m "emergency fix"
 Our pre-commit configuration includes:
 
 ### Python Hooks
+
 - **Black**: Code formatting
 - **Ruff**: Fast Python linter
 - **mypy**: Static type checking
@@ -101,11 +103,13 @@ Our pre-commit configuration includes:
 - **pytest-check**: Runs unit tests on push
 
 ### JavaScript/TypeScript Hooks
+
 - **ESLint**: Linting for JS/TS files
 - **Prettier**: Code formatting
 - **jest-check**: Runs tests on push
 
 ### General Hooks
+
 - **trailing-whitespace**: Removes trailing whitespace
 - **end-of-file-fixer**: Ensures files end with a newline
 - **check-yaml**: Validates YAML files
@@ -115,6 +119,7 @@ Our pre-commit configuration includes:
 - **gitleaks**: Scans for secrets
 
 ### Docker & Config Hooks
+
 - **hadolint**: Dockerfile linting
 - **yamllint**: YAML linting
 - **markdownlint**: Markdown linting
@@ -156,6 +161,7 @@ Some hooks can be slow on large codebases. You can:
 
 1. Run on changed files only (default behavior)
 2. Skip specific hooks temporarily:
+
    ```bash
    SKIP=mypy,eslint git commit -m "message"
    ```
@@ -183,6 +189,7 @@ Then commit the changes to `.pre-commit-config.yaml`.
 ### VS Code
 
 Install these extensions:
+
 - Python: Black Formatter
 - ESLint
 - Prettier

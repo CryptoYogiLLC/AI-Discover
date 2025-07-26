@@ -5,6 +5,7 @@ This document summarizes the quality assurance measures implemented in the AI-Di
 ## Testing Framework
 
 ### Backend (Python/FastAPI)
+
 - **Framework**: pytest with async support
 - **Coverage Tool**: pytest-cov
 - **Minimum Coverage**: 80% (enforced in CI/CD)
@@ -15,6 +16,7 @@ This document summarizes the quality assurance measures implemented in the AI-Di
   - `backend/tests/utils/` - Test utilities
 
 ### Frontend (Next.js/React)
+
 - **Framework**: Jest with React Testing Library
 - **Coverage Tool**: Jest built-in coverage
 - **Minimum Coverage**: 80% (enforced in CI/CD)
@@ -27,14 +29,17 @@ This document summarizes the quality assurance measures implemented in the AI-Di
 ### CI/CD Pipeline Checks
 
 1. **Linting**
+
    - Python: Black (formatting), Ruff (linting), mypy (type checking)
    - JavaScript/TypeScript: ESLint, TypeScript compiler
 
 2. **Testing**
+
    - All tests must pass
    - Coverage must be ≥ 80% for all metrics
 
 3. **Security Scanning**
+
    - Bandit (Python security)
    - pip-audit (Python dependencies)
    - npm audit (JavaScript dependencies)
@@ -50,6 +55,7 @@ This document summarizes the quality assurance measures implemented in the AI-Di
 ### Pre-commit Hooks
 
 Local checks before committing:
+
 - Code formatting (Black, Prettier)
 - Linting (Ruff, ESLint)
 - Type checking (mypy, TypeScript)
@@ -83,6 +89,7 @@ cd frontend && npm audit
 ### IDE Integration
 
 Configure your IDE to run these tools automatically:
+
 - Format on save (Black/Prettier)
 - Lint on save (Ruff/ESLint)
 - Type check in real-time (mypy/TypeScript)
@@ -97,6 +104,7 @@ Configure your IDE to run these tools automatically:
 ### Coverage Metrics
 
 We track four coverage metrics:
+
 - **Lines**: Percentage of code lines executed
 - **Branches**: Percentage of decision branches taken
 - **Functions**: Percentage of functions called
@@ -107,16 +115,19 @@ All must be ≥ 80% for the build to pass.
 ## Best Practices
 
 1. **Write Tests First** (TDD)
+
    - Write failing test
    - Implement feature
    - Refactor
 
 2. **Test Pyramid**
+
    - Many unit tests (fast, isolated)
    - Some integration tests (component interaction)
    - Few E2E tests (complete workflows)
 
 3. **Mock External Dependencies**
+
    - Use provided mocks for Redis, OpenAI, Celery
    - Keep tests deterministic and fast
 
@@ -130,11 +141,13 @@ All must be ≥ 80% for the build to pass.
 ### Common Issues
 
 1. **Coverage Below Threshold**
+
    - Identify uncovered code: Check HTML reports
    - Add missing tests
    - Consider if code is actually needed
 
 2. **Flaky Tests**
+
    - Remove time dependencies
    - Mock external services properly
    - Ensure proper async handling
@@ -154,6 +167,7 @@ All must be ≥ 80% for the build to pass.
 ## Metrics and Monitoring
 
 Track these metrics over time:
+
 - Coverage percentage trends
 - Test execution time
 - Number of tests
@@ -163,6 +177,7 @@ Track these metrics over time:
 ## Future Enhancements
 
 Planned improvements:
+
 - [ ] E2E testing with Playwright
 - [ ] Performance testing
 - [ ] Mutation testing

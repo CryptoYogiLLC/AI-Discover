@@ -11,7 +11,7 @@ services:
     container_name: ai-discover-postgres
     restart: always
     ports:
-      - "127.0.0.1:5442:5432"  # Bind only to localhost
+      - "127.0.0.1:5442:5432" # Bind only to localhost
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -29,10 +29,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 2G
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
     logging:
       driver: "json-file"
@@ -50,7 +50,7 @@ services:
     container_name: ai-discover-redis
     restart: always
     ports:
-      - "127.0.0.1:6479:6379"  # Bind only to localhost
+      - "127.0.0.1:6479:6379" # Bind only to localhost
     command: >
       redis-server
       --appendonly yes
@@ -62,7 +62,15 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD}", "ping"]
+      test:
+        [
+          "CMD",
+          "redis-cli",
+          "--no-auth-warning",
+          "-a",
+          "${REDIS_PASSWORD}",
+          "ping",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -70,10 +78,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 1G
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 256M
     logging:
       driver: "json-file"
@@ -97,7 +105,7 @@ services:
     container_name: ai-discover-backend
     restart: always
     ports:
-      - "127.0.0.1:8800:8000"  # Note: Internal port is 8000, mapped to 8800
+      - "127.0.0.1:8800:8000" # Note: Internal port is 8000, mapped to 8800
     environment:
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
@@ -131,10 +139,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 2G
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
     logging:
       driver: "json-file"
@@ -160,7 +168,7 @@ services:
     container_name: ai-discover-frontend
     restart: always
     ports:
-      - "3300:3000"  # Internal port is 3000, mapped to 3300
+      - "3300:3000" # Internal port is 3000, mapped to 3300
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8800}
       - PORT=3000
@@ -177,10 +185,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 1G
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 256M
     logging:
       driver: "json-file"
@@ -238,10 +246,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 2G
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
     logging:
       driver: "json-file"
@@ -278,10 +286,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
         reservations:
-          cpus: '0.1'
+          cpus: "0.1"
           memory: 128M
     logging:
       driver: "json-file"
@@ -302,7 +310,7 @@ services:
     container_name: ai-discover-flower
     restart: always
     ports:
-      - "127.0.0.1:5555:5555"  # Bind only to localhost
+      - "127.0.0.1:5555:5555" # Bind only to localhost
     environment:
       - CELERY_BROKER_URL=redis://:${REDIS_PASSWORD}@redis:6379/1
       - CELERY_RESULT_BACKEND=redis://:${REDIS_PASSWORD}@redis:6379/2
@@ -323,10 +331,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
         reservations:
-          cpus: '0.1'
+          cpus: "0.1"
           memory: 128M
     logging:
       driver: "json-file"
@@ -362,10 +370,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 512M
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 128M
     logging:
       driver: "json-file"
@@ -389,13 +397,21 @@ services:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-      - '--storage.tsdb.retention.time=30d'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--storage.tsdb.retention.time=30d"
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:9090/-/healthy",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -403,10 +419,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 1G
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 256M
     logging:
       driver: "json-file"
@@ -444,10 +460,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 512M
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 256M
     logging:
       driver: "json-file"

@@ -3,6 +3,7 @@
 ## Essential Commands
 
 ### Deployment
+
 ```bash
 ./scripts/deploy.sh deploy    # Full deployment
 ./scripts/deploy.sh status    # Check status
@@ -12,6 +13,7 @@
 ```
 
 ### Service Management
+
 ```bash
 # Start/stop services
 ./scripts/deploy.sh start
@@ -25,6 +27,7 @@ docker-compose -f docker-compose.prod.yml start redis
 ```
 
 ### Monitoring
+
 ```bash
 # Check logs
 ./scripts/deploy.sh logs backend    # Backend logs
@@ -40,14 +43,14 @@ docker stats
 
 ## Service URLs
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| Frontend | https://your-domain.com | N/A |
-| Backend API | https://api.your-domain.com | JWT Auth |
-| API Docs | https://api.your-domain.com/docs | N/A |
-| Flower | http://localhost:5555 | Set in FLOWER_BASIC_AUTH |
-| Grafana | http://localhost:3000 | admin / GRAFANA_ADMIN_PASSWORD |
-| Prometheus | http://localhost:9090 | N/A |
+| Service     | URL                                | Credentials                    |
+| ----------- | ---------------------------------- | ------------------------------ |
+| Frontend    | <https://your-domain.com>          | N/A                            |
+| Backend API | <https://api.your-domain.com>      | JWT Auth                       |
+| API Docs    | <https://api.your-domain.com/docs> | N/A                            |
+| Flower      | <http://localhost:5555>            | Set in FLOWER_BASIC_AUTH       |
+| Grafana     | <http://localhost:3000>            | admin / GRAFANA_ADMIN_PASSWORD |
+| Prometheus  | <http://localhost:9090>            | N/A                            |
 
 ## Health Check Endpoints
 
@@ -68,6 +71,7 @@ docker-compose -f docker-compose.prod.yml exec redis redis-cli -a $REDIS_PASSWOR
 ## Common Tasks
 
 ### Database Operations
+
 ```bash
 # Connect to database
 docker-compose -f docker-compose.prod.yml exec postgres \
@@ -82,6 +86,7 @@ docker-compose -f docker-compose.prod.yml exec backend \
 ```
 
 ### Cache Management
+
 ```bash
 # Clear Redis cache
 docker-compose -f docker-compose.prod.yml exec redis \
@@ -93,6 +98,7 @@ docker-compose -f docker-compose.prod.yml exec redis \
 ```
 
 ### Celery Management
+
 ```bash
 # Check worker status
 docker-compose -f docker-compose.prod.yml exec celery \
@@ -110,6 +116,7 @@ docker-compose -f docker-compose.prod.yml exec celery \
 ## Troubleshooting
 
 ### Quick Diagnostics
+
 ```bash
 # System health
 ./scripts/deploy.sh health
@@ -125,6 +132,7 @@ docker-compose -f docker-compose.prod.yml exec backend bash
 ```
 
 ### Common Fixes
+
 ```bash
 # Restart unhealthy service
 docker-compose -f docker-compose.prod.yml restart [service]
@@ -140,16 +148,19 @@ docker system prune -a --volumes
 ## Emergency Procedures
 
 ### Complete Shutdown
+
 ```bash
 ./scripts/deploy.sh stop
 ```
 
 ### Emergency Rollback
+
 ```bash
 ./scripts/deploy.sh rollback
 ```
 
 ### Data Recovery
+
 ```bash
 # List backups
 ls -la backups/
@@ -165,22 +176,27 @@ docker-compose -f docker-compose.prod.yml exec -T postgres \
 ### Key Metrics to Watch
 
 1. **API Response Time**
+
    - Target: < 200ms p50, < 1s p95
    - Alert: > 2s p95
 
 2. **Database Connections**
+
    - Target: < 80% of max_connections
    - Alert: > 90% utilized
 
 3. **Redis Memory**
+
    - Target: < 80% of maxmemory
    - Alert: > 90% utilized
 
 4. **Celery Queue Size**
+
    - Target: < 100 tasks
    - Alert: > 1000 tasks
 
 5. **CPU Usage**
+
    - Target: < 70% average
    - Alert: > 85% sustained
 
@@ -189,6 +205,7 @@ docker-compose -f docker-compose.prod.yml exec -T postgres \
    - Alert: > 90% utilized
 
 ### Quick Performance Check
+
 ```bash
 # API response time
 curl -w "@curl-format.txt" -o /dev/null -s https://api.your-domain.com/health
@@ -205,19 +222,20 @@ docker-compose -f docker-compose.prod.yml exec redis \
 
 ## Log Locations
 
-| Component | Log Location | View Command |
-|-----------|--------------|--------------|
-| Backend | Docker logs | `./scripts/deploy.sh logs backend` |
-| Frontend | Docker logs | `./scripts/deploy.sh logs frontend` |
-| PostgreSQL | Docker logs | `./scripts/deploy.sh logs postgres` |
-| Redis | Docker logs | `./scripts/deploy.sh logs redis` |
-| Celery | Docker logs | `./scripts/deploy.sh logs celery` |
-| Nginx | Docker logs | `./scripts/deploy.sh logs nginx` |
-| Deployment | `logs/deployment_*.log` | `tail -f logs/deployment_*.log` |
+| Component  | Log Location            | View Command                        |
+| ---------- | ----------------------- | ----------------------------------- |
+| Backend    | Docker logs             | `./scripts/deploy.sh logs backend`  |
+| Frontend   | Docker logs             | `./scripts/deploy.sh logs frontend` |
+| PostgreSQL | Docker logs             | `./scripts/deploy.sh logs postgres` |
+| Redis      | Docker logs             | `./scripts/deploy.sh logs redis`    |
+| Celery     | Docker logs             | `./scripts/deploy.sh logs celery`   |
+| Nginx      | Docker logs             | `./scripts/deploy.sh logs nginx`    |
+| Deployment | `logs/deployment_*.log` | `tail -f logs/deployment_*.log`     |
 
 ## Environment Variables
 
 Key variables to check:
+
 ```bash
 # View current configuration
 grep -E "ENVIRONMENT|DEBUG|DATABASE_URL|REDIS_URL|SECRET_KEY" .env.production

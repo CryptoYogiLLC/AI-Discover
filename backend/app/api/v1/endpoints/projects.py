@@ -438,3 +438,75 @@ async def remove_project_member(
         user_id=str(user_id),
         removed_by=str(current_user.id),
     )
+
+
+@router.get("/{project_id}/export")
+async def export_project_assessments(
+    project_id: UUID,
+    format: str = Query("csv", regex="^(csv|excel|json)$"),
+    include_metadata: bool = Query(True),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Export project assessments in various formats
+
+    Supported formats:
+    - csv: Comma-separated values
+    - excel: Excel workbook with multiple sheets
+    - json: JSON format with metadata
+    """
+    from app.services.export import ExportService
+    from fastapi.responses import StreamingResponse
+    import io
+
+    # Check project access
+    project = await get_project_or_404(project_id, db, current_user)
+
+    # Get assessments for project
+    from app.models.assessment import ApplicationAssessment
+
+    result = await db.execute(
+        select(ApplicationAssessment)
+        .where(ApplicationAssessment.project_id == project_id)
+        .options(selectinload(ApplicationAssessment.assessed_by_user))
+    )
+    assessments = result.scalars().all()
+
+    if not assessments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No assessments found for this project",
+        )
+
+    # Initialize export service
+    export_service = ExportService()
+
+    # Generate export based on format
+    if format == "csv":
+        content = await export_service.export_assessments_csv(
+            assessments, include_metadata
+        )
+        media_type = "text/csv"
+        filename = f"project_{project.name}_assessments.csv"
+
+    elif format == "excel":
+        content = await export_service.export_assessments_excel(
+            assessments, project, include_analytics=True
+        )
+        media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        filename = f"project_{project.name}_assessments.xlsx"
+
+    else:  # json
+        content = await export_service.export_assessments_json(
+            assessments, include_metadata
+        )
+        media_type = "application/json"
+        filename = f"project_{project.name}_assessments.json"
+
+    # Return file response
+    return StreamingResponse(
+        io.BytesIO(content),
+        media_type=media_type,
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
