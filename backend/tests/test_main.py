@@ -9,7 +9,10 @@ async def test_health_check(async_client: AsyncClient):
     """Test the health check endpoint"""
     response = await async_client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "healthy"}
+    data = response.json()
+    assert data["status"] == "healthy"
+    assert "version" in data
+    assert "environment" in data
 
 
 @pytest.mark.asyncio
