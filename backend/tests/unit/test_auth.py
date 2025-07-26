@@ -95,7 +95,10 @@ class TestAuthEndpoints:
             test_db, email="inactive@example.com", is_active=False
         )
 
-        login_data = {"username": user.email, "password": "testpassword123"}  # pragma: allowlist secret
+        login_data = {
+            "username": user.email,
+            "password": "testpassword123",  # pragma: allowlist secret
+        }
 
         response = await async_client.post(
             "/api/v1/auth/login",
@@ -154,7 +157,7 @@ class TestAuthEndpoints:
     async def test_change_password(self, authenticated_client: AsyncClient):
         """Test changing user password."""
         password_data = {
-            "current_password": "testpassword123",
+            "current_password": "testpassword123",  # pragma: allowlist secret
             "new_password": "newsecurepassword123",  # pragma: allowlist secret
         }
 
