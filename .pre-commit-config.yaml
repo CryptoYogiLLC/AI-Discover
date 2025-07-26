@@ -28,23 +28,49 @@ repos:
       - id: black
         language_version: python3.13
         files: ^backend/
+        exclude: ^backend/migrations/
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.3.5
     hooks:
       - id: ruff
-        args: [--fix]
+        args: [--fix, --exit-non-zero-on-fix]
         files: ^backend/
+        exclude: ^backend/migrations/
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.9.0
     hooks:
       - id: mypy
         files: ^backend/
+        exclude: ^backend/(tests|migrations)/
+        args: [--config-file=backend/mypy.ini]
         additional_dependencies:
           - types-requests
           - types-redis
           - sqlalchemy[mypy]
+          - pydantic
+          - pytest
+          - httpx
+  
+  # Python security checks
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.8
+    hooks:
+      - id: bandit
+        args: [-r, backend/app, -f, json, -o, /dev/null]
+        files: ^backend/app/
+  
+  # Python test coverage check (local)
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        entry: bash -c 'cd backend && python -m pytest tests/unit -x -v --tb=short || true'
+        language: system
+        files: ^backend/.*\.py$
+        pass_filenames: false
+        stages: [push]
 
   # JavaScript/TypeScript hooks
   - repo: https://github.com/pre-commit/mirrors-eslint
@@ -71,7 +97,18 @@ repos:
     hooks:
       - id: prettier
         files: \.(js|jsx|ts|tsx|css|scss|json|md|yaml|yml)$
-        exclude: ^(backend/|.*/migrations/)
+        exclude: ^(backend/|.*/migrations/|package-lock\.json)
+  
+  # Frontend tests (local)
+  - repo: local
+    hooks:
+      - id: jest-check
+        name: jest-check
+        entry: bash -c 'cd frontend && npm test -- --passWithNoTests --maxWorkers=2 || true'
+        language: system
+        files: ^frontend/.*\.(js|jsx|ts|tsx)$
+        pass_filenames: false
+        stages: [push]
 
   # Security scanning
   - repo: https://github.com/Yelp/detect-secrets

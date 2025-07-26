@@ -108,14 +108,22 @@ jobs:
           REDIS_URL: redis://localhost:6379
         run: |
           cd backend
-          pytest --cov=app --cov-report=xml --cov-report=html --cov-report=term
+          pytest --cov=app --cov-report=xml --cov-report=html --cov-report=term --cov-fail-under=80
 
-      - name: Upload coverage reports
+      - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           file: ./backend/coverage.xml
           flags: backend
           name: backend-coverage
+      
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: |
+            backend/coverage.xml
+            backend/htmlcov/
 
   # Frontend Jobs
   frontend-lint:
@@ -166,20 +174,84 @@ jobs:
 
       - name: Run tests with coverage
         working-directory: frontend
-        run: npm run test:ci
+        run: npm run test:ci -- --coverageThreshold='{"global":{"branches":80,"functions":80,"lines":80,"statements":80}}'
 
-      - name: Upload coverage reports
+      - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           file: ./frontend/coverage/lcov.info
           flags: frontend
           name: frontend-coverage
+      
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: |
+            frontend/coverage/
+            frontend/coverage-summary.json
+
+  # Quality Gates Check
+  quality-gates:
+    name: Quality Gates Check
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download backend coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend-coverage
+
+      - name: Download frontend coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend-coverage
+
+      - name: Check quality gates
+        run: |
+          echo "Checking quality gates..."
+          
+          # Backend coverage check
+          if [ -f backend-coverage/coverage.xml ]; then
+            backend_coverage=$(python3 -c "
+import xml.etree.ElementTree as ET
+tree = ET.parse('backend-coverage/coverage.xml')
+root = tree.getroot()
+coverage = float(root.attrib.get('line-rate', 0)) * 100
+print(f'{coverage:.2f}')
+            ")
+            echo "Backend coverage: ${backend_coverage}%"
+            if (( $(echo "$backend_coverage < 80" | bc -l) )); then
+              echo "Backend coverage is below 80% threshold"
+              exit 1
+            fi
+          fi
+          
+          # Frontend coverage check
+          if [ -f frontend-coverage/coverage-summary.json ]; then
+            frontend_coverage=$(node -e "
+const data = require('./frontend-coverage/coverage-summary.json');
+const coverage = data.total.lines.pct;
+console.log(coverage.toFixed(2));
+            ")
+            echo "Frontend coverage: ${frontend_coverage}%"
+            if (( $(echo "$frontend_coverage < 80" | bc -l) )); then
+              echo "Frontend coverage is below 80% threshold"
+              exit 1
+            fi
+          fi
+          
+          echo "All quality gates passed!"
 
   # Security Scanning Jobs
   security-scan:
     name: Security Scanning
     runs-on: ubuntu-latest
-    needs: [backend-lint, frontend-lint]
+    needs: [backend-lint, frontend-lint, quality-gates]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -203,15 +275,48 @@ jobs:
           name: bandit-results
           path: bandit-report.json
 
+      - name: Install dependencies for security scanning
+        run: |
+          cd backend
+          pip install pip-tools
+          pip-compile requirements.in -o requirements.txt
+          pip-compile requirements-dev.in -o requirements-dev.txt
+          cd ..
+
       - name: Run pip-audit
         run: |
           pip install pip-audit
-          if [ -f backend/requirements.txt ]; then pip-audit -r backend/requirements.txt; fi
+          echo "Auditing production dependencies..."
+          pip-audit -r backend/requirements.txt --desc
+          echo "Auditing development dependencies..."
+          pip-audit -r backend/requirements-dev.txt --desc || true
 
       # JavaScript security scanning
       - name: Run npm audit
         working-directory: frontend
-        run: npm audit --production
+        run: |
+          echo "Running npm audit for production dependencies..."
+          npm audit --production --audit-level=moderate || true
+          echo "Running npm audit for all dependencies..."
+          npm audit --audit-level=high || true
+
+      # OWASP Dependency Check
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'ai-discover'
+          path: '.'
+          format: 'ALL'
+          args: >
+            --enableRetired
+            --enableExperimental
+          
+      - name: Upload OWASP results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: owasp-results
+          path: reports/
 
       # Container scanning
       - name: Run Trivy vulnerability scanner

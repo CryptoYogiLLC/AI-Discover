@@ -27,6 +27,24 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    
+    # LDAP/AD Configuration
+    LDAP_ENABLED: bool = False
+    LDAP_SERVER_URL: str = "ldap://localhost:389"
+    LDAP_BASE_DN: str = "dc=example,dc=com"
+    LDAP_BIND_DN: str = "cn=admin,dc=example,dc=com"
+    LDAP_BIND_PASSWORD: str = ""
+    LDAP_USER_SEARCH_FILTER: str = "(sAMAccountName={username})"
+    LDAP_GROUP_SEARCH_FILTER: str = "(member={user_dn})"
+    LDAP_USE_SSL: bool = False
+    LDAP_USE_TLS: bool = False
+    LDAP_AUTH_TYPE: str = "SIMPLE"  # SIMPLE or NTLM
+    LDAP_DOMAIN: Optional[str] = None  # For NTLM auth
+    
+    # LDAP Group to Role Mapping
+    LDAP_ADMIN_GROUP: str = "CN=AI-Discover-Admins,OU=Groups,DC=example,DC=com"
+    LDAP_COLLABORATOR_GROUP: str = "CN=AI-Discover-Collaborators,OU=Groups,DC=example,DC=com"
+    LDAP_VIEWER_GROUP: str = "CN=AI-Discover-Viewers,OU=Groups,DC=example,DC=com"
 
     # CORS
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []

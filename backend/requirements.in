@@ -30,6 +30,7 @@ google-cloud-compute>=1.0.0  # GCP
 python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
 cryptography>=42.0.0
+ldap3>=2.9.0
 
 # Utilities
 httpx>=0.26.0

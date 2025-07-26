@@ -7,6 +7,17 @@ from app.api.v1.endpoints import (
     collection_flows,
     adapters,
     discovery,
+    projects,
+    assessments,
 )
 
-__all__ = ["auth", "users", "applications", "collection_flows", "adapters", "discovery"]
+__all__ = [
+    "auth", 
+    "users", 
+    "applications", 
+    "collection_flows", 
+    "adapters", 
+    "discovery",
+    "projects",
+    "assessments",
+]
