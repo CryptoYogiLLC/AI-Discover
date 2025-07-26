@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  PYTHON_VERSION: "3.11"
+  PYTHON_VERSION: "3.13"
   NODE_VERSION: "18"
   DOCKER_BUILDKIT: 1
 
@@ -116,7 +116,7 @@ jobs:
           file: ./backend/coverage.xml
           flags: backend
           name: backend-coverage
-      
+
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -182,7 +182,7 @@ jobs:
           file: ./frontend/coverage/lcov.info
           flags: frontend
           name: frontend-coverage
-      
+
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -214,37 +214,27 @@ jobs:
       - name: Check quality gates
         run: |
           echo "Checking quality gates..."
-          
+
           # Backend coverage check
           if [ -f backend-coverage/coverage.xml ]; then
-            backend_coverage=$(python3 -c "
-import xml.etree.ElementTree as ET
-tree = ET.parse('backend-coverage/coverage.xml')
-root = tree.getroot()
-coverage = float(root.attrib.get('line-rate', 0)) * 100
-print(f'{coverage:.2f}')
-            ")
+            backend_coverage=$(python3 -c "import xml.etree.ElementTree as ET; tree = ET.parse('backend-coverage/coverage.xml'); root = tree.getroot(); coverage = float(root.attrib.get('line-rate', 0)) * 100; print(f'{coverage:.2f}')")
             echo "Backend coverage: ${backend_coverage}%"
             if (( $(echo "$backend_coverage < 80" | bc -l) )); then
               echo "Backend coverage is below 80% threshold"
               exit 1
             fi
           fi
-          
+
           # Frontend coverage check
           if [ -f frontend-coverage/coverage-summary.json ]; then
-            frontend_coverage=$(node -e "
-const data = require('./frontend-coverage/coverage-summary.json');
-const coverage = data.total.lines.pct;
-console.log(coverage.toFixed(2));
-            ")
+            frontend_coverage=$(node -e "const data = require('./frontend-coverage/coverage-summary.json'); const coverage = data.total.lines.pct; console.log(coverage.toFixed(2));")
             echo "Frontend coverage: ${frontend_coverage}%"
             if (( $(echo "$frontend_coverage < 80" | bc -l) )); then
               echo "Frontend coverage is below 80% threshold"
               exit 1
             fi
           fi
-          
+
           echo "All quality gates passed!"
 
   # Security Scanning Jobs
@@ -304,13 +294,13 @@ console.log(coverage.toFixed(2));
       - name: Run OWASP Dependency Check
         uses: dependency-check/Dependency-Check_Action@main
         with:
-          project: 'ai-discover'
-          path: '.'
-          format: 'ALL'
+          project: "ai-discover"
+          path: "."
+          format: "ALL"
           args: >
             --enableRetired
             --enableExperimental
-          
+
       - name: Upload OWASP results
         uses: actions/upload-artifact@v4
         if: always()
