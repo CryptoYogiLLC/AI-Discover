@@ -26,26 +26,31 @@ AI-Discover's UI embodies the concept of **"Intelligent Simplicity"** - a design
 ### 1.2 Core Design Principles
 
 #### 1.2.1 Progressive Disclosure
+
 - Present information in layers, revealing complexity only when needed
 - Start with high-level overviews, allow drilling down for details
 - Use expandable sections, tabs, and modals strategically
 
 #### 1.2.2 Data-Driven Clarity
+
 - Visualize complex data through intuitive charts and infographics
 - Use color coding and visual hierarchies to highlight insights
 - Provide contextual help and tooltips for technical concepts
 
 #### 1.2.3 Adaptive Intelligence
+
 - Interface adapts based on user's technical level and preferences
 - Smart defaults that learn from user behavior
 - Contextual suggestions powered by AI insights
 
 #### 1.2.4 Trust Through Transparency
+
 - Clear indication of data sources and confidence levels
 - Visible progress indicators for long-running processes
 - Audit trails and change history for all modifications
 
 #### 1.2.5 Accessibility First
+
 - WCAG 2.1 AA compliance as baseline
 - Keyboard navigation for all interactions
 - Screen reader optimized components
@@ -121,19 +126,19 @@ AI-Discover's UI embodies the concept of **"Intelligent Simplicity"** - a design
 
 ```css
 /* Font Stack */
---font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
---font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+--font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+--font-mono: "JetBrains Mono", "Fira Code", monospace;
 
 /* Font Sizes */
---text-xs: 0.75rem;     /* 12px */
---text-sm: 0.875rem;    /* 14px */
---text-base: 1rem;      /* 16px */
---text-lg: 1.125rem;    /* 18px */
---text-xl: 1.25rem;     /* 20px */
---text-2xl: 1.5rem;     /* 24px */
---text-3xl: 1.875rem;   /* 30px */
---text-4xl: 2.25rem;    /* 36px */
---text-5xl: 3rem;       /* 48px */
+--text-xs: 0.75rem; /* 12px */
+--text-sm: 0.875rem; /* 14px */
+--text-base: 1rem; /* 16px */
+--text-lg: 1.125rem; /* 18px */
+--text-xl: 1.25rem; /* 20px */
+--text-2xl: 1.5rem; /* 24px */
+--text-3xl: 1.875rem; /* 30px */
+--text-4xl: 2.25rem; /* 36px */
+--text-5xl: 3rem; /* 48px */
 
 /* Line Heights */
 --leading-none: 1;
@@ -157,18 +162,18 @@ AI-Discover's UI embodies the concept of **"Intelligent Simplicity"** - a design
 ```css
 /* Base unit: 4px */
 --space-0: 0;
---space-1: 0.25rem;   /* 4px */
---space-2: 0.5rem;    /* 8px */
---space-3: 0.75rem;   /* 12px */
---space-4: 1rem;      /* 16px */
---space-5: 1.25rem;   /* 20px */
---space-6: 1.5rem;    /* 24px */
---space-8: 2rem;      /* 32px */
---space-10: 2.5rem;   /* 40px */
---space-12: 3rem;     /* 48px */
---space-16: 4rem;     /* 64px */
---space-20: 5rem;     /* 80px */
---space-24: 6rem;     /* 96px */
+--space-1: 0.25rem; /* 4px */
+--space-2: 0.5rem; /* 8px */
+--space-3: 0.75rem; /* 12px */
+--space-4: 1rem; /* 16px */
+--space-5: 1.25rem; /* 20px */
+--space-6: 1.5rem; /* 24px */
+--space-8: 2rem; /* 32px */
+--space-10: 2.5rem; /* 40px */
+--space-12: 3rem; /* 48px */
+--space-16: 4rem; /* 64px */
+--space-20: 5rem; /* 80px */
+--space-24: 6rem; /* 96px */
 ```
 
 ### 2.4 Shadow System
@@ -187,12 +192,12 @@ AI-Discover's UI embodies the concept of **"Intelligent Simplicity"** - a design
 
 ```css
 --radius-none: 0;
---radius-sm: 0.125rem;    /* 2px */
---radius-md: 0.375rem;    /* 6px */
---radius-lg: 0.5rem;      /* 8px */
---radius-xl: 0.75rem;     /* 12px */
---radius-2xl: 1rem;       /* 16px */
---radius-3xl: 1.5rem;     /* 24px */
+--radius-sm: 0.125rem; /* 2px */
+--radius-md: 0.375rem; /* 6px */
+--radius-lg: 0.5rem; /* 8px */
+--radius-xl: 0.75rem; /* 12px */
+--radius-2xl: 1rem; /* 16px */
+--radius-3xl: 1.5rem; /* 24px */
 --radius-full: 9999px;
 ```
 
@@ -243,6 +248,7 @@ src/
 ### 3.3 Base Component Examples
 
 #### Button Component
+
 ```tsx
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -252,11 +258,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-primary-500 text-white hover:bg-primary-600 focus-visible:ring-primary-500",
-        secondary: "bg-secondary-500 text-white hover:bg-secondary-600 focus-visible:ring-secondary-500",
-        outline: "border border-neutral-300 bg-transparent hover:bg-neutral-100 focus-visible:ring-neutral-500",
-        ghost: "hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-neutral-500",
-        destructive: "bg-error text-white hover:bg-error/90 focus-visible:ring-error",
+        primary:
+          "bg-primary-500 text-white hover:bg-primary-600 focus-visible:ring-primary-500",
+        secondary:
+          "bg-secondary-500 text-white hover:bg-secondary-600 focus-visible:ring-secondary-500",
+        outline:
+          "border border-neutral-300 bg-transparent hover:bg-neutral-100 focus-visible:ring-neutral-500",
+        ghost:
+          "hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-neutral-500",
+        destructive:
+          "bg-error text-white hover:bg-error/90 focus-visible:ring-error",
       },
       size: {
         sm: "h-8 px-3 text-xs",
@@ -269,7 +280,7 @@ const buttonVariants = cva(
       variant: "primary",
       size: "md",
     },
-  }
+  },
 );
 
 export interface ButtonProps
@@ -312,7 +323,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
       </button>
     );
-  }
+  },
 );
 ```
 
@@ -461,6 +472,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 ### 5.1 Navigation Components
 
 #### Primary Navigation
+
 ```tsx
 interface NavItem {
   id: string;
@@ -478,7 +490,7 @@ const PrimaryNavigation: React.FC = () => {
         href="/dashboard"
         icon={HomeIcon}
         label="Dashboard"
-        isActive={pathname === '/dashboard'}
+        isActive={pathname === "/dashboard"}
       />
       <NavLink
         href="/discovery"
@@ -486,21 +498,9 @@ const PrimaryNavigation: React.FC = () => {
         label="Discovery"
         badge={3}
       />
-      <NavLink
-        href="/applications"
-        icon={ServerIcon}
-        label="Applications"
-      />
-      <NavLink
-        href="/assessments"
-        icon={ChartIcon}
-        label="Assessments"
-      />
-      <NavLink
-        href="/reports"
-        icon={DocumentIcon}
-        label="Reports"
-      />
+      <NavLink href="/applications" icon={ServerIcon} label="Applications" />
+      <NavLink href="/assessments" icon={ChartIcon} label="Assessments" />
+      <NavLink href="/reports" icon={DocumentIcon} label="Reports" />
     </nav>
   );
 };
@@ -509,6 +509,7 @@ const PrimaryNavigation: React.FC = () => {
 ### 5.2 Data Display Components
 
 #### Application Card
+
 ```tsx
 interface ApplicationCardProps {
   application: Application;
@@ -519,14 +520,14 @@ interface ApplicationCardProps {
 const ApplicationCard: React.FC<ApplicationCardProps> = ({
   application,
   onSelect,
-  isSelected
+  isSelected,
 }) => {
   return (
     <div
       className={cn(
         "group relative rounded-xl border p-6 transition-all duration-200",
         "hover:shadow-lg hover:border-primary-300",
-        isSelected && "border-primary-500 bg-primary-50"
+        isSelected && "border-primary-500 bg-primary-50",
       )}
     >
       <div className="flex items-start justify-between">
@@ -538,11 +539,9 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
             {application.description}
           </p>
         </div>
-        <Badge variant={application.status}>
-          {application.status}
-        </Badge>
+        <Badge variant={application.status}>{application.status}</Badge>
       </div>
-      
+
       <div className="mt-4 grid grid-cols-3 gap-4">
         <Metric
           label="Components"
@@ -561,7 +560,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
           color={getRiskColor(application.riskScore)}
         />
       </div>
-      
+
       <div className="mt-4 flex items-center justify-between">
         <div className="flex -space-x-2">
           {application.technologies.slice(0, 3).map((tech) => (
@@ -573,7 +572,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
             </span>
           )}
         </div>
-        
+
         <Button
           size="sm"
           variant="ghost"
@@ -591,11 +590,12 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
 ### 5.3 Form Components
 
 #### Smart Form Field
+
 ```tsx
 interface SmartFieldProps {
   name: string;
   label: string;
-  type?: 'text' | 'number' | 'select' | 'multiselect' | 'date';
+  type?: "text" | "number" | "select" | "multiselect" | "date";
   placeholder?: string;
   helpText?: string;
   required?: boolean;
@@ -607,7 +607,7 @@ interface SmartFieldProps {
 const SmartField: React.FC<SmartFieldProps> = ({
   name,
   label,
-  type = 'text',
+  type = "text",
   helpText,
   required,
   aiAssisted,
@@ -615,7 +615,7 @@ const SmartField: React.FC<SmartFieldProps> = ({
 }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState<string>();
-  
+
   return (
     <div className="relative">
       <Label htmlFor={name} required={required}>
@@ -626,7 +626,7 @@ const SmartField: React.FC<SmartFieldProps> = ({
           </Tooltip>
         )}
       </Label>
-      
+
       <div className="relative mt-1">
         <Input
           id={name}
@@ -634,11 +634,11 @@ const SmartField: React.FC<SmartFieldProps> = ({
           type={type}
           className={cn(
             "pr-10",
-            aiSuggestion && "border-primary-300 bg-primary-50"
+            aiSuggestion && "border-primary-300 bg-primary-50",
           )}
           {...props}
         />
-        
+
         {aiAssisted && (
           <button
             type="button"
@@ -649,16 +649,12 @@ const SmartField: React.FC<SmartFieldProps> = ({
           </button>
         )}
       </div>
-      
-      {helpText && (
-        <p className="mt-1 text-sm text-neutral-600">{helpText}</p>
-      )}
-      
+
+      {helpText && <p className="mt-1 text-sm text-neutral-600">{helpText}</p>}
+
       {aiSuggestion && (
         <div className="mt-2 rounded-lg bg-primary-50 p-3">
-          <p className="text-sm font-medium text-primary-900">
-            AI Suggestion:
-          </p>
+          <p className="text-sm font-medium text-primary-900">AI Suggestion:</p>
           <p className="mt-1 text-sm text-primary-700">{aiSuggestion}</p>
           <div className="mt-2 flex gap-2">
             <Button size="sm" onClick={acceptSuggestion}>
@@ -678,8 +674,11 @@ const SmartField: React.FC<SmartFieldProps> = ({
 ### 5.4 Visualization Components
 
 #### Migration Readiness Chart
+
 ```tsx
-const MigrationReadinessChart: React.FC<{ data: AssessmentData }> = ({ data }) => {
+const MigrationReadinessChart: React.FC<{ data: AssessmentData }> = ({
+  data,
+}) => {
   return (
     <Card>
       <CardHeader>
@@ -702,16 +701,13 @@ const MigrationReadinessChart: React.FC<{ data: AssessmentData }> = ({ data }) =
                 <div
                   className={cn(
                     "h-full rounded-lg transition-all duration-500",
-                    getStrategyColor(strategy.name)
+                    getStrategyColor(strategy.name),
                   )}
                   style={{ width: `${strategy.confidence}%` }}
                 />
               </div>
               {strategy.isRecommended && (
-                <Badge
-                  variant="success"
-                  className="absolute -top-2 right-0"
-                >
+                <Badge variant="success" className="absolute -top-2 right-0">
                   Recommended
                 </Badge>
               )}
@@ -749,19 +745,19 @@ const ApplicationSkeleton: React.FC = () => {
 // Progressive Loading
 const ProgressiveList: React.FC = () => {
   const { data, isLoading, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ['applications'],
+    queryKey: ["applications"],
     queryFn: fetchApplications,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
-  
+
   return (
     <div>
-      {data?.pages.map((page) => (
+      {data?.pages.map((page) =>
         page.items.map((item) => (
           <ApplicationCard key={item.id} application={item} />
-        ))
-      ))}
-      
+        )),
+      )}
+
       {isFetchingNextPage && (
         <div className="flex justify-center py-4">
           <Spinner />
@@ -789,7 +785,7 @@ const ProgressiveList: React.FC = () => {
 }
 
 .button-ripple::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -798,7 +794,9 @@ const ProgressiveList: React.FC = () => {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.5);
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .button-ripple:active::after {
@@ -811,7 +809,9 @@ const ProgressiveList: React.FC = () => {
 
 ```tsx
 // Page Transitions
-const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const PageTransition: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -825,7 +825,10 @@ const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 // Accordion Animation
-const AccordionContent: React.FC<{ isOpen: boolean }> = ({ isOpen, children }) => {
+const AccordionContent: React.FC<{ isOpen: boolean }> = ({
+  isOpen,
+  children,
+}) => {
   return (
     <motion.div
       initial={false}
@@ -849,7 +852,10 @@ const AccordionContent: React.FC<{ isOpen: boolean }> = ({ isOpen, children }) =
 
 ```tsx
 // Toast Notifications
-const showNotification = (type: 'success' | 'error' | 'info', message: string) => {
+const showNotification = (
+  type: "success" | "error" | "info",
+  message: string,
+) => {
   toast.custom((t) => (
     <motion.div
       initial={{ opacity: 0, y: -50 }}
@@ -857,14 +863,14 @@ const showNotification = (type: 'success' | 'error' | 'info', message: string) =
       exit={{ opacity: 0, y: -50 }}
       className={cn(
         "flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg",
-        type === 'success' && "bg-green-50 text-green-900",
-        type === 'error' && "bg-red-50 text-red-900",
-        type === 'info' && "bg-blue-50 text-blue-900"
+        type === "success" && "bg-green-50 text-green-900",
+        type === "error" && "bg-red-50 text-red-900",
+        type === "info" && "bg-blue-50 text-blue-900",
       )}
     >
-      {type === 'success' && <CheckCircleIcon className="h-5 w-5" />}
-      {type === 'error' && <XCircleIcon className="h-5 w-5" />}
-      {type === 'info' && <InfoIcon className="h-5 w-5" />}
+      {type === "success" && <CheckCircleIcon className="h-5 w-5" />}
+      {type === "error" && <XCircleIcon className="h-5 w-5" />}
+      {type === "info" && <InfoIcon className="h-5 w-5" />}
       <p className="font-medium">{message}</p>
     </motion.div>
   ));
@@ -873,7 +879,7 @@ const showNotification = (type: 'success' | 'error' | 'info', message: string) =
 // Inline Validation Feedback
 const ValidationFeedback: React.FC<{ error?: string; success?: boolean }> = ({
   error,
-  success
+  success,
 }) => {
   return (
     <AnimatePresence>
@@ -909,11 +915,11 @@ const ValidationFeedback: React.FC<{ error?: string; success?: boolean }> = ({
 
 ```css
 /* Breakpoints aligned with common device sizes */
---screen-xs: 475px;   /* Mobile devices */
---screen-sm: 640px;   /* Small tablets */
---screen-md: 768px;   /* Tablets */
---screen-lg: 1024px;  /* Small laptops */
---screen-xl: 1280px;  /* Desktops */
+--screen-xs: 475px; /* Mobile devices */
+--screen-sm: 640px; /* Small tablets */
+--screen-md: 768px; /* Tablets */
+--screen-lg: 1024px; /* Small laptops */
+--screen-xl: 1280px; /* Desktops */
 --screen-2xl: 1536px; /* Large screens */
 ```
 
@@ -923,7 +929,7 @@ const ValidationFeedback: React.FC<{ error?: string; success?: boolean }> = ({
 // Responsive Navigation
 const ResponsiveNav: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   return (
     <>
       {/* Mobile Navigation */}
@@ -934,7 +940,7 @@ const ResponsiveNav: React.FC = () => {
         >
           <MenuIcon className="h-6 w-6" />
         </button>
-        
+
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -949,7 +955,7 @@ const ResponsiveNav: React.FC = () => {
           )}
         </AnimatePresence>
       </div>
-      
+
       {/* Desktop Navigation */}
       <nav className="hidden lg:flex items-center gap-6">
         <DesktopNavItems />
@@ -975,17 +981,17 @@ const ResponsiveGrid: React.FC = () => {
 ```tsx
 // Adaptive Dashboard Layout
 const DashboardLayout: React.FC = () => {
-  const isTablet = useMediaQuery('(max-width: 1024px)');
-  const isMobile = useMediaQuery('(max-width: 640px)');
-  
+  const isTablet = useMediaQuery("(max-width: 1024px)");
+  const isMobile = useMediaQuery("(max-width: 640px)");
+
   if (isMobile) {
     return <MobileDashboard />;
   }
-  
+
   if (isTablet) {
     return <TabletDashboard />;
   }
-  
+
   return <DesktopDashboard />;
 };
 
@@ -1019,7 +1025,7 @@ const ResponsiveTable: React.FC<{ data: any[] }> = ({ data }) => {
           </tbody>
         </table>
       </div>
-      
+
       {/* Mobile Cards */}
       <div className="md:hidden space-y-4">
         {data.map((item) => (
@@ -1038,6 +1044,7 @@ const ResponsiveTable: React.FC<{ data: any[] }> = ({ data }) => {
 ### 8.1 WCAG 2.1 AA Compliance
 
 #### Color Contrast
+
 ```css
 /* Ensure minimum contrast ratios */
 /* Normal text: 4.5:1 */
@@ -1054,6 +1061,7 @@ const ResponsiveTable: React.FC<{ data: any[] }> = ({ data }) => {
 ```
 
 #### Focus Indicators
+
 ```css
 /* Visible focus states for all interactive elements */
 :focus-visible {
@@ -1063,7 +1071,9 @@ const ResponsiveTable: React.FC<{ data: any[] }> = ({ data }) => {
 
 /* Custom focus styles for specific components */
 .button:focus-visible {
-  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primary-500);
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--primary-500);
 }
 ```
 
@@ -1074,22 +1084,22 @@ const ResponsiveTable: React.FC<{ data: any[] }> = ({ data }) => {
 const AccessibleDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     switch (e.key) {
-      case 'Escape':
+      case "Escape":
         setIsOpen(false);
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
         setSelectedIndex((prev) => Math.min(prev + 1, options.length - 1));
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
         setSelectedIndex((prev) => Math.max(prev - 1, 0));
         break;
-      case 'Enter':
-      case ' ':
+      case "Enter":
+      case " ":
         e.preventDefault();
         if (isOpen) {
           selectOption(options[selectedIndex]);
@@ -1099,7 +1109,7 @@ const AccessibleDropdown: React.FC = () => {
         break;
     }
   };
-  
+
   return (
     <div
       role="combobox"
@@ -1124,7 +1134,9 @@ const AccessibleForm: React.FC = () => {
         <div>
           <label htmlFor="app-name" className="block text-sm font-medium">
             Application Name
-            <span className="text-red-500 ml-1" aria-label="required">*</span>
+            <span className="text-red-500 ml-1" aria-label="required">
+              *
+            </span>
           </label>
           <input
             id="app-name"
@@ -1139,7 +1151,7 @@ const AccessibleForm: React.FC = () => {
             Enter the official name of your application
           </p>
         </div>
-        
+
         {/* Live region for dynamic updates */}
         <div aria-live="polite" aria-atomic="true">
           {validationMessage && (
@@ -1168,9 +1180,12 @@ const SkipNav: React.FC = () => {
 
 ```tsx
 // Accessible modal dialog
-const AccessibleModal: React.FC<{ isOpen: boolean }> = ({ isOpen, children }) => {
+const AccessibleModal: React.FC<{ isOpen: boolean }> = ({
+  isOpen,
+  children,
+}) => {
   const previouslyFocused = useRef<HTMLElement>();
-  
+
   useEffect(() => {
     if (isOpen) {
       previouslyFocused.current = document.activeElement as HTMLElement;
@@ -1179,7 +1194,7 @@ const AccessibleModal: React.FC<{ isOpen: boolean }> = ({ isOpen, children }) =>
       previouslyFocused.current?.focus();
     }
   }, [isOpen]);
-  
+
   return (
     <Dialog
       open={isOpen}
@@ -1221,19 +1236,19 @@ import {
   AlertCircle,
   Info,
   Loader2,
-} from 'lucide-react';
+} from "lucide-react";
 
 // Icon wrapper for consistent sizing
-const Icon: React.FC<{ icon: LucideIcon; size?: 'sm' | 'md' | 'lg' }> = ({
+const Icon: React.FC<{ icon: LucideIcon; size?: "sm" | "md" | "lg" }> = ({
   icon: IconComponent,
-  size = 'md',
+  size = "md",
 }) => {
   const sizes = {
-    sm: 'h-4 w-4',
-    md: 'h-5 w-5',
-    lg: 'h-6 w-6',
+    sm: "h-4 w-4",
+    md: "h-5 w-5",
+    lg: "h-6 w-6",
   };
-  
+
   return <IconComponent className={sizes[size]} />;
 };
 ```
@@ -1278,13 +1293,13 @@ const EmptyState: React.FC<{
 ```tsx
 // Chart color palette
 const chartColors = {
-  primary: ['#0066cc', '#0084ff', '#36a3ff', '#7cc3ff', '#bae0ff'],
-  secondary: ['#00c853', '#1af599', '#66f9bd', '#b3fce1', '#e6fef5'],
+  primary: ["#0066cc", "#0084ff", "#36a3ff", "#7cc3ff", "#bae0ff"],
+  secondary: ["#00c853", "#1af599", "#66f9bd", "#b3fce1", "#e6fef5"],
   semantic: {
-    success: '#00c853',
-    warning: '#ff9800',
-    error: '#f44336',
-    info: '#2196f3',
+    success: "#00c853",
+    warning: "#ff9800",
+    error: "#f44336",
+    info: "#2196f3",
   },
 };
 
@@ -1293,23 +1308,23 @@ const chartTheme = {
   axis: {
     style: {
       tickLabels: {
-        fontFamily: 'Inter',
+        fontFamily: "Inter",
         fontSize: 12,
-        fill: '#495057',
+        fill: "#495057",
       },
       grid: {
-        stroke: '#e9ecef',
-        strokeDasharray: '3 3',
+        stroke: "#e9ecef",
+        strokeDasharray: "3 3",
       },
     },
   },
   tooltip: {
     style: {
-      backgroundColor: '#ffffff',
-      border: '1px solid #dee2e6',
-      borderRadius: '8px',
-      padding: '12px',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+      backgroundColor: "#ffffff",
+      border: "1px solid #dee2e6",
+      borderRadius: "8px",
+      padding: "12px",
+      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
     },
   },
 };
@@ -1405,26 +1420,23 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-const componentVariants = cva(
-  "base-classes",
-  {
-    variants: {
-      variant: {
-        default: "default-classes",
-        secondary: "secondary-classes",
-      },
-      size: {
-        default: "size-default-classes",
-        sm: "size-sm-classes",
-        lg: "size-lg-classes",
-      },
+const componentVariants = cva("base-classes", {
+  variants: {
+    variant: {
+      default: "default-classes",
+      secondary: "secondary-classes",
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
+    size: {
+      default: "size-default-classes",
+      sm: "size-sm-classes",
+      lg: "size-lg-classes",
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+  },
+});
 
 export interface ComponentProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -1441,7 +1453,7 @@ const Component = React.forwardRef<HTMLDivElement, ComponentProps>(
         {...props}
       />
     );
-  }
+  },
 );
 
 Component.displayName = "Component";
@@ -1453,29 +1465,30 @@ export { Component, componentVariants };
 
 ```tsx
 // Theme provider
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = "light" | "dark" | "system";
 
 const ThemeContext = createContext<{
   theme: Theme;
   setTheme: (theme: Theme) => void;
 }>({
-  theme: 'system',
+  theme: "system",
   setTheme: () => null,
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('system');
+  const [theme, setTheme] = useState<Theme>("system");
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
+    root.classList.remove("light", "dark");
 
-    if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light";
       root.classList.add(systemTheme);
     } else {
       root.classList.add(theme);
@@ -1496,17 +1509,22 @@ export const useTheme = () => useContext(ThemeContext);
 
 ```tsx
 // Advanced form with validation
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 const applicationSchema = z.object({
-  name: z.string().min(1, 'Application name is required'),
+  name: z.string().min(1, "Application name is required"),
   description: z.string().optional(),
-  platform: z.enum(['aws', 'azure', 'gcp', 'onprem']),
-  environment: z.enum(['dev', 'staging', 'production']),
-  technologies: z.array(z.string()).min(1, 'Select at least one technology'),
-  dataClassification: z.enum(['public', 'internal', 'confidential', 'restricted']),
+  platform: z.enum(["aws", "azure", "gcp", "onprem"]),
+  environment: z.enum(["dev", "staging", "production"]),
+  technologies: z.array(z.string()).min(1, "Select at least one technology"),
+  dataClassification: z.enum([
+    "public",
+    "internal",
+    "confidential",
+    "restricted",
+  ]),
 });
 
 type ApplicationFormData = z.infer<typeof applicationSchema>;
@@ -1524,32 +1542,24 @@ export function ApplicationForm() {
   const onSubmit = async (data: ApplicationFormData) => {
     try {
       await createApplication(data);
-      toast.success('Application created successfully');
+      toast.success("Application created successfully");
     } catch (error) {
-      toast.error('Failed to create application');
+      toast.error("Failed to create application");
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <FormField
-        label="Application Name"
-        error={errors.name?.message}
-        required
-      >
+      <FormField label="Application Name" error={errors.name?.message} required>
         <Input
-          {...register('name')}
+          {...register("name")}
           placeholder="Enter application name"
-          aria-invalid={errors.name ? 'true' : 'false'}
+          aria-invalid={errors.name ? "true" : "false"}
         />
       </FormField>
 
-      <FormField
-        label="Platform"
-        error={errors.platform?.message}
-        required
-      >
-        <Select {...register('platform')}>
+      <FormField label="Platform" error={errors.platform?.message} required>
+        <Select {...register("platform")}>
           <option value="">Select platform</option>
           <option value="aws">Amazon Web Services</option>
           <option value="azure">Microsoft Azure</option>
@@ -1597,12 +1607,12 @@ export function ApplicationForm() {
 
 ```tsx
 // Route-based code splitting
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense } from "react";
 
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Discovery = lazy(() => import('./pages/Discovery'));
-const Applications = lazy(() => import('./pages/Applications'));
-const Reports = lazy(() => import('./pages/Reports'));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Discovery = lazy(() => import("./pages/Discovery"));
+const Applications = lazy(() => import("./pages/Applications"));
+const Reports = lazy(() => import("./pages/Reports"));
 
 function App() {
   return (
@@ -1622,7 +1632,7 @@ function App() {
 
 ```tsx
 // Next.js Image component usage
-import Image from 'next/image';
+import Image from "next/image";
 
 const OptimizedImage: React.FC<{
   src: string;
@@ -1650,20 +1660,23 @@ const OptimizedImage: React.FC<{
 
 ```tsx
 // Memoized expensive components
-import { memo, useMemo } from 'react';
+import { memo, useMemo } from "react";
 
-const ExpensiveChart = memo<{ data: ChartData }>(({ data }) => {
-  const processedData = useMemo(() => {
-    return processChartData(data);
-  }, [data]);
+const ExpensiveChart = memo<{ data: ChartData }>(
+  ({ data }) => {
+    const processedData = useMemo(() => {
+      return processChartData(data);
+    }, [data]);
 
-  return <Chart data={processedData} />;
-}, (prevProps, nextProps) => {
-  return JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data);
-});
+    return <Chart data={processedData} />;
+  },
+  (prevProps, nextProps) => {
+    return JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data);
+  },
+);
 
 // Virtual scrolling for large lists
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 const VirtualList: React.FC<{ items: any[] }> = ({ items }) => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -1680,18 +1693,18 @@ const VirtualList: React.FC<{ items: any[] }> = ({ items }) => {
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
-          width: '100%',
-          position: 'relative',
+          width: "100%",
+          position: "relative",
         }}
       >
         {virtualizer.getVirtualItems().map((virtualItem) => (
           <div
             key={virtualItem.key}
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
-              width: '100%',
+              width: "100%",
               height: `${virtualItem.size}px`,
               transform: `translateY(${virtualItem.start}px)`,
             }}
@@ -1714,19 +1727,19 @@ module.exports = {
     optimizeCss: true,
   },
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
   },
   swcMinify: true,
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    removeConsole: process.env.NODE_ENV === "production",
   },
   webpack: (config, { isServer }) => {
     // Tree shaking optimization
     config.optimization.usedExports = true;
-    
+
     // Module concatenation
     config.optimization.concatenateModules = true;
-    
+
     return config;
   },
 };
@@ -1740,37 +1753,43 @@ module.exports = {
 
 ```tsx
 // Component test example
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { ApplicationForm } from './ApplicationForm';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { ApplicationForm } from "./ApplicationForm";
 
-describe('ApplicationForm', () => {
-  it('should validate required fields', async () => {
+describe("ApplicationForm", () => {
+  it("should validate required fields", async () => {
     render(<ApplicationForm />);
-    
-    const submitButton = screen.getByRole('button', { name: /create application/i });
+
+    const submitButton = screen.getByRole("button", {
+      name: /create application/i,
+    });
     fireEvent.click(submitButton);
-    
+
     await waitFor(() => {
-      expect(screen.getByText('Application name is required')).toBeInTheDocument();
+      expect(
+        screen.getByText("Application name is required"),
+      ).toBeInTheDocument();
     });
   });
-  
-  it('should submit form with valid data', async () => {
+
+  it("should submit form with valid data", async () => {
     const mockSubmit = jest.fn();
     render(<ApplicationForm onSubmit={mockSubmit} />);
-    
+
     const user = userEvent.setup();
-    
-    await user.type(screen.getByLabelText(/application name/i), 'Test App');
-    await user.selectOptions(screen.getByLabelText(/platform/i), 'aws');
-    
-    await user.click(screen.getByRole('button', { name: /create application/i }));
-    
+
+    await user.type(screen.getByLabelText(/application name/i), "Test App");
+    await user.selectOptions(screen.getByLabelText(/platform/i), "aws");
+
+    await user.click(
+      screen.getByRole("button", { name: /create application/i }),
+    );
+
     await waitFor(() => {
       expect(mockSubmit).toHaveBeenCalledWith({
-        name: 'Test App',
-        platform: 'aws',
+        name: "Test App",
+        platform: "aws",
       });
     });
   });
@@ -1828,15 +1847,15 @@ describe('Accessibility', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
-  
+
   it('should support keyboard navigation', () => {
     render(<Navigation />);
-    
+
     const firstLink = screen.getByRole('link', { name: /dashboard/i });
     firstLink.focus();
-    
+
     fireEvent.keyDown(firstLink, { key: 'Tab' });
-    
+
     const secondLink = screen.getByRole('link', { name: /discovery/i });
     expect(document.activeElement).toBe(secondLink);
   });
@@ -1860,23 +1879,23 @@ const PerformanceMonitor: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     });
   }, []);
-  
+
   return <>{children}</>;
 };
 
 // Component render performance
 const ApplicationList = () => {
   const renderStartTime = performance.now();
-  
+
   useEffect(() => {
     const renderEndTime = performance.now();
     const renderTime = renderEndTime - renderStartTime;
-    
+
     if (renderTime > 16) { // More than one frame
       console.warn(`Slow render detected: ${renderTime}ms`);
     }
   });
-  
+
   return <VirtualList items={applications} />;
 };
 ```
@@ -1887,6 +1906,7 @@ const ApplicationList = () => {
 ## Pre-Release Quality Checklist
 
 ### Visual Design
+
 - [ ] All components follow design system guidelines
 - [ ] Consistent spacing and typography
 - [ ] Proper color contrast ratios
@@ -1894,6 +1914,7 @@ const ApplicationList = () => {
 - [ ] No visual glitches or layout shifts
 
 ### Functionality
+
 - [ ] All interactive elements work as expected
 - [ ] Forms validate correctly
 - [ ] Error states display appropriately
@@ -1901,6 +1922,7 @@ const ApplicationList = () => {
 - [ ] Data persists correctly
 
 ### Accessibility
+
 - [ ] Keyboard navigation works throughout
 - [ ] Screen reader announces content correctly
 - [ ] Focus indicators are visible
@@ -1908,6 +1930,7 @@ const ApplicationList = () => {
 - [ ] Interactive elements have proper labels
 
 ### Performance
+
 - [ ] Page load time < 3 seconds
 - [ ] Time to Interactive < 5 seconds
 - [ ] No janky animations
@@ -1915,6 +1938,7 @@ const ApplicationList = () => {
 - [ ] Bundle size is acceptable
 
 ### Cross-browser Testing
+
 - [ ] Chrome (latest)
 - [ ] Firefox (latest)
 - [ ] Safari (latest)
@@ -1922,6 +1946,7 @@ const ApplicationList = () => {
 - [ ] Mobile browsers
 
 ### Responsive Design
+
 - [ ] Mobile (320px - 640px)
 - [ ] Tablet (641px - 1024px)
 - [ ] Desktop (1025px+)
@@ -1929,6 +1954,7 @@ const ApplicationList = () => {
 - [ ] Touch targets are adequate
 
 ### Documentation
+
 - [ ] Component documentation updated
 - [ ] Storybook stories created
 - [ ] README updated
@@ -1942,6 +1968,7 @@ const ApplicationList = () => {
 This comprehensive UI/UX design document provides a complete foundation for building AI-Discover's frontend. By following these guidelines, the development team can create a consistent, accessible, and performant user interface that delights users while meeting business objectives.
 
 Key takeaways:
+
 1. **Design System First**: Establish consistent patterns before building features
 2. **Component-Driven**: Build reusable components that compose into complex UIs
 3. **Accessibility Always**: Consider all users from the start

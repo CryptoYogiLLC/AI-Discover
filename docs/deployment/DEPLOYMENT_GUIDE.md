@@ -26,6 +26,7 @@
 ### Software Dependencies
 
 1. **Docker Engine** (20.10+)
+
    ```bash
    curl -fsSL https://get.docker.com -o get-docker.sh
    sudo sh get-docker.sh
@@ -33,17 +34,20 @@
    ```
 
 2. **Docker Compose** (2.0+)
+
    ```bash
    sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
    sudo chmod +x /usr/local/bin/docker-compose
    ```
 
 3. **Git**
+
    ```bash
    sudo apt-get update && sudo apt-get install -y git
    ```
 
 4. **Additional Tools**
+
    ```bash
    sudo apt-get install -y curl jq htop iotop
    ```
@@ -69,16 +73,16 @@ nano .env.production
 
 #### Required Environment Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `SECRET_KEY` | Django secret key (generate with `openssl rand -hex 32`) | `a1b2c3d4...` |
-| `POSTGRES_USER` | PostgreSQL username | `ai_discover_prod` |
-| `POSTGRES_PASSWORD` | PostgreSQL password (strong) | `StrongP@ssw0rd!` |
-| `POSTGRES_DB` | Database name | `ai_discover_production` |
-| `REDIS_PASSWORD` | Redis password (strong) | `R3d1sP@ssw0rd!` |
-| `OPENAI_API_KEY` | OpenAI API key | `sk-...` |
-| `CORS_ORIGINS` | Allowed CORS origins | `https://your-domain.com` |
-| `NEXT_PUBLIC_API_URL` | API URL for frontend | `https://api.your-domain.com` |
+| Variable              | Description                                              | Example                       |
+| --------------------- | -------------------------------------------------------- | ----------------------------- |
+| `SECRET_KEY`          | Django secret key (generate with `openssl rand -hex 32`) | `a1b2c3d4...`                 |
+| `POSTGRES_USER`       | PostgreSQL username                                      | `ai_discover_prod`            |
+| `POSTGRES_PASSWORD`   | PostgreSQL password (strong)                             | `StrongP@ssw0rd!`             |
+| `POSTGRES_DB`         | Database name                                            | `ai_discover_production`      |
+| `REDIS_PASSWORD`      | Redis password (strong)                                  | `R3d1sP@ssw0rd!`              |
+| `OPENAI_API_KEY`      | OpenAI API key                                           | `sk-...`                      |
+| `CORS_ORIGINS`        | Allowed CORS origins                                     | `https://your-domain.com`     |
+| `NEXT_PUBLIC_API_URL` | API URL for frontend                                     | `https://api.your-domain.com` |
 
 ### 3. SSL Certificates
 
@@ -113,6 +117,7 @@ Run the deployment script in check mode:
 ```
 
 This validates:
+
 - All required environment variables are set
 - Docker and Docker Compose are installed
 - Sufficient disk space is available
@@ -190,27 +195,29 @@ docker-compose -f docker-compose.prod.yml restart celery  # Restart service
 ### Health Check Endpoints
 
 1. **Backend Health**: `https://api.your-domain.com/health`
+
    ```json
    {
      "status": "healthy",
      "version": "1.0.0",
      "environment": "production",
      "checks": {
-       "database": {"status": "healthy"},
-       "redis": {"status": "healthy"},
-       "openai": {"status": "configured"}
+       "database": { "status": "healthy" },
+       "redis": { "status": "healthy" },
+       "openai": { "status": "configured" }
      }
    }
    ```
 
 2. **Frontend Health**: `https://your-domain.com/api/health`
+
    ```json
    {
      "status": "healthy",
      "timestamp": "2024-01-26T10:00:00Z",
      "checks": {
-       "frontend": {"status": "healthy"},
-       "backend": {"status": "healthy"}
+       "frontend": { "status": "healthy" },
+       "backend": { "status": "healthy" }
      }
    }
    ```
@@ -219,38 +226,43 @@ docker-compose -f docker-compose.prod.yml restart celery  # Restart service
 
 #### Accessing Monitoring Tools
 
-1. **Prometheus**: http://localhost:9090
+1. **Prometheus**: <http://localhost:9090>
+
    - Metrics collection and alerting
    - Query examples:
+
      ```promql
      # API request rate
      sum(rate(http_requests_total{job="backend"}[5m]))
-     
+
      # Database connections
      pg_stat_database_numbackends{datname="ai_discover_production"}
-     
+
      # Redis memory usage
      redis_memory_used_bytes / redis_memory_max_bytes
      ```
 
-2. **Grafana**: http://localhost:3000
+2. **Grafana**: <http://localhost:3000>
+
    - Default login: admin / `GRAFANA_ADMIN_PASSWORD`
    - Pre-configured dashboards:
      - AI-Discover Overview
      - System Metrics
      - Container Metrics
 
-3. **Flower** (Celery monitoring): http://localhost:5555
+3. **Flower** (Celery monitoring): <http://localhost:5555>
    - Default login: admin / `FLOWER_BASIC_AUTH`
    - Monitor task queues and workers
 
 ### Alert Configuration
 
 Alerts are configured in `monitoring/alerts/`:
+
 - `application.yml`: Application-specific alerts
 - `system.yml`: System resource alerts
 
 To add custom alerts:
+
 ```yaml
 - alert: CustomAlert
   expr: your_prometheus_query > threshold
@@ -278,6 +290,7 @@ The deployment includes automated daily backups:
 ### Backup Configuration
 
 Add to crontab for automated backups:
+
 ```bash
 # Daily backup at 2 AM
 0 2 * * * /path/to/ai-discover/scripts/deploy.sh backup
@@ -286,21 +299,24 @@ Add to crontab for automated backups:
 ### Restore Procedure
 
 1. **Stop services**:
+
    ```bash
    ./scripts/deploy.sh stop
    ```
 
 2. **Restore database**:
+
    ```bash
    # Decompress backup
    gunzip backups/postgres_backup_20240126_020000.sql.gz
-   
+
    # Restore
    docker-compose -f docker-compose.prod.yml run --rm postgres \
      psql -U $POSTGRES_USER -d $POSTGRES_DB < backups/postgres_backup_20240126_020000.sql
    ```
 
 3. **Start services**:
+
    ```bash
    ./scripts/deploy.sh start
    ```
@@ -389,6 +405,7 @@ docker-compose -f docker-compose.prod.yml exec redis \
 ### Debug Mode
 
 Enable debug logging:
+
 ```bash
 # Set in .env.production
 LOG_LEVEL=DEBUG
@@ -444,6 +461,7 @@ sudo systemctl enable fail2ban
 2. **CORS**: Set `CORS_ORIGINS` to your domain only
 3. **Security Headers**: Automatically added by nginx
 4. **Database Security**:
+
    ```sql
    -- Revoke unnecessary privileges
    REVOKE ALL ON SCHEMA public FROM PUBLIC;
@@ -475,6 +493,7 @@ sudo systemctl enable fail2ban
 ### Horizontal Scaling
 
 1. **Backend Scaling**:
+
    ```yaml
    # In docker-compose.prod.yml
    backend:
@@ -483,10 +502,11 @@ sudo systemctl enable fail2ban
    ```
 
 2. **Celery Worker Scaling**:
+
    ```bash
    # Increase worker concurrency
    CELERY_WORKER_CONCURRENCY=8
-   
+
    # Or add more worker containers
    docker-compose -f docker-compose.prod.yml up -d --scale celery=3
    ```
@@ -494,16 +514,18 @@ sudo systemctl enable fail2ban
 ### Performance Tuning
 
 1. **PostgreSQL Optimization**:
+
    ```sql
    -- Analyze tables
    ANALYZE;
-   
+
    -- Create indexes for common queries
    CREATE INDEX idx_applications_user_id ON applications(user_id);
    CREATE INDEX idx_discovery_tasks_status ON discovery_tasks(status);
    ```
 
 2. **Redis Optimization**:
+
    ```bash
    # In redis command
    maxmemory-policy allkeys-lru
@@ -548,34 +570,37 @@ sudo apt-get install k6
 ### Disaster Recovery Plan
 
 1. **Infrastructure Failure**:
+
    ```bash
    # Switch to DR site
    ./scripts/dr-failover.sh
-   
+
    # Update DNS
    # Restore from latest backup
    ```
 
 2. **Data Corruption**:
+
    ```bash
    # Stop services
    ./scripts/deploy.sh stop
-   
+
    # Restore from known good backup
    ./scripts/restore-backup.sh 2024-01-25
-   
+
    # Verify data integrity
    ./scripts/verify-data.sh
    ```
 
 3. **Security Breach**:
+
    ```bash
    # Immediate actions
    ./scripts/deploy.sh stop
-   
+
    # Rotate all credentials
    ./scripts/rotate-credentials.sh
-   
+
    # Audit logs
    ./scripts/security-audit.sh
    ```
@@ -583,6 +608,7 @@ sudo apt-get install k6
 ### Testing Disaster Recovery
 
 Monthly DR tests:
+
 ```bash
 # Test backup restoration
 ./scripts/test-dr.sh
@@ -598,16 +624,19 @@ Monthly DR tests:
 ### Regular Maintenance Tasks
 
 1. **Daily**:
+
    - Monitor health endpoints
    - Check error logs
    - Verify backups
 
 2. **Weekly**:
+
    - Review performance metrics
    - Clean up old logs
    - Update monitoring dashboards
 
 3. **Monthly**:
+
    - Security updates
    - Performance optimization
    - Capacity planning
@@ -636,6 +665,7 @@ git pull origin main
 ## Support
 
 For production support:
+
 - **Documentation**: /docs
 - **Monitoring**: Grafana dashboards
 - **Logs**: Centralized in /logs

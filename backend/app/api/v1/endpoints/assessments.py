@@ -447,3 +447,114 @@ async def analyze_assessment(
             else None
         ),
     )
+
+
+@router.get("/export")
+async def export_assessments(
+    format: str = Query("csv", regex="^(csv|excel|json)$"),
+    project_id: Optional[UUID] = None,
+    recommendation: Optional[MigrationRecommendation] = None,
+    criticality: Optional[str] = None,
+    include_metadata: bool = Query(True),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Export assessments in various formats
+
+    Can filter by project, recommendation, or criticality.
+
+    Supported formats:
+    - csv: Comma-separated values
+    - excel: Excel workbook with multiple sheets
+    - json: JSON format with metadata
+    """
+    from app.services.export import ExportService
+    from fastapi.responses import StreamingResponse
+    import io
+
+    # Base query
+    query = select(ApplicationAssessment).options(
+        selectinload(ApplicationAssessment.project),
+        selectinload(ApplicationAssessment.assessed_by_user),
+    )
+
+    # Apply filters
+    if project_id:
+        # Check project access
+        await get_project_or_404(project_id, db, current_user)
+        query = query.where(ApplicationAssessment.project_id == project_id)
+    else:
+        # Get all accessible projects
+        if current_user.role != UserRole.ADMIN:
+            # Get projects where user is a member
+            project_query = (
+                select(Project.id)
+                .join(ProjectMember)
+                .where(ProjectMember.user_id == current_user.id)
+            )
+            accessible_projects = await db.execute(project_query)
+            project_ids = [p[0] for p in accessible_projects]
+
+            if not project_ids:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="No assessments found",
+                )
+
+            query = query.where(ApplicationAssessment.project_id.in_(project_ids))
+
+    if recommendation:
+        query = query.where(ApplicationAssessment.recommendation == recommendation)
+
+    if criticality:
+        query = query.where(ApplicationAssessment.business_criticality == criticality)
+
+    # Execute query
+    result = await db.execute(query)
+    assessments = result.scalars().all()
+
+    if not assessments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No assessments found matching criteria",
+        )
+
+    # Initialize export service
+    export_service = ExportService()
+
+    # Generate export based on format
+    if format == "csv":
+        content = await export_service.export_assessments_csv(
+            assessments, include_metadata
+        )
+        media_type = "text/csv"
+        filename = "assessments_export.csv"
+
+    elif format == "excel":
+        content = await export_service.export_assessments_excel(
+            assessments, None, include_analytics=True
+        )
+        media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        filename = "assessments_export.xlsx"
+
+    else:  # json
+        content = await export_service.export_assessments_json(
+            assessments, include_metadata
+        )
+        media_type = "application/json"
+        filename = "assessments_export.json"
+
+    logger.info(
+        "Assessments exported",
+        format=format,
+        count=len(assessments),
+        user_id=str(current_user.id),
+    )
+
+    # Return file response
+    return StreamingResponse(
+        io.BytesIO(content),
+        media_type=media_type,
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )

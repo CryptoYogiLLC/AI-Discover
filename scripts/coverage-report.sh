@@ -18,7 +18,7 @@ echo -e "\n${YELLOW}Running Backend Tests with Coverage...${NC}"
 cd backend
 if pytest --cov=app --cov-report=term-missing --cov-report=html --cov-report=json --cov-fail-under=80; then
     echo -e "${GREEN}✓ Backend tests passed with coverage >= 80%${NC}"
-    
+
     # Extract coverage percentage
     if [ -f coverage.json ]; then
         BACKEND_COV=$(python -c "import json; data=json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.2f}%\")")
@@ -35,7 +35,7 @@ echo -e "\n${YELLOW}Running Frontend Tests with Coverage...${NC}"
 cd frontend
 if npm run test:ci; then
     echo -e "${GREEN}✓ Frontend tests passed with coverage >= 80%${NC}"
-    
+
     # Extract coverage percentage
     if [ -f coverage/coverage-summary.json ]; then
         FRONTEND_COV=$(node -e "const data=require('./coverage/coverage-summary.json'); console.log(data.total.lines.pct + '%')")
@@ -57,7 +57,7 @@ echo -e "========================================="
 # Open coverage reports if running locally
 if [ -z "$CI" ]; then
     echo -e "\n${YELLOW}Opening coverage reports in browser...${NC}"
-    
+
     # Check OS and open accordingly
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS

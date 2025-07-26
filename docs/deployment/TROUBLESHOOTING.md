@@ -3,6 +3,7 @@
 ## Quick Diagnostics
 
 Run this command first for a complete system check:
+
 ```bash
 ./scripts/deploy.sh health
 ```
@@ -12,6 +13,7 @@ Run this command first for a complete system check:
 ### 1. Services Won't Start
 
 #### Symptom: Container keeps restarting
+
 ```bash
 # Check container status
 docker-compose -f docker-compose.prod.yml ps
@@ -20,9 +22,10 @@ docker-compose -f docker-compose.prod.yml ps
 docker-compose -f docker-compose.prod.yml logs --tail=50 [service_name]
 ```
 
-#### Common Causes and Solutions:
+#### Common Causes and Solutions
 
 **Port Already in Use**
+
 ```bash
 # Check what's using the port
 sudo lsof -i :8800  # Backend
@@ -34,6 +37,7 @@ sudo lsof -i :6479  # Redis
 ```
 
 **Database Connection Failed**
+
 ```bash
 # Test database connection
 docker-compose -f docker-compose.prod.yml exec postgres pg_isready
@@ -46,6 +50,7 @@ grep DATABASE_URL .env.production
 ```
 
 **Missing Environment Variables**
+
 ```bash
 # Validate all required variables
 ./scripts/deploy.sh check
@@ -61,6 +66,7 @@ grep DATABASE_URL .env.production
 #### 500 Internal Server Error
 
 **Check Application Logs**
+
 ```bash
 # Backend logs
 docker-compose -f docker-compose.prod.yml logs -f backend
@@ -70,6 +76,7 @@ docker-compose -f docker-compose.prod.yml logs backend | grep -A 10 "Traceback"
 ```
 
 **Database Migration Issues**
+
 ```bash
 # Check migration status
 docker-compose -f docker-compose.prod.yml exec backend alembic current
@@ -86,6 +93,7 @@ docker-compose -f docker-compose.prod.yml exec postgres \
 #### API Performance Issues
 
 **Slow Response Times**
+
 ```bash
 # Check resource usage
 docker stats
@@ -96,13 +104,14 @@ curl http://localhost:8800/metrics | grep http_request_duration
 # Check database slow queries
 docker-compose -f docker-compose.prod.yml exec postgres \
   psql -U $POSTGRES_USER -d $POSTGRES_DB -c \
-  "SELECT query, mean_exec_time, calls 
-   FROM pg_stat_statements 
-   ORDER BY mean_exec_time DESC 
+  "SELECT query, mean_exec_time, calls
+   FROM pg_stat_statements
+   ORDER BY mean_exec_time DESC
    LIMIT 10;"
 ```
 
 **High Memory Usage**
+
 ```bash
 # Check Python memory usage
 docker-compose -f docker-compose.prod.yml exec backend \
@@ -117,6 +126,7 @@ docker-compose -f docker-compose.prod.yml up -d --force-recreate backend
 #### Build Failures
 
 **Next.js Build Errors**
+
 ```bash
 # Check build logs
 docker-compose -f docker-compose.prod.yml logs frontend
@@ -133,6 +143,7 @@ docker-compose -f docker-compose.prod.yml build --no-cache frontend
 #### Blank Page or 404 Errors
 
 **Check Static Files**
+
 ```bash
 # Verify build output
 docker-compose -f docker-compose.prod.yml exec frontend ls -la .next/
@@ -143,6 +154,7 @@ docker-compose -f docker-compose.prod.yml exec frontend \
 ```
 
 **API Connection Issues**
+
 ```bash
 # Test API connectivity from frontend
 docker-compose -f docker-compose.prod.yml exec frontend \
@@ -159,6 +171,7 @@ grep CORS_ORIGINS .env.production
 **Symptoms**: "too many connections" errors
 
 **Solution**:
+
 ```bash
 # Check current connections
 docker-compose -f docker-compose.prod.yml exec postgres \
@@ -177,6 +190,7 @@ docker-compose -f docker-compose.prod.yml restart postgres
 #### Disk Space Issues
 
 **Check Disk Usage**
+
 ```bash
 # Overall disk usage
 df -h
@@ -191,6 +205,7 @@ docker-compose -f docker-compose.prod.yml exec postgres \
 ```
 
 **Clean Up**
+
 ```bash
 # Remove old backups
 find ./backups -name "*.sql.gz" -mtime +30 -delete
@@ -208,6 +223,7 @@ docker-compose -f docker-compose.prod.yml exec postgres \
 #### Memory Issues
 
 **Check Memory Usage**
+
 ```bash
 # Redis memory info
 docker-compose -f docker-compose.prod.yml exec redis \
@@ -219,6 +235,7 @@ docker-compose -f docker-compose.prod.yml exec redis \
 ```
 
 **Clear Cache**
+
 ```bash
 # Flush all data (WARNING: This clears everything)
 docker-compose -f docker-compose.prod.yml exec redis \
@@ -234,6 +251,7 @@ docker-compose -f docker-compose.prod.yml exec redis \
 #### Workers Not Processing Tasks
 
 **Check Worker Status**
+
 ```bash
 # View Celery logs
 docker-compose -f docker-compose.prod.yml logs celery
@@ -247,6 +265,7 @@ docker-compose -f docker-compose.prod.yml exec celery \
 ```
 
 **Queue Buildup**
+
 ```bash
 # Check queue lengths
 docker-compose -f docker-compose.prod.yml exec redis \
@@ -260,6 +279,7 @@ docker-compose -f docker-compose.prod.yml exec celery \
 #### Task Failures
 
 **Debug Failed Tasks**
+
 ```bash
 # Check for exceptions
 docker-compose -f docker-compose.prod.yml logs celery | grep -i error
@@ -278,6 +298,7 @@ EOF
 #### SSL Certificate Problems
 
 **Certificate Expired**
+
 ```bash
 # Check certificate expiry
 openssl x509 -in nginx/ssl/cert.pem -noout -dates
@@ -289,6 +310,7 @@ sudo certbot renew
 #### 502 Bad Gateway
 
 **Check Upstream Services**
+
 ```bash
 # Test backend directly
 curl http://localhost:8800/health
@@ -305,6 +327,7 @@ docker-compose -f docker-compose.prod.yml logs nginx
 #### High CPU Usage
 
 **Identify CPU-Heavy Processes**
+
 ```bash
 # Container CPU usage
 docker stats --no-stream
@@ -317,6 +340,7 @@ docker-compose -f docker-compose.prod.yml exec backend \
 #### Memory Leaks
 
 **Monitor Memory Growth**
+
 ```bash
 # Track memory over time
 while true; do
@@ -337,6 +361,7 @@ EOF
 #### Prometheus Not Scraping Metrics
 
 **Check Targets**
+
 ```bash
 # Access Prometheus UI
 curl http://localhost:9090/targets
@@ -348,6 +373,7 @@ curl http://localhost:8800/metrics
 #### Grafana Dashboard Empty
 
 **Check Data Sources**
+
 ```bash
 # Test Prometheus query
 curl -G http://localhost:9090/api/v1/query \
@@ -401,6 +427,7 @@ docker-compose -f docker-compose.prod.yml exec -T postgres \
 ## Diagnostic Commands Reference
 
 ### System Health
+
 ```bash
 # Overall health check
 ./scripts/deploy.sh health
@@ -415,6 +442,7 @@ iotop
 ```
 
 ### Logs
+
 ```bash
 # All logs
 docker-compose -f docker-compose.prod.yml logs
@@ -430,6 +458,7 @@ docker-compose -f docker-compose.prod.yml logs | grep -i error
 ```
 
 ### Network
+
 ```bash
 # Test connectivity
 docker-compose -f docker-compose.prod.yml exec backend ping postgres
@@ -440,6 +469,7 @@ netstat -tulpn | grep LISTEN
 ```
 
 ### Database
+
 ```bash
 # Connect to database
 docker-compose -f docker-compose.prod.yml exec postgres \
@@ -462,6 +492,7 @@ SELECT current_database();  # Current database
 4. **Documentation**: Refer to deployment guide for configuration
 
 If you're still stuck:
+
 - Review this troubleshooting guide
 - Check application logs for stack traces
 - Verify all environment variables are set correctly

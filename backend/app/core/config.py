@@ -108,6 +108,7 @@ class Settings(BaseSettings):
 
     # AI/ML
     OPENAI_API_KEY: Optional[str] = None
+    DEEPINFRA_API_KEY: Optional[str] = None
     CREW_AI_MODEL: str = "gpt-4"
 
     # Cloud Providers

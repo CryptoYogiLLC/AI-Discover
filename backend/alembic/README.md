@@ -5,24 +5,28 @@ This directory contains database migrations managed by Alembic.
 ## Running Migrations
 
 ### Apply all migrations
+
 ```bash
 cd backend
 alembic upgrade head
 ```
 
 ### Create a new migration
+
 ```bash
 cd backend
 alembic revision --autogenerate -m "Description of changes"
 ```
 
 ### Rollback one migration
+
 ```bash
 cd backend
 alembic downgrade -1
 ```
 
 ### View migration history
+
 ```bash
 cd backend
 alembic history
@@ -38,6 +42,7 @@ python -m app.scripts.seed_data
 ```
 
 This will create:
+
 - Sample users with different roles (admin, collaborator, viewer)
 - Sample projects
 - Sample application assessments with realistic data

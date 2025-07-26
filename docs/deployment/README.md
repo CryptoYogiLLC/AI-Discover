@@ -5,7 +5,9 @@ This directory contains comprehensive documentation for deploying and maintainin
 ## Documentation Structure
 
 ### 📘 [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
+
 Complete guide for production deployment including:
+
 - System requirements and prerequisites
 - Step-by-step deployment instructions
 - Configuration management
@@ -15,7 +17,9 @@ Complete guide for production deployment including:
 - Disaster recovery planning
 
 ### 🔧 [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+
 Comprehensive troubleshooting guide covering:
+
 - Common issues and solutions
 - Diagnostic commands
 - Performance troubleshooting
@@ -24,7 +28,9 @@ Comprehensive troubleshooting guide covering:
 - Recovery procedures
 
 ### 🔒 [SECURITY_HARDENING.md](./SECURITY_HARDENING.md)
+
 Security hardening checklist including:
+
 - Pre-deployment security measures
 - Network security configuration
 - Application security best practices
@@ -34,7 +40,9 @@ Security hardening checklist including:
 - Incident response procedures
 
 ### 📋 [QUICK_REFERENCE.md](./QUICK_REFERENCE.md)
+
 Quick reference for operators containing:
+
 - Essential commands
 - Service URLs and endpoints
 - Common tasks
@@ -69,17 +77,18 @@ The deployment process is managed through scripts in the `/scripts` directory:
 
 The application uses non-standard ports to avoid conflicts:
 
-| Service | Internal Port | External Port |
-|---------|--------------|---------------|
-| Frontend | 3000 | 3300 |
-| Backend | 8000 | 8800 |
-| PostgreSQL | 5432 | 5442 |
-| Redis | 6379 | 6479 |
-| Flower | 5555 | 5555 |
+| Service    | Internal Port | External Port |
+| ---------- | ------------- | ------------- |
+| Frontend   | 3000          | 3300          |
+| Backend    | 8000          | 8800          |
+| PostgreSQL | 5432          | 5442          |
+| Redis      | 6379          | 6479          |
+| Flower     | 5555          | 5555          |
 
 ## Support and Maintenance
 
 For production support:
+
 1. Check health endpoints first
 2. Review logs for errors
 3. Monitor Grafana dashboards
