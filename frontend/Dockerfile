@@ -30,8 +30,12 @@ WORKDIR /app
 # Create non-root user for build stage
 RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
 
+# Copy dependencies and source files
 COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --chown=nextjs:nodejs . .
+
+# Create .next directory with proper permissions before switching user
+RUN mkdir -p /app/.next && chown -R nextjs:nodejs /app
 
 USER nextjs
 
