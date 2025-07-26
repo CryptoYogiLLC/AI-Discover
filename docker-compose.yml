@@ -1,3 +1,10 @@
+# Docker Compose configuration for AI-Discover
+#
+# SECURITY NOTE: This configuration is for LOCAL DEVELOPMENT ONLY.
+# Default passwords and secrets must be replaced with secure values
+# in production environments. Use environment variables to provide
+# secure credentials.
+
 services:
   # PostgreSQL Database
   postgres:
@@ -44,6 +51,8 @@ services:
     ports:
       - "8800:8800"
     environment:
+      # Note: Default values are for local development only.
+      # Production deployments must use secure credentials via environment variables.
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_discover}
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY:-your-secret-key-here-change-in-production}
@@ -93,6 +102,8 @@ services:
     container_name: ai-discover-celery
     restart: unless-stopped
     environment:
+      # Note: Default values are for local development only.
+      # Production deployments must use secure credentials via environment variables.
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_discover}
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
@@ -114,6 +125,8 @@ services:
     container_name: ai-discover-celery-beat
     restart: unless-stopped
     environment:
+      # Note: Default values are for local development only.
+      # Production deployments must use secure credentials via environment variables.
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_discover}
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1

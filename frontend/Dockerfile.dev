@@ -12,8 +12,12 @@ RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
 # Copy package files with proper ownership
 COPY --chown=nextjs:nodejs package.json package-lock.json* ./
 
+# Set npm cache directory to a writable location for the user
+RUN mkdir -p /app/.npm && chown -R nextjs:nodejs /app/.npm
+
 # Switch to non-root user
 USER nextjs
+ENV NPM_CONFIG_CACHE=/app/.npm
 
 # Install dependencies with security flag
 RUN npm ci --ignore-scripts
@@ -21,8 +25,15 @@ RUN npm ci --ignore-scripts
 # Copy source files
 COPY --chown=nextjs:nodejs . .
 
+# Copy health check script
+COPY --chown=nextjs:nodejs healthcheck.js ./
+
 # Expose port
 EXPOSE 3300
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD ["node", "healthcheck.js"]
 
 # Development server
 CMD ["npm", "run", "dev"]
